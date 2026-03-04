@@ -1,0 +1,16 @@
+# Python / Backend
+.venv/
+__pycache__/
+*.pyc
+.env
+debug_error.log
+tunnel_url.log
+
+# Node / Frontend
+node_modules/
+.next/
+out/
+build/
+.env.local
+.DS_Store
+*.log

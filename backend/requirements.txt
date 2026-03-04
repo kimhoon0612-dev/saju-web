@@ -1,0 +1,10 @@
+fastapi[standard]>=0.110.0
+langchain>=0.1.13
+pinecone-client>=3.2.2
+redis>=5.0.3
+pydantic>=2.6.4
+python-dotenv>=1.0.1
+uvicorn>=0.29.0
+requests>=2.31.0
+sqlalchemy>=2.0.28
+aiosqlite>=0.20.0
