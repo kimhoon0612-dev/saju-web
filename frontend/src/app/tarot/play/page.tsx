@@ -21,7 +21,8 @@ function TarotPlayContent() {
     const [step, setStep] = useState(1);
 
     // Track selected cards out of a mock deck
-    const deckSize = 10;
+    // Reduce deck size so it fits on one screen (e.g. 6 or 9)
+    const deckSize = isDaily ? 6 : 9;
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
     // Fetching state
@@ -44,7 +45,8 @@ function TarotPlayContent() {
     const submitSelections = async () => {
         setIsFetching(true);
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
+            // Fix: Hardcode the Render backend URL if NEXT_PUBLIC_API_URL is missing in Vercel
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://saju-api.onrender.com";
             const response = await fetch(`${apiUrl}/api/tarot/draw-multiple`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -62,7 +64,7 @@ function TarotPlayContent() {
                 setReadings(data);
                 setStep(2);
                 setIsFetching(false);
-            }, 1500); // Give flip animation time to finish
+            }, 1000); // Give flip animation time to finish
 
         } catch (error) {
             console.error("Tarot reading error:", error);
@@ -89,9 +91,9 @@ function TarotPlayContent() {
 
             <main className="max-w-md mx-auto pt-20 px-5">
                 {step === 1 && (
-                    <div className="animate-in fade-in duration-500 flex flex-col items-center min-h-[70vh]">
-                        <div className="text-center mb-8">
-                            <h2 className="text-xl font-bold mb-2">
+                    <div className="animate-in fade-in duration-500 flex flex-col items-center">
+                        <div className="text-center mb-6">
+                            <h2 className="text-xl font-bold mb-1">
                                 마음을 집중하고<br />
                                 <span className="text-purple-600 font-extrabold">{targetCount}장</span>의 카드를 골라주세요
                             </h2>
@@ -100,8 +102,8 @@ function TarotPlayContent() {
                             </p>
                         </div>
 
-                        {/* Deck layout */}
-                        <div className="grid grid-cols-3 gap-3 w-full justify-items-center mb-8 relative">
+                        {/* Deck layout - tighter to fit one screen */}
+                        <div className={`grid ${isDaily ? "grid-cols-3" : "grid-cols-3"} gap-3 w-full justify-items-center mb-8 relative max-w-[320px] mx-auto`}>
                             {Array.from({ length: deckSize }).map((_, i) => {
                                 const isSelected = selectedIndices.includes(i);
                                 const label = getSelectionLabel(i);
@@ -110,20 +112,20 @@ function TarotPlayContent() {
                                     <div
                                         key={i}
                                         onClick={() => handleCardClick(i)}
-                                        className={`relative w-20 h-32 rounded-lg cursor-pointer transition-all duration-500 transform ${isFetching && !isSelected ? 'opacity-30' : 'hover:-translate-y-1'
-                                            } ${isSelected ? 'rotate-y-180 scale-105 z-10 opacity-70 cursor-default' : ''
+                                        className={`relative w-[85px] h-[125px] rounded-lg cursor-pointer transition-all duration-300 transform ${isFetching && !isSelected ? 'opacity-30' : 'hover:-translate-y-1'
+                                            } ${isSelected ? 'rotate-y-180 scale-[1.02] z-10 opacity-80 cursor-default shadow-lg' : ''
                                             }`}
                                         style={{ perspective: "1000px" }}
                                     >
                                         {/* Back of card */}
-                                        <div className={`absolute inset-0 backface-hidden rounded-lg border-2 border-primary-900 bg-primary-900 shadow-md flex items-center justify-center transition-all duration-500 ${isSelected ? 'opacity-0' : 'opacity-100'}`}>
-                                            <div className="w-full h-full opacity-20 border-[3px] border-amber-400 m-1 rounded-md"></div>
-                                            <Sparkles className="absolute text-amber-400 opacity-40" size={24} />
+                                        <div className={`absolute inset-0 backface-hidden rounded-lg border-[1.5px] border-primary-900 bg-primary-900 shadow-md flex items-center justify-center transition-all duration-300 ${isSelected ? 'opacity-0' : 'opacity-100'}`}>
+                                            <div className="w-full h-full opacity-20 border-[2px] border-amber-400 m-1.5 rounded-sm"></div>
+                                            <Sparkles className="absolute text-amber-400 opacity-60" size={20} />
                                         </div>
 
                                         {/* Front of card (Dummy Selected State) */}
-                                        <div className={`absolute inset-0 backface-hidden rounded-lg border border-purple-300 bg-purple-50 shadow-lg flex flex-col items-center justify-center transition-all duration-500 rotate-y-180 p-1 text-center ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
-                                            <span className="text-xs font-bold text-purple-700 break-keep">{label}</span>
+                                        <div className={`absolute inset-0 backface-hidden rounded-lg border-[1.5px] border-purple-300 bg-purple-50 shadow-md flex flex-col items-center justify-center transition-all duration-300 rotate-y-180 p-1 text-center ${isSelected ? 'opacity-100' : 'opacity-0'}`}>
+                                            <span className="text-[11px] font-bold text-purple-700 break-keep leading-tight">{label}</span>
                                         </div>
                                     </div>
                                 );
