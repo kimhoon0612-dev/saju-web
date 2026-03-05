@@ -164,7 +164,7 @@ export default function Home() {
     <div className="w-full flex flex-col">
       {!matrixData ? (
         // --- FULL SCREEN ONBOARDING HERO ---
-        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-12 pb-8 relative">
+        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative">
           {/* Background Decoration */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-blue-100/50 rounded-full blur-3xl opacity-60"></div>
@@ -177,7 +177,7 @@ export default function Home() {
             transition={{ duration: 0.7, ease: "easeOut" }}
             className="w-full max-w-md relative z-10 flex flex-col gap-8"
           >
-            <div className="text-center pt-8">
+            <div className="text-center">
               <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-gray-100 mb-5">
                 <Sparkles className="w-6 h-6 text-blue-500" />
               </div>
