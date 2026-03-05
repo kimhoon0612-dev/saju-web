@@ -94,11 +94,15 @@ function ConfirmContent() {
     const birthDateObj = new Date(userInfo.birth_time_iso);
     const formattedDate = `${birthDateObj.getFullYear()}.${String(birthDateObj.getMonth() + 1).padStart(2, '0')}.${String(birthDateObj.getDate()).padStart(2, '0')} (${userInfo.is_lunar ? '음력' : '양력'})`;
     const formattedTime = `${birthDateObj.getHours()}시 ${birthDateObj.getMinutes()}분`;
-    const genderKr = userInfo.gender === 'male' ? '남성' : '여성';
+    const genderKr = (userInfo.gender === 'M' || userInfo.gender === 'male') ? '남성' : '여성';
+
+    // Helper to parse "癸(계)" into Hanja ("癸") and Hangul ("계")
+    const getHanja = (label?: string) => label ? label.split('(')[0] : "?";
+    const getHangul = (label?: string) => label && label.includes('(') ? label.split('(')[1].replace(')', '') : "?";
 
     // Summary Elements Calculation
     const dayElement = matrix.day_pillar?.heavenly?.element || "earth";
-    const dayBranch = matrix.day_pillar?.earthly?.name || "술";
+    const dayBranch = getHanja(matrix.day_pillar?.earthly?.label);
     const dominantTenGod = matrix.month_pillar?.earthly?.ten_god || "상관";
 
     // Calendar Helpers
@@ -192,35 +196,33 @@ function ConfirmContent() {
                                     {pillar.label}
                                 </span>
 
-                                <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center">
+                                <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
                                     {pillar.data?.heavenly?.ten_god || "-"}
                                 </div>
 
                                 <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold mb-2 shadow-sm relative overflow-hidden`}>
-                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{pillar.data?.heavenly?.name || "?"}</div>
+                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.heavenly?.label)}</div>
                                     <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
-                                        <span>{pillar.data?.heavenly?.yin_yang === '-' ? '-' : '+'}</span>
-                                        <span>{pillar.data?.heavenly?.name_kor || "?"}</span>
+                                        <span>{getHangul(pillar.data?.heavenly?.label)}</span>
                                         <span className="text-[7px]">,</span>
                                         <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
                                     </div>
                                 </div>
 
                                 <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold shadow-sm relative overflow-hidden mb-3`}>
-                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{pillar.data?.earthly?.name || "?"}</div>
+                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.earthly?.label)}</div>
                                     <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
-                                        <span>{pillar.data?.earthly?.yin_yang === '-' ? '-' : '+'}</span>
-                                        <span>{pillar.data?.earthly?.name_kor || "?"}</span>
+                                        <span>{getHangul(pillar.data?.earthly?.label)}</span>
                                         <span className="text-[7px]">,</span>
                                         <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
                                     </div>
                                 </div>
 
-                                <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px]">
+                                <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px] whitespace-nowrap">
                                     {pillar.data?.earthly?.ten_god || "-"}
                                 </div>
-                                <div className="text-[12px] font-bold text-gray-500">
-                                    {pillar.data?.earthly?.stage || "-"}
+                                <div className="text-[12px] font-bold text-gray-500 whitespace-nowrap">
+                                    {pillar.data?.twelve_state || "-"}
                                 </div>
 
                             </div>
@@ -320,7 +322,7 @@ function ConfirmContent() {
                                                 <button
                                                     onClick={() => handleSelectDate(num)}
                                                     className={`w-8 h-8 rounded-full flex items-center justify-center ${isSelected ? 'bg-[#2196F3] text-white shadow-md' :
-                                                            isToday ? 'border border-[#2196F3] text-[#2196F3]' : 'text-gray-700 hover:bg-gray-100'
+                                                        isToday ? 'border border-[#2196F3] text-[#2196F3]' : 'text-gray-700 hover:bg-gray-100'
                                                         }`}>
                                                     {num}
                                                 </button>
