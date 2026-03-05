@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, Sparkles, Loader2 } from "lucide-react";
 
-export default function TarotPlayPage() {
+function TarotPlayContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = searchParams?.get("type") || "daily";
@@ -186,5 +186,17 @@ export default function TarotPlayPage() {
                 )}
             </main>
         </div>
+    );
+}
+
+export default function TarotPlayPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center">
+                <Loader2 className="animate-spin text-purple-500" size={32} />
+            </div>
+        }>
+            <TarotPlayContent />
+        </Suspense>
     );
 }
