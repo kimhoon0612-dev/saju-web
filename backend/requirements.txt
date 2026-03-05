@@ -10,3 +10,14 @@ sqlalchemy>=2.0.28
 aiosqlite>=0.20.0
 korean_lunar_calendar>=0.3.1
 ephem>=4.1.5
+langchain-openai
+langchain-chroma
+langchain-core
+langchain-google-genai
+sentence-transformers
+chromadb
+pillow
+google-generativeai
+openai
+icalendar
+httpx
