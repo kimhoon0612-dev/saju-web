@@ -134,6 +134,7 @@ export default function Home() {
         eot_min: responseData.eot_min,
         total_correction_min: responseData.total_correction_min
       }));
+      sessionStorage.setItem("saju_user_info", JSON.stringify(data));
 
       console.log("Data saved to sessionStorage. Showing dashboard...");
       setMatrixData(completeMatrix);

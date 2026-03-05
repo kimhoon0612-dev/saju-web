@@ -98,40 +98,40 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">가장 정확한 사주 풀이</h2>
                     </div>
                     <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=신년운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Calendar} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">신년운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={BookOpen} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">토정비결</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={FileText} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">정통사주</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Sun} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">오늘의 운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=내일의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Clock} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">내일의 운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=지정일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={ClipboardCheck} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">지정일 운세</span>
                         </Link>
                         {/* Hidden rows from screenshot 2 but added for fullness */}
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=관상" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Users} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">관상</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={HeartHandshake} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">궁합</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/tarot" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Sparkles} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">타로 운세</span>
                         </Link>
@@ -276,27 +276,27 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">나에 대한 모든 것</h2>
                     </div>
                     <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=띠 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Cat} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">띠 운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=별자리 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Stars} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">별자리 운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=태어난 계절운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={CloudSun} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">태어난 계절운</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=생년월일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Cake} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">생년월일 운세</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=전생운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Globe2} />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">전생운</span>
                         </Link>
-                        <Link href="/saju" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=탄생석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={Gem} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">탄생석</span>
                         </Link>
@@ -310,7 +310,7 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">우리는 어떻게 될까?</h2>
                     </div>
                     <div className="flex flex-col gap-5">
-                        <Link href="#" className="flex items-center gap-4 group cursor-pointer">
+                        <Link href="/saju/confirm?type=짝궁합" className="flex items-center gap-4 group cursor-pointer">
                             <div className="w-[52px] h-[52px] rounded-full bg-[#f8f9fb] flex items-center justify-center border border-gray-100 shadow-sm shrink-0">
                                 <div className="absolute w-[18px] h-[18px] bg-[#fbff3a] rounded-full opacity-80"></div>
                                 <HeartHandshake size={24} strokeWidth={1.5} className="relative z-10 text-[#222]" />
@@ -320,7 +320,7 @@ export default function FortuneHubPage() {
                                 <p className="text-[13px] text-gray-400 mt-0.5">쉽고 자세한 해석을 원한다면!</p>
                             </div>
                         </Link>
-                        <Link href="#" className="flex items-center gap-4 group cursor-pointer">
+                        <Link href="/saju/confirm?type=정통궁합" className="flex items-center gap-4 group cursor-pointer">
                             <div className="w-[52px] h-[52px] rounded-full bg-[#f8f9fb] flex items-center justify-center border border-gray-100 shadow-sm shrink-0">
                                 <div className="absolute w-[18px] h-[18px] bg-[#fbff3a] rounded-full translate-x-1 opacity-80"></div>
                                 <Puzzle size={24} strokeWidth={1.5} className="relative z-10 text-[#222]" />
