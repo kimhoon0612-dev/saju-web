@@ -105,20 +105,6 @@ export default function TarotPage() {
                 ))}
             </div>
 
-            {/* Bottom Charge Banner */}
-            <div className="fixed bottom-[80px] left-0 right-0 max-w-md mx-auto px-5 z-40 bg-white/90 backdrop-blur-sm pt-4 pb-2 border-t border-gray-50">
-                <div className="flex justify-between items-center bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-                    <div className="flex flex-col">
-                        <p className="text-xs text-gray-500 font-medium mb-1">전면 광고 없이 쾌적하게 ⚡ 무료로!!</p>
-                        <p className="text-[15px] font-bold">
-                            행운패스 잔여시간 <span className="text-blue-600">충전이 필요해요</span>
-                        </p>
-                    </div>
-                    <button className="bg-[#1a1a1a] text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-black transition-colors shadow-sm">
-                        충전하기
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }
