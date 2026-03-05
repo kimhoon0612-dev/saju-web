@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 import { Sparkles, Heart, Star, Moon } from "lucide-react";
 
@@ -43,7 +43,7 @@ export default function TarotPage() {
 
             {/* Top 2 Big Cards */}
             <div className="px-5 flex gap-3 mb-10">
-                <div className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <Link href="/tarot/play?type=daily" className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="relative mb-3 h-12 w-12 flex justify-center items-center">
                         {/* Back Card (Moon) */}
                         <div className="absolute w-[30px] h-[40px] border-[1.5px] border-[#111] bg-[#111] rounded-[3px] flex items-center justify-center rotate-12 translate-x-2 shadow-sm">
@@ -56,12 +56,12 @@ export default function TarotPage() {
                     </div>
                     <h3 className="text-[15px] font-bold mb-1">오늘의 타로</h3>
                     <p className="text-xs text-gray-400">오늘 하루는 어떨까?</p>
-                </div>
-                <div className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                </Link>
+                <Link href="/tarot/play?type=monthly" className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="text-4xl mb-3">🔮</div>
                     <h3 className="text-[15px] font-bold mb-1">이달의 타로</h3>
                     <p className="text-xs text-gray-400">이번달 나의 총운은?</p>
-                </div>
+                </Link>
             </div>
 
             {/* Secondary Header */}

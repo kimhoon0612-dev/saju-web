@@ -262,6 +262,7 @@ from app.api.admin_goods import router as admin_goods_router
 from app.api.admin_market import router as admin_market_router
 from app.api.admin_system import router as admin_system_router
 from app.api.store import router as store_router
+from app.api.tarot import router as tarot_router
 
 app.include_router(marketplace_router)
 app.include_router(admin_analytics_router)
@@ -269,4 +270,5 @@ app.include_router(admin_goods_router)
 app.include_router(admin_market_router)
 app.include_router(admin_system_router)
 app.include_router(store_router)
+app.include_router(tarot_router)
 
