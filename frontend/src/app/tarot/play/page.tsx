@@ -64,7 +64,7 @@ function TarotPlayContent() {
         setProgress(5);
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://saju-api.onrender.com";
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
             const response = await fetch(`${apiUrl}/api/tarot/draw-multiple`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -140,14 +140,14 @@ function TarotPlayContent() {
                         {renderPlaceholders()}
 
                         {/* Deck layout - 22 cards */}
-                        <div className="flex flex-wrap justify-center gap-2 w-full max-w-[340px] mx-auto mb-10">
+                        <div className="flex flex-wrap justify-center gap-[6px] w-full max-w-[360px] mx-auto mb-10">
                             {Array.from({ length: deckSize }).map((_, i) => {
                                 const isSelected = selectedIndices.includes(i);
                                 return (
                                     <div
                                         key={i}
                                         onClick={() => handleCardClick(i)}
-                                        className={`relative w-[17.5%] aspect-[0.68] rounded flex-shrink-0 cursor-pointer transition-all duration-500 transform ${isSelected ? 'opacity-0 scale-50 pointer-events-none translate-y-[-50px]' : 'hover:-translate-y-1 hover:brightness-125 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] shadow-sm'
+                                        className={`relative w-[14.5%] aspect-[0.68] rounded flex-shrink-0 cursor-pointer transition-all duration-500 transform ${isSelected ? 'opacity-0 scale-50 pointer-events-none translate-y-[-50px]' : 'hover:-translate-y-1 hover:brightness-125 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] shadow-sm'
                                             }`}
                                     >
                                         <div className="w-full h-full bg-[#1e1030] border border-[#d4af37]/40 rounded overflow-hidden flex items-center justify-center p-1.5 relative">
