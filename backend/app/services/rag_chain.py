@@ -10,20 +10,15 @@ except Exception as e:
     Chroma = None
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-try:
-    from sentence_transformers import SentenceTransformer
-except ImportError:
-    SentenceTransformer = None
-
-try:
-    from langchain_google_genai import ChatGoogleGenerativeAI
-except ImportError:
-    ChatGoogleGenerativeAI = None
-
 # 로컬 임베딩용 래퍼 클래스
 class LocalHuggingFaceEmbeddings:
     def __init__(self, model_name: str = "jhgan/ko-sbert-nli"):
-        self.model = SentenceTransformer(model_name)
+        import threading
+        try:
+            from sentence_transformers import SentenceTransformer
+            self.model = SentenceTransformer(model_name)
+        except ImportError:
+            self.model = None
         
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         return self.model.encode(texts).tolist()
@@ -48,9 +43,15 @@ class SajuRAGChain:
         # 실제 운영에서는 os.environ.get("OPENAI_API_KEY") 확인
         # 여기서는 LLM 초기화를 지연시키기 위해 None으로 둠 (API 키 없을 시 대비)
         self.llm = None 
-        
-        # Load Local Vector DB
+        self.embeddings = None
+        self.vector_store = None
+        self._db_initialized = False
+
+    def _init_db(self):
+        if self._db_initialized: return
+        self._db_initialized = True
         try:
+            from langchain_chroma import Chroma
             self.embeddings = LocalHuggingFaceEmbeddings()
             self.vector_store = Chroma(
                 collection_name="classical_saju_texts",
@@ -58,7 +59,9 @@ class SajuRAGChain:
                 persist_directory=self.db_path
             )
         except Exception as e:
+            import traceback
             print(f"Failed to load Vector DB: {e}")
+            traceback.print_exc()
             self.vector_store = None
 
     def analyze_saju_structure(self, saju_matrix: Dict[str, Any]) -> str:
@@ -82,6 +85,7 @@ class SajuRAGChain:
         """
         Step 2: 하이브리드 검색 (Vector DB 호출)
         """
+        self._init_db()
         if not self.vector_store:
             return "[데이터베이스 연결 실패] 적천수: 甲木參天 脫胎要火 (갑목은 성장을 위해 반드시 화가 필요함)"
             
@@ -179,6 +183,11 @@ class SajuRAGChain:
             }
 
         # Select Gemini if key exists and class loaded, otherwise fallback to OpenAI
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+        except ImportError:
+            ChatGoogleGenerativeAI = None
+            
         if gemini_api_key and ChatGoogleGenerativeAI is not None:
             llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=gemini_api_key)
         else:
