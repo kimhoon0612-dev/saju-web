@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, ShoppingBag, PhoneCall, Layers } from "lucide-react";
+import { Compass, ShoppingBag, Layers, ClipboardList, MessageSquare } from "lucide-react";
 
 export default function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "홈", path: "/", icon: Home },
-        { name: "정통사주", path: "/saju", icon: Compass },
-        { name: "부적상점", path: "/store", icon: ShoppingBag },
-        { name: "운세상담", path: "/experts", icon: PhoneCall },
+        { name: "점신", path: "/", icon: ClipboardList },
+        { name: "2026 운세", path: "/saju", icon: Compass },
         { name: "타로", path: "/tarot", icon: Layers },
+        { name: "상담", path: "/experts", icon: MessageSquare },
+        { name: "점신몰", path: "/store", icon: ShoppingBag },
     ];
 
     return (
