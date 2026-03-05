@@ -8,8 +8,8 @@ export default function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "점신", path: "/", icon: ClipboardList },
-        { name: "2026 운세", path: "/saju", icon: Compass },
+        { name: "홈", path: "/", icon: ClipboardList },
+        { name: "나의 운세", path: "/saju", icon: Compass },
         { name: "타로", path: "/tarot", icon: Sparkles },
         { name: "상담", path: "/experts", icon: MessageCircle },
         { name: "상점", path: "/store", icon: ShoppingBag },

@@ -164,7 +164,7 @@ export default function Home() {
     <div className="w-full flex flex-col">
       {!matrixData ? (
         // --- FULL SCREEN ONBOARDING HERO ---
-        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center px-4 py-8 relative">
+        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-12 pb-8 relative">
           {/* Background Decoration */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-blue-100/50 rounded-full blur-3xl opacity-60"></div>

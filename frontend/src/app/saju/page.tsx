@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
     RefreshCw,
     Calendar, // 신년운세
@@ -53,6 +54,20 @@ const CircleIcon = ({ icon: Icon, bgColor = "bg-white" }: { icon: any, bgColor?:
 );
 
 export default function FortuneHubPage() {
+    const [userName, setUserName] = useState("");
+
+    useEffect(() => {
+        const storedInfo = sessionStorage.getItem("saju_user_info");
+        if (storedInfo) {
+            try {
+                const parsed = JSON.parse(storedInfo);
+                if (parsed.name) {
+                    setUserName(parsed.name);
+                }
+            } catch (e) { }
+        }
+    }, []);
+
     return (
         <div className="min-h-screen bg-[#F5F6F8] text-[#111111] pb-[100px] font-pretendard">
 
@@ -61,7 +76,7 @@ export default function FortuneHubPage() {
                 <h1 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">운세</h1>
                 <button className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors">
                     <RefreshCw size={14} className="text-gray-500" />
-                    김훈님
+                    {userName ? `${userName}님` : "방문자님"}
                 </button>
             </header>
 
@@ -123,17 +138,9 @@ export default function FortuneHubPage() {
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">지정일 운세</span>
                         </Link>
                         {/* Hidden rows from screenshot 2 but added for fullness */}
-                        <Link href="/saju/confirm?type=관상" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon icon={Users} hasBadge />
-                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">관상</span>
-                        </Link>
                         <Link href="/saju/confirm?type=궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon icon={HeartHandshake} hasBadge />
                             <span className="text-[13px] font-medium text-gray-800 tracking-tight">궁합</span>
-                        </Link>
-                        <Link href="/tarot" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon icon={Sparkles} hasBadge />
-                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">타로 운세</span>
                         </Link>
                     </div>
                 </section>
