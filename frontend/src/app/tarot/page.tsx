@@ -93,15 +93,19 @@ export default function TarotPage() {
             {/* Tarot List */}
             <div className="px-5 flex flex-col gap-4">
                 {tarotList.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center py-2 group cursor-pointer border-b border-gray-50/50 pb-4 last:border-0">
+                    <Link
+                        href={`/tarot/play?type=single&category=${item.title}`}
+                        key={item.id}
+                        className="flex justify-between items-center py-2 group cursor-pointer border-b border-gray-50/50 pb-4 last:border-0 hover:bg-gray-50/50 rounded-xl transition-colors px-2 -mx-2"
+                    >
                         <div className="flex flex-col flex-1 pr-4">
-                            <h3 className="text-[16px] font-bold mb-1.5 group-hover:text-brand-red transition-colors">{item.title}</h3>
+                            <h3 className="text-[16px] font-bold mb-1.5 group-hover:text-purple-600 transition-colors">{item.title}</h3>
                             <p className="text-[13px] text-gray-400 font-medium">{item.tags}</p>
                         </div>
                         <div className={`w-[72px] h-[72px] rounded-2xl ${item.bgColor} flex items-center justify-center text-3xl shadow-sm shrink-0`}>
                             {item.emoji}
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 

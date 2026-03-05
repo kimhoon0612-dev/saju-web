@@ -9,13 +9,23 @@ function TarotPlayContent() {
     const searchParams = useSearchParams();
     const type = searchParams?.get("type") || "daily";
 
-    // Daily Configuration (3 Cards) vs Monthly Configuration (6 Cards)
-    const isDaily = type === "daily";
-    const titleInfo = isDaily ? "오늘의 타로" : "이달의 타로";
-    const targetCount = isDaily ? 3 : 6;
-    const targetCategories = isDaily
-        ? ["애정운", "재물운", "직장/사업운"]
-        : ["직장운", "애정운", "재물운", "학업운", "건강운", "종합운"];
+    // Dynamic Configuration
+    let titleInfo = "특별한 타로";
+    let targetCount = 1;
+    let targetCategories = [searchParams?.get("category") || "오늘의 운세"];
+
+    if (type === "daily") {
+        titleInfo = "오늘의 타로";
+        targetCount = 3;
+        targetCategories = ["애정운", "재물운", "직장/사업운"];
+    } else if (type === "monthly") {
+        titleInfo = "이달의 타로";
+        targetCount = 6;
+        targetCategories = ["직장운", "애정운", "재물운", "학업운", "건강운", "종합운"];
+    } else if (type === "single") {
+        titleInfo = "궁금한 타로"; // "Curious Tarot"
+        // uses the default targetCount = 1 and targetCategories from searchParams
+    }
 
     const [step, setStep] = useState(1);
     const deckSize = 22; // 5 x 4 + 2 for the pyramid-like structure
