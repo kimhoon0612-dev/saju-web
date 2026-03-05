@@ -11,7 +11,7 @@ export default function BottomNav() {
         { name: "점신", path: "/", icon: ClipboardList },
         { name: "2026 운세", path: "/saju", icon: Compass },
         { name: "타로", path: "/tarot", icon: Sparkles },
-        { name: "상담", path: "/chat", icon: MessageCircle },
+        { name: "상담", path: "/experts", icon: MessageCircle },
         { name: "상점", path: "/store", icon: ShoppingBag },
     ];
 
