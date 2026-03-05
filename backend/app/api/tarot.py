@@ -1,27 +1,29 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.services.tarot_service import generate_tarot_reading
+from typing import List
+from app.services.tarot_service import generate_multiple_tarot_readings
 
 router = APIRouter(prefix="/api/tarot", tags=["Tarot"])
 
-class TarotDrawRequest(BaseModel):
-    category: str
+class TarotMultiDrawRequest(BaseModel):
+    categories: List[str]
     type: str
 
 class TarotDrawResponse(BaseModel):
+    category: str
     card_name: str
     card_name_kr: str
     emoji: str
     interpretation: str
 
-@router.post("/draw", response_model=TarotDrawResponse)
-def draw_tarot_card(request: TarotDrawRequest):
+@router.post("/draw-multiple", response_model=List[TarotDrawResponse])
+def draw_multiple_tarot_cards(request: TarotMultiDrawRequest):
     """
-    Draws a random Tarot card and returns the LLM-generated interpretation
-    based on the requested category (e.g., love, career) and type (daily, monthly).
+    Draws multiple unique Tarot cards and returns LLM-generated interpretations
+    for each requested category (e.g., love, career) based on the type (daily, monthly).
     """
     try:
-        result = generate_tarot_reading(request.type, request.category)
-        return TarotDrawResponse(**result)
+        results = generate_multiple_tarot_readings(request.type, request.categories)
+        return [TarotDrawResponse(**res) for res in results]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

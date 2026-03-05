@@ -29,65 +29,88 @@ TAROT_CARDS = [
     {"name": "The World", "name_kr": "세계", "emoji": "🌍"}
 ]
 
-def generate_tarot_reading(reading_type: str, category: str) -> dict:
+def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -> list[dict]:
     """
-    Draws a random Tarot card and generates an interpretation using an LLM.
+    Draws N unique random Tarot cards and generates interpretations for each given category using an LLM.
     """
-    drawn_card = random.choice(TAROT_CARDS)
+    if not categories:
+        return []
 
-    # For testing/fallback without API key
+    # Draw unique cards
+    drawn_cards = random.sample(TAROT_CARDS, len(categories))
+    
     api_key_openai = os.environ.get("OPENAI_API_KEY")
     api_key_gemini = os.environ.get("GOOGLE_API_KEY")
 
-    if not api_key_openai and not api_key_gemini:
-        return {
-            "card_name": drawn_card["name"],
-            "card_name_kr": drawn_card["name_kr"],
-            "emoji": drawn_card["emoji"],
-            "interpretation": f"[{reading_type} - {category} 운세]\n\n당신이 뽑은 카드는 '{drawn_card['name_kr']}' 입니다. 새로운 시작과 무한한 가능성을 암시하며, 현재의 상황에서 뜻밖의 행운이 찾아올 수 있습니다. 마음을 열고 기회를 받아들이세요."
-        }
-
-    try:
-        if api_key_openai:
+    llm = None
+    if api_key_openai:
+        try:
             from langchain_openai import ChatOpenAI
             llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
-        else:
+        except Exception:
+            pass
+    elif api_key_gemini:
+        try:
             from langchain_google_genai import ChatGoogleGenerativeAI
             llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7)
+        except Exception:
+            pass
 
-        prompt = ChatPromptTemplate.from_template(
-            "당신은 공감 능력이 뛰어나고 통찰력 있는 전문 타로 리더입니다.\n"
-            "사용자가 뽑은 타로 카드는 '{card_name_kr}' ({card_name}) 입니다.\n"
-            "상담 종류(유효기간): {reading_type} (예: daily, monthly)\n"
-            "질문 주제: {category}\n\n"
-            "[작성 규칙]\n"
-            "1. 부드럽고 따뜻한 존댓말로 작성해주세요.\n"
-            "2. 앞부분에 뽑은 카드의 일반적인 상징 의미를 가볍게 설명하고,\n"
-            "3. 곧바로 주제({category})와 연관지어 구체적이고 현실적인 조언과 처방을 3~4문단으로 작성해주세요.\n"
-            "4. 불필요한 인사말이나 서론은 생략하고 바로 본론으로 들어가주세요."
-        )
-
-        chain = prompt | llm | StrOutputParser()
+    results = []
+    
+    for i, category in enumerate(categories):
+        drawn_card = drawn_cards[i]
         
-        result = chain.invoke({
-            "card_name": drawn_card["name"],
-            "card_name_kr": drawn_card["name_kr"],
-            "reading_type": "오늘 하루" if reading_type == "daily" else "이번 한 달",
-            "category": category
-        })
+        if not llm:
+            # Fallback
+            results.append({
+                "category": category,
+                "card_name": drawn_card["name"],
+                "card_name_kr": drawn_card["name_kr"],
+                "emoji": drawn_card["emoji"],
+                "interpretation": f"[{reading_type} - {category} 운세]\n\n당신이 뽑은 카드는 '{drawn_card['name_kr']}' 입니다. 뜻밖의 행운이 찾아올 수 있습니다. 기회를 받아들이세요."
+            })
+            continue
 
-        return {
-            "card_name": drawn_card["name"],
-            "card_name_kr": drawn_card["name_kr"],
-            "emoji": drawn_card["emoji"],
-            "interpretation": result
-        }
+        try:
+            prompt = ChatPromptTemplate.from_template(
+                "당신은 공감 능력이 뛰어나고 통찰력 있는 전문 타로 리더입니다.\n"
+                "사용자가 뽑은 타로 카드는 '{card_name_kr}' ({card_name}) 입니다.\n"
+                "상담 종류(유효기간): {reading_type} (예: daily, monthly)\n"
+                "질문 주제: {category}\n\n"
+                "[작성 규칙]\n"
+                "1. 부드럽고 따뜻한 존댓말로 작성해주세요.\n"
+                "2. 앞부분에 뽑은 카드의 일반적인 상징 의미를 가볍게 설명하고,\n"
+                "3. 곧바로 주제({category})와 연관지어 구체적이고 현실적인 조언과 처방을 3~4문단으로 작성해주세요.\n"
+                "4. 불필요한 인사말이나 서론은 생략하고 바로 본론으로 들어가주세요."
+            )
 
-    except Exception as e:
-        print(f"Tarot LLM Error: {e}")
-        return {
-            "card_name": drawn_card["name"],
-            "card_name_kr": drawn_card["name_kr"],
-            "emoji": drawn_card["emoji"],
-            "interpretation": f"선택하신 '{drawn_card['name_kr']}' 카드는 매우 강렬한 에너지를 지니고 있습니다. 당신의 직관을 믿고 나아가세요. (일시적인 시스템 에러로 상세 풀이가 제한되었습니다: {str(e)})"
-        }
+            chain = prompt | llm | StrOutputParser()
+            
+            reading_duration = "오늘 하루" if reading_type == "daily" else "이번 한 달"
+            interpretation = chain.invoke({
+                "card_name": drawn_card["name"],
+                "card_name_kr": drawn_card["name_kr"],
+                "reading_type": reading_duration,
+                "category": category
+            })
+
+            results.append({
+                "category": category,
+                "card_name": drawn_card["name"],
+                "card_name_kr": drawn_card["name_kr"],
+                "emoji": drawn_card["emoji"],
+                "interpretation": interpretation
+            })
+
+        except Exception as e:
+            print(f"Tarot LLM Error for {category}: {e}")
+            results.append({
+                "category": category,
+                "card_name": drawn_card["name"],
+                "card_name_kr": drawn_card["name_kr"],
+                "emoji": drawn_card["emoji"],
+                "interpretation": f"선택하신 '{drawn_card['name_kr']}' 카드는 운명적인 흐름을 뜻합니다. 직관을 믿고 나아가세요. (로딩 시스템 에러: {str(e)})"
+            })
+
+    return results
