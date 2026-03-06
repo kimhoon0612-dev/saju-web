@@ -79,6 +79,10 @@ class ReportRequest(BaseModel):
     saju_params: Dict[str, Any]
     month_theme: str
 
+class SpecificReadingRequest(BaseModel):
+    saju_matrix: Dict[str, Any]
+    reading_type: str
+
 class DigitalGoodsRequest(BaseModel):
     saju_params: Dict[str, Any]
 
@@ -173,6 +177,15 @@ def get_life_stages(matrix: SajuMatrix):
     rag_chain = SajuRAGChain()
     result = rag_chain.generate_life_stages_analysis(matrix.dict())
     return result
+
+@app.post("/api/specific-reading")
+def get_specific_reading(request: SpecificReadingRequest):
+    """
+    신년운세, 토정비결, 궁합 등 특정 운세에 대한 맞춤형 해석을 반환합니다.
+    """
+    rag_chain = SajuRAGChain()
+    result = rag_chain.generate_specific_reading(request.saju_matrix, request.reading_type)
+    return {"reading": result}
 
 @app.post("/api/chat")
 def chat_with_agent(request: ChatRequest):

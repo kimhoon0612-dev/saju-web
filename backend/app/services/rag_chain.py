@@ -253,6 +253,62 @@ class SajuRAGChain:
                 ]
             }
 
+    def generate_specific_reading(self, saju_matrix: Dict[str, Any], reading_type: str) -> str:
+        """
+        사용자의 사주 매트릭스를 기반으로 특정 운세 (신년운세, 토정비결 등)에 대한 맞춤형 해석을 생성합니다.
+        """
+        gemini_api_key = os.environ.get("GEMINI_API_KEY")
+        openai_api_key = os.environ.get("OPENAI_API_KEY")
+        
+        if not gemini_api_key and not openai_api_key:
+            return f"[{reading_type}] 분석결과: 현재 AI 모델 연결이 설정되지 않아 임시 결과를 보여드립니다. 당신의 사주 구조상 올해는 새로운 시작과 성장이 기대되는 해입니다."
+
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+        except ImportError:
+            ChatGoogleGenerativeAI = None
+            
+        if gemini_api_key and ChatGoogleGenerativeAI is not None:
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+        else:
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
+            
+        prompt = ChatPromptTemplate.from_template(
+            """당신은 세련되고 통찰력 있는 AI 명리학 컨설턴트입니다.
+사용자의 사주 정보(4기둥)를 바탕으로 요청받은 특정 운세('[ {reading_type} ]')에 대한 3~4문단의 심층적이고 구체적인 풀이를 현대적인 어조로 작성해 주세요.
+
+[사주 정보]
+일간: {day_stem}
+특성 요약 쿼리: {query_info}
+
+[규칙]
+1. 막연한 긍정보다는 운세 종류({reading_type})의 특성에 맞는 분석(예: 신년운세면 한 해의 흐름, 궁합이면 관계성 등)을 제공할 것.
+2. 마크다운 포맷(제목, 굵은 글씨, 글머리 기호 등)을 적절히 사용하여 모바일 읽기 좋게 구성할 것.
+3. 딱딱한 한자어는 현대적 의미로 풀어서 설명할 것.
+
+운세 풀이:"""
+        )
+
+        query = self.analyze_saju_structure(saju_matrix)
+        
+        try:
+            day_stem = saju_matrix['day_pillar']['heavenly']['label']
+        except Exception:
+            day_stem = "알 수 없음"
+
+        chain = prompt | llm | StrOutputParser()
+        
+        try:
+            result = chain.invoke({
+                "reading_type": reading_type,
+                "day_stem": day_stem,
+                "query_info": query
+            })
+            return result
+        except Exception as e:
+            print(f"LLM Invoke Error: {e}")
+            return f"[{reading_type}] 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+
 # 테스트용 실행
 if __name__ == "__main__":
     chain = SajuRAGChain()

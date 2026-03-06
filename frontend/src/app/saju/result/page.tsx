@@ -34,6 +34,7 @@ function SajuContent() {
     const [matrix, setMatrix] = useState<MatrixData | null>(null);
     const [insight, setInsight] = useState<string | null>(null);
     const [lifeStages, setLifeStages] = useState<LifeStage[] | null>(null);
+    const [specificReading, setSpecificReading] = useState<string | null>(null);
     const [timeInfo, setTimeInfo] = useState<{
         true_solar_time: string;
         original_time: string;
@@ -45,8 +46,10 @@ function SajuContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Read initial tab from URL if present
     const initialTabParam = searchParams.get('tab') as any;
+    const readingType = searchParams.get('type');
+    const displayTitle = readingType ? `${readingType} 결과` : '정밀 사주 분석';
+
     const initialTab = ['daewun', 'life_stages', 'yearly', 'daily', 'elemental'].includes(initialTabParam)
         ? initialTabParam
         : "daewun";
@@ -113,7 +116,8 @@ function SajuContent() {
             const fetchAdditionalData = async () => {
                 setIsLoading(true);
                 try {
-                    const [insightRes, lifeStagesRes] = await Promise.all([
+                    const paramsType = searchParams.get('type');
+                    const fetches = [
                         fetch(`${API_BASE}/insight`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -124,42 +128,39 @@ function SajuContent() {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(parsedMatrix)
                         })
-                    ]);
+                    ];
 
-                    if (insightRes.ok) {
-                        const insightData = await insightRes.json();
+                    if (paramsType) {
+                        fetches.push(
+                            fetch(`${API_BASE}/specific-reading`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ saju_matrix: parsedMatrix, reading_type: paramsType })
+                            })
+                        );
+                    }
+
+                    const responses = await Promise.all(fetches);
+
+                    if (responses[0].ok) {
+                        const insightData = await responses[0].json();
                         setInsight(insightData.insight);
                     }
-                    if (lifeStagesRes.ok) {
-                        const lifeData = await lifeStagesRes.json();
-                        setLifeStages(lifeData.stages || [
-                            { name: "초년기 (0~19세)", pillar: "년주", description: "성장의 토대를 마련하는 시기입니다." },
-                            { name: "청년기 (20~39세)", pillar: "월주", description: "사회와 부딪히며 직업적 기틀을 잡습니다." },
-                            { name: "중년기 (40~59세)", pillar: "일주", description: "나 자신의 능력이 완성되어 자율성을 가집니다." },
-                            { name: "말년기 (60세 이후)", pillar: "시주", description: "결실을 맺고 지혜를 나누는 시기입니다." }
-                        ]);
-                    } else {
-                        setLifeStages([
-                            { name: "초년기 (0~19세)", pillar: "년주", description: "성장의 토대를 마련하는 시기입니다." },
-                            { name: "청년기 (20~39세)", pillar: "월주", description: "사회와 부딪히며 직업적 기틀을 잡습니다." },
-                            { name: "중년기 (40~59세)", pillar: "일주", description: "나 자신의 능력이 완성되어 자율성을 가집니다." },
-                            { name: "말년기 (60세 이후)", pillar: "시주", description: "결실을 맺고 지혜를 나누는 시기입니다." }
-                        ]);
+                    if (responses[1].ok) {
+                        const lifeData = await responses[1].json();
+                        setLifeStages(lifeData.stages || []);
                     }
+                    if (paramsType && responses[2] && responses[2].ok) {
+                        const readingData = await responses[2].json();
+                        setSpecificReading(readingData.reading);
+                    }
+
                 } catch (error) {
                     console.error("추가 데이터 로드 실패:", error);
-                    setLifeStages([
-                        { name: "초년기 (0~19세)", pillar: "년주", description: "성장의 토대를 마련하는 시기입니다." },
-                        { name: "청년기 (20~39세)", pillar: "월주", description: "사회와 부딪히며 직업적 기틀을 잡습니다." },
-                        { name: "중년기 (40~59세)", pillar: "일주", description: "나 자신의 능력이 완성되어 자율성을 가집니다." },
-                        { name: "말년기 (60세 이후)", pillar: "시주", description: "결실을 맺고 지혜를 나누는 시기입니다." }
-                    ]);
                 } finally {
                     setIsLoading(false);
                 }
             };
-
-            console.log("Loaded Matrix Data:", parsedMatrix);
 
             fetchAdditionalData();
 
@@ -167,7 +168,7 @@ function SajuContent() {
             console.error("세션 스토리지 파싱 오류:", e);
             router.replace("/");
         }
-    }, [router]);
+    }, [router, searchParams]);
 
     return (
         <div className="font-pretendard bg-[#F5F6F8] min-h-screen pb-24 text-[#111111]">
@@ -175,12 +176,32 @@ function SajuContent() {
                 <Link href="/" className="p-2 -ml-2 text-gray-800">
                     <ArrowLeft size={24} />
                 </Link>
-                <h1 className="font-bold text-lg text-gray-900 ml-2">정밀 사주 분석</h1>
+                <h1 className="font-bold text-lg text-gray-900 ml-2">{displayTitle}</h1>
             </div>
 
             <main className="max-w-md mx-auto px-4 pt-4 flex flex-col gap-4 relative z-10 w-full">
                 {matrix && (
                     <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700">
+
+                        {/* Specific Reading Display */}
+                        {readingType && (
+                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#d4af37]/30 mb-2 mt-2">
+                                <h2 className="text-xl font-black text-gray-900 mb-4">{readingType} 상세 풀이</h2>
+                                {specificReading ? (
+                                    <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed font-medium">
+                                        {/* Simple rendering for markdown-like text */}
+                                        {specificReading.split('\n').map((line, i) => (
+                                            <p key={i} className="mb-2">{line.replace(/\*\*/g, '')}</p>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-10 gap-4">
+                                        <div className="w-8 h-8 rounded-full border-t-[3px] border-r-[3px] border-[#d4af37] border-solid animate-spin"></div>
+                                        <p className="text-sm font-bold text-gray-500">당신의 {readingType}를 세밀하게 분석하고 있습니다...</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* Main Module: Destiny Matrix (Always visible) */}
                         <div className="w-full">

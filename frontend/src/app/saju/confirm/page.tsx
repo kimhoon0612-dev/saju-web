@@ -291,7 +291,7 @@ function ConfirmContent() {
                             if (isCompatibility) {
                                 alert("궁합 대상 정보가 아직 추가되지 않았습니다. (Demo)");
                             } else {
-                                router.push("/saju/result");
+                                router.push(`/saju/result?type=${encodeURIComponent(type)}`);
                             }
                         }}
                         className="w-full py-4 bg-gradient-to-r from-gray-900 to-[#1e1e1e] text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-md hover:from-black hover:to-gray-900 transition-colors"
