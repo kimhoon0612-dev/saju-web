@@ -184,7 +184,7 @@ function SajuContent() {
                     <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700">
 
                         {/* Specific Reading Display */}
-                        {readingType && (
+                        {readingType ? (
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#d4af37]/30 mb-2 mt-2">
                                 <h2 className="text-xl font-black text-gray-900 mb-4">{readingType} 상세 풀이</h2>
                                 {specificReading ? (
@@ -201,123 +201,125 @@ function SajuContent() {
                                     </div>
                                 )}
                             </div>
-                        )}
-
-                        {/* Main Module: Destiny Matrix (Always visible) */}
-                        <div className="w-full">
-                            <DestinyMatrixCard matrix={matrix} timeInfo={timeInfo} />
-                        </div>
-
-                        {/* Category Tabs (MZ Style Segmented Control) */}
-                        <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 w-full overflow-x-auto hide-scrollbar snap-x shadow-sm h-14 items-center">
-                            <button
-                                onClick={() => handleTabClick("daewun")}
-                                className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daewun' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                            >
-                                10년 대운
-                            </button>
-                            <button
-                                onClick={() => handleTabClick("life_stages")}
-                                className={`flex-1 min-w-[120px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'life_stages' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                            >
-                                평생 총운
-                            </button>
-                            <button
-                                onClick={() => handleTabClick("yearly")}
-                                className={`flex-1 min-w-[100px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'yearly' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                            >
-                                올해 운세
-                            </button>
-                            <button
-                                onClick={() => handleTabClick("daily")}
-                                className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daily' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                            >
-                                오늘 일진
-                            </button>
-                            <button
-                                onClick={() => handleTabClick("elemental")}
-                                className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'elemental' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                            >
-                                오행 분석
-                            </button>
-                        </div>
-
-                        {/* Tab Contents */}
-                        <div className="min-h-[400px] animate-in fade-in duration-500">
-
-                            {/* Tab 1: Daewun */}
-                            {activeTab === "daewun" && matrix.daewun_pillars && (
-                                <div className="bg-white rounded-3xl pb-6 shadow-sm border border-gray-100 overflow-hidden">
-                                    <DaewunTimeline daewunNumber={matrix.daewun_number} pillars={matrix.daewun_pillars} />
+                        ) : (
+                            <>
+                                {/* Main Module: Destiny Matrix (Always visible when not a specific reading) */}
+                                <div className="w-full">
+                                    <DestinyMatrixCard matrix={matrix} timeInfo={timeInfo} />
                                 </div>
-                            )}
 
-                            {/* Tab: Life Stages */}
-                            {activeTab === "life_stages" && (
-                                <div className="flex flex-col gap-3">
-                                    {!lifeStages ? (
-                                        // Loading Skeleton
-                                        <div className="flex flex-col gap-3 animate-pulse">
-                                            {[1, 2, 3, 4].map((skeleton) => (
-                                                <div key={skeleton} className="rounded-2xl bg-white border border-gray-100 p-5 h-28 flex flex-col justify-center">
-                                                    <div className="w-1/3 h-5 bg-gray-200 rounded mb-3"></div>
-                                                    <div className="w-full h-3 bg-gray-100 rounded mb-2"></div>
-                                                    <div className="w-4/5 h-3 bg-gray-100 rounded"></div>
-                                                </div>
-                                            ))}
+                                {/* Category Tabs (MZ Style Segmented Control) */}
+                                <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 w-full overflow-x-auto hide-scrollbar snap-x shadow-sm h-14 items-center">
+                                    <button
+                                        onClick={() => handleTabClick("daewun")}
+                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daewun' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                    >
+                                        10년 대운
+                                    </button>
+                                    <button
+                                        onClick={() => handleTabClick("life_stages")}
+                                        className={`flex-1 min-w-[120px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'life_stages' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                    >
+                                        평생 총운
+                                    </button>
+                                    <button
+                                        onClick={() => handleTabClick("yearly")}
+                                        className={`flex-1 min-w-[100px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'yearly' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                    >
+                                        올해 운세
+                                    </button>
+                                    <button
+                                        onClick={() => handleTabClick("daily")}
+                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daily' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                    >
+                                        오늘 일진
+                                    </button>
+                                    <button
+                                        onClick={() => handleTabClick("elemental")}
+                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'elemental' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                    >
+                                        오행 분석
+                                    </button>
+                                </div>
+
+                                {/* Tab Contents */}
+                                <div className="min-h-[400px] animate-in fade-in duration-500">
+
+                                    {/* Tab 1: Daewun */}
+                                    {activeTab === "daewun" && matrix.daewun_pillars && (
+                                        <div className="bg-white rounded-3xl pb-6 shadow-sm border border-gray-100 overflow-hidden">
+                                            <DaewunTimeline daewunNumber={matrix.daewun_number} pillars={matrix.daewun_pillars} />
                                         </div>
-                                    ) : (
-                                        lifeStages.map((stage, i) => (
-                                            <div key={i} className="rounded-2xl bg-white border border-gray-100 p-5 relative overflow-hidden group hover:bg-gray-50 transition-colors shadow-sm">
-                                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500 opacity-70" />
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <h4 className="text-lg font-bold text-gray-900 tracking-tight">{stage.name}</h4>
-                                                    <span className="text-[11px] font-outfit text-gray-500 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
-                                                        {stage.pillar}
-                                                    </span>
+                                    )}
+
+                                    {/* Tab: Life Stages */}
+                                    {activeTab === "life_stages" && (
+                                        <div className="flex flex-col gap-3">
+                                            {!lifeStages ? (
+                                                // Loading Skeleton
+                                                <div className="flex flex-col gap-3 animate-pulse">
+                                                    {[1, 2, 3, 4].map((skeleton) => (
+                                                        <div key={skeleton} className="rounded-2xl bg-white border border-gray-100 p-5 h-28 flex flex-col justify-center">
+                                                            <div className="w-1/3 h-5 bg-gray-200 rounded mb-3"></div>
+                                                            <div className="w-full h-3 bg-gray-100 rounded mb-2"></div>
+                                                            <div className="w-4/5 h-3 bg-gray-100 rounded"></div>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                                <p className="text-[13px] text-gray-600 leading-relaxed font-medium">
-                                                    {stage.description}
-                                                </p>
+                                            ) : (
+                                                lifeStages.map((stage, i) => (
+                                                    <div key={i} className="rounded-2xl bg-white border border-gray-100 p-5 relative overflow-hidden group hover:bg-gray-50 transition-colors shadow-sm">
+                                                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500 opacity-70" />
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <h4 className="text-lg font-bold text-gray-900 tracking-tight">{stage.name}</h4>
+                                                            <span className="text-[11px] font-outfit text-gray-500 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                                                                {stage.pillar}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[13px] text-gray-600 leading-relaxed font-medium">
+                                                            {stage.description}
+                                                        </p>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Tab 2: Yearly & Monthly */}
+                                    {activeTab === "yearly" && (
+                                        <div className="flex flex-col gap-4">
+                                            {matrix.fortune_cycle && (
+                                                <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-4">
+                                                    <FortuneCycleDashboard cycle={matrix.fortune_cycle} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Tab 3: Daily Fortune & Insight */}
+                                    {activeTab === "daily" && (
+                                        <div className="flex flex-col gap-4">
+                                            {matrix.daily_fortune && (
+                                                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-1">
+                                                    <DailyGuideCard fortune={matrix.daily_fortune} />
+                                                </div>
+                                            )}
+                                            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+                                                <ActionableInsightWidget insightText={insight} />
                                             </div>
-                                        ))
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Tab 2: Yearly & Monthly */}
-                            {activeTab === "yearly" && (
-                                <div className="flex flex-col gap-4">
-                                    {matrix.fortune_cycle && (
-                                        <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-4">
-                                            <FortuneCycleDashboard cycle={matrix.fortune_cycle} />
                                         </div>
                                     )}
-                                </div>
-                            )}
 
-                            {/* Tab 3: Daily Fortune & Insight */}
-                            {activeTab === "daily" && (
-                                <div className="flex flex-col gap-4">
-                                    {matrix.daily_fortune && (
-                                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-1">
-                                            <DailyGuideCard fortune={matrix.daily_fortune} />
+                                    {/* Tab 4: Elemental Analysis */}
+                                    {activeTab === "elemental" && (
+                                        <div className="h-[350px] bg-white rounded-3xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
+                                            <ElementalRadarChart matrix={matrix} />
                                         </div>
                                     )}
-                                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
-                                        <ActionableInsightWidget insightText={insight} />
-                                    </div>
-                                </div>
-                            )}
 
-                            {/* Tab 4: Elemental Analysis */}
-                            {activeTab === "elemental" && (
-                                <div className="h-[350px] bg-white rounded-3xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
-                                    <ElementalRadarChart matrix={matrix} />
                                 </div>
-                            )}
-
-                        </div>
+                            </>
+                        )}
                     </div>
                 )}
             </main>
