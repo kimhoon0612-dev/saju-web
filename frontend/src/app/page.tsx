@@ -164,33 +164,47 @@ export default function Home() {
     <div className="w-full flex flex-col">
       {!matrixData ? (
         // --- FULL SCREEN ONBOARDING HERO ---
-        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative">
+        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#110e1b] overflow-hidden">
           {/* Background Decoration */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-blue-100/50 rounded-full blur-3xl opacity-60"></div>
-            <div className="absolute top-[60%] -left-[10%] w-[40%] h-[40%] bg-indigo-100/50 rounded-full blur-3xl opacity-60"></div>
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Stars background */}
+            {Array.from({ length: 15 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute bg-white rounded-full opacity-30 animate-pulse"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  width: `${Math.random() * 3 + 1}px`,
+                  height: `${Math.random() * 3 + 1}px`,
+                  animationDuration: `${Math.random() * 3 + 2}s`
+                }}
+              />
+            ))}
+            <div className="absolute -top-[10%] -right-[10%] w-[60%] h-[60%] bg-purple-900/30 rounded-full blur-[80px] opacity-70"></div>
+            <div className="absolute top-[50%] -left-[20%] w-[50%] h-[50%] bg-[#d4af37]/10 rounded-full blur-[60px] opacity-60"></div>
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="w-full max-w-md relative z-10 flex flex-col gap-8"
+            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-4"
           >
             <div className="text-center">
-              <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-gray-100 mb-5">
-                <Sparkles className="w-6 h-6 text-blue-500" />
+              <div className="inline-flex items-center justify-center p-3.5 bg-[#1a142d] border border-[#d4af37]/30 rounded-2xl shadow-[0_0_15px_rgba(212,175,55,0.15)] mb-5">
+                <span className="text-3xl leading-none">🔮</span>
               </div>
-              <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-3 leading-tight">
-                나의 운명을 꿰뚫는<br />단 하나의 패스포트
+              <h1 className="text-[28px] font-black text-[#fdfbf7] tracking-tight mb-3 leading-[1.3] drop-shadow-md font-pretendard">
+                하늘이 정해둔<br />당신만의 운명 안내서
               </h1>
-              <p className="text-gray-500 font-medium text-sm">
-                생년월일을 입력하고 당신만의 우주 매트릭스를 시작하세요.
+              <p className="text-[#d4af37]/80 font-medium text-[15px] break-keep px-4">
+                생년월일을 입력하고 밤하늘에 새겨진<br />나의 사주와 타로의 흐름을 확인하세요.
               </p>
             </div>
 
             <div className="w-full pb-8">
-              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 사주 입력" />
+              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="운명의 흐름 확인하기" />
             </div>
           </motion.div>
         </div>

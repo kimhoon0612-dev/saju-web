@@ -62,34 +62,34 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     const minutes = Array.from({ length: 60 }, (_, i) => i);
 
     return (
-        <div className="w-full rounded-[24px] bg-white border border-gray-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
+        <div className="w-full rounded-[24px] bg-[#1a142d]/80 backdrop-blur-md border border-[#d4af37]/20 p-6 sm:p-8 shadow-xl relative overflow-hidden">
             <header className="mb-6 z-10 relative">
-                <h3 className="font-pretendard text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 tracking-tight">
-                    <Sparkles className="w-6 h-6 text-[var(--color-brand-red)]" />운명의 좌표 입력
+                <h3 className="font-pretendard text-xl sm:text-2xl font-black text-amber-100 flex items-center gap-2 tracking-tight">
+                    <Sparkles className="w-6 h-6 text-[#d4af37]" />운명의 좌표 입력
                 </h3>
-                <p className="font-outfit text-xs text-gray-500 mt-1 uppercase tracking-widest font-medium">Input Birth Coordinates</p>
+                <p className="font-outfit text-xs text-[#d4af37]/60 mt-1 uppercase tracking-widest font-medium">Input Birth Coordinates</p>
             </header>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
 
                 {/* 이름 입력 */}
                 <div className="flex flex-col gap-2.5">
-                    <label className="font-pretendard text-sm text-gray-700 flex items-center gap-2 font-bold">
-                        <User className="w-[18px] h-[18px] text-gray-400" />이름
+                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
+                        <User className="w-[18px] h-[18px] text-[#d4af37]/60" />이름
                     </label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="이름을 입력해주세요 (선택)"
-                        className="w-full h-14 bg-gray-50/50 border border-gray-200 rounded-xl px-4 font-pretendard text-[15px] font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all shadow-sm"
+                        className="w-full h-14 bg-[#110e1b]/80 border border-[#d4af37]/30 rounded-xl px-4 font-pretendard text-[15px] font-medium text-white placeholder-[#d4af37]/40 focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:bg-[#1a142d] transition-all shadow-inner"
                     />
                 </div>
 
                 {/* 성별 선택 */}
                 <div className="flex flex-col gap-2.5">
-                    <label className="font-pretendard text-sm text-gray-700 flex items-center gap-2 font-bold">
-                        성별 <span className="text-gray-400 text-[10px] font-medium tracking-wide">대운 주행 결정</span>
+                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
+                        성별 <span className="text-[#d4af37]/50 text-[10px] font-medium tracking-wide">대운 주행 결정</span>
                     </label>
                     <div className="flex flex-row w-full gap-2">
                         <button
@@ -97,7 +97,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             onClick={(e) => { e.preventDefault(); setGender('M'); }}
                             className={cn(
                                 "flex-1 py-3.5 rounded-xl text-[15px] font-bold transition-all duration-200 border",
-                                gender === 'M' ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20" : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                                gender === 'M' ? "bg-amber-600/20 text-amber-200 border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]" : "bg-[#110e1b]/60 text-white/50 border-white/10 hover:bg-[#110e1b]"
                             )}
                         >
                             남성 (乾)
@@ -107,7 +107,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             onClick={(e) => { e.preventDefault(); setGender('F'); }}
                             className={cn(
                                 "flex-1 py-3.5 rounded-xl text-[15px] font-bold transition-all duration-200 border",
-                                gender === 'F' ? "bg-[var(--color-brand-red)] text-white border-[var(--color-brand-red)] shadow-md shadow-[var(--color-brand-red)]/20" : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                                gender === 'F' ? "bg-purple-600/20 text-purple-200 border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)]" : "bg-[#110e1b]/60 text-white/50 border-white/10 hover:bg-[#110e1b]"
                             )}
                         >
                             여성 (坤)
@@ -118,16 +118,16 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 {/* 양력/음력 선택 및 출생 일자 */}
                 <div className="flex flex-col gap-2.5 mt-3">
                     <div className="flex items-center justify-between">
-                        <label className="font-pretendard text-sm text-gray-700 flex items-center gap-2 font-bold">
+                        <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
                             출생 일자
                         </label>
-                        <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                        <div className="flex items-center bg-[#110e1b]/80 border border-white/10 rounded-lg p-1">
                             <button
                                 type="button"
                                 onClick={() => setIsLunar(false)}
                                 className={cn(
                                     "px-4 py-1.5 rounded-md text-sm font-bold transition-all duration-200",
-                                    !isLunar ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                                    !isLunar ? "bg-[#d4af37]/20 text-[#d4af37] shadow-sm" : "text-white/40 hover:text-white/70"
                                 )}
                             >
                                 양력
@@ -137,7 +137,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 onClick={() => setIsLunar(true)}
                                 className={cn(
                                     "px-4 py-1.5 rounded-md text-sm font-bold transition-all duration-200",
-                                    isLunar ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                                    isLunar ? "bg-[#d4af37]/20 text-[#d4af37] shadow-sm" : "text-white/40 hover:text-white/70"
                                 )}
                             >
                                 음력
@@ -152,65 +152,65 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 id="leap_month"
                                 checked={isLeapMonth}
                                 onChange={(e) => setIsLeapMonth(e.target.checked)}
-                                className="w-4 h-4 rounded border-gray-300 text-[var(--color-brand-red)] focus:ring-[var(--color-brand-red)]"
+                                className="w-4 h-4 rounded border-[#d4af37]/40 bg-[#110e1b] text-[#d4af37] focus:ring-[#d4af37] focus:ring-offset-[#1a142d]"
                             />
-                            <label htmlFor="leap_month" className="text-sm text-gray-700 font-bold cursor-pointer select-none">
+                            <label htmlFor="leap_month" className="text-sm text-white/70 font-bold cursor-pointer select-none">
                                 윤달입니다
                             </label>
                         </div>
                     )}
 
                     <div className="flex items-center gap-1.5 w-full">
-                        <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {years.map(y => <option key={y} value={y} className="bg-white text-gray-900">{y}</option>)}
+                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {years.map(y => <option key={y} value={y} className="bg-[#1a142d] text-white">{y}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-gray-500 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {months.map(m => <option key={m} value={m} className="bg-white text-gray-900">{m}</option>)}
+                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {months.map(m => <option key={m} value={m} className="bg-[#1a142d] text-white">{m}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-gray-500 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {days.map(d => <option key={d} value={d} className="bg-white text-gray-900">{d}</option>)}
+                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {days.map(d => <option key={d} value={d} className="bg-[#1a142d] text-white">{d}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-gray-500 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
                         </div>
                     </div>
                 </div>
 
                 {/* 태어난 시간 (Full Width) */}
                 <div className="flex flex-col gap-2.5 mt-2 mb-2">
-                    <label className="font-pretendard text-sm text-gray-700 flex items-center gap-2 font-bold">
+                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
                         출생 시간
                     </label>
                     <div className="flex items-center gap-1.5 w-full">
-                        <div className="flex-[0.8] flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={ampm} onChange={(e) => setAmpm(e.target.value)} className="bg-transparent text-[var(--color-brand-red)] font-pretendard font-bold text-sm sm:text-[15px] outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                <option value="오전" className="bg-white text-gray-900">오전</option>
-                                <option value="오후" className="bg-white text-gray-900">오후</option>
+                        <div className="flex-[0.8] flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={ampm} onChange={(e) => setAmpm(e.target.value)} className="bg-transparent text-[#d4af37] font-pretendard font-bold text-sm sm:text-[15px] outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                <option value="오전" className="bg-[#1a142d] text-white">오전</option>
+                                <option value="오후" className="bg-[#1a142d] text-white">오후</option>
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[var(--color-brand-red)] absolute right-2 pointer-events-none" />
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/80 absolute right-2 pointer-events-none" />
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {hours.map(h => <option key={h} value={h} className="bg-white text-gray-900">{h}</option>)}
+                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {hours.map(h => <option key={h} value={h} className="bg-[#1a142d] text-white">{h}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-gray-500 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-2 sm:px-3 py-3.5 hover:border-gray-300 transition-all focus-within:border-[var(--color-brand-red)] focus-within:bg-white relative">
-                            <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {minutes.map(m => <option key={m} value={m} className="bg-white text-gray-900">{m.toString().padStart(2, '0')}</option>)}
+                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
+                            <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {minutes.map(m => <option key={m} value={m} className="bg-[#1a142d] text-white">{m.toString().padStart(2, '0')}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-gray-500 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
                         </div>
                     </div>
                 </div>
@@ -222,13 +222,13 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     className={cn(
                         "mt-4 w-full py-4.5 rounded-xl font-pretendard font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2",
                         isLoading
-                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            : "bg-[var(--color-brand-red)] text-white shadow-md shadow-[var(--color-brand-red)]/30 hover:shadow-lg hover:shadow-[var(--color-brand-red)]/40 hover:-translate-y-0.5"
+                            ? "bg-[#110e1b] text-white/50 border border-white/10 cursor-not-allowed"
+                            : "bg-gradient-to-r from-amber-500 to-amber-400 text-[#111] shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 border border-amber-300"
                     )}
                 >
                     {isLoading ? (
                         <>
-                            <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                            <div className="w-5 h-5 border-2 border-white/20 border-t-white/80 rounded-full animate-spin" />
                             운명의 좌표 확인 중...
                         </>
                     ) : (
