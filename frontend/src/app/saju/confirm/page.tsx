@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Info, Share2, Plus, Calendar as CalendarIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Info, Share2, Plus, Calendar as CalendarIcon, X, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface SajuUserInfo {
@@ -141,7 +141,7 @@ function ConfirmContent() {
     };
 
     return (
-        <div className="font-pretendard bg-[#F5F6F8] min-h-screen pb-28 text-[#111111] relative">
+        <div className="font-pretendard bg-[#F5F6F8] min-h-screen pb-10 text-[#111111] relative">
 
             {/* Header */}
             <header className="bg-white px-5 h-14 flex items-center justify-between border-b border-gray-100 sticky top-0 z-40">
@@ -156,14 +156,6 @@ function ConfirmContent() {
             </header>
 
             <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
-
-                {/* Saju Type Information Heading */}
-                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex flex-col gap-2">
-                    <h2 className="text-[20px] font-extrabold text-[#111] leading-tight"><span className="text-[#d4af37] tracking-tighter">[{type}]</span> 해석 준비 완료</h2>
-                    <p className="text-[14px] text-gray-600 leading-relaxed font-medium break-keep">
-                        {SAJU_INFO[type] || "선택하신 운세의 다양한 기운과 흐름을 명리학과 타로점, 점성술을 융합하여 입체적으로 풀어드립니다."}
-                    </p>
-                </section>
 
                 {/* 1. User Profile Box */}
                 <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
@@ -286,20 +278,29 @@ function ConfirmContent() {
                     </section>
                 )}
 
-            </main>
+                {/* Saju Type Info & Action Button */}
+                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex flex-col gap-5 mb-4">
+                    <div className="flex flex-col gap-1.5">
+                        <span className="text-[14px] font-black text-[#d4af37] tracking-tight">{type} 정보</span>
+                        <p className="text-[15px] text-gray-700 leading-relaxed font-medium break-keep">
+                            {SAJU_INFO[type] || "선택하신 운세의 다양한 기운과 흐름을 명리학과 타로점, 점성술을 융합하여 입체적으로 풀어드립니다."}
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => {
+                            if (isCompatibility) {
+                                alert("궁합 대상 정보가 아직 추가되지 않았습니다. (Demo)");
+                            } else {
+                                router.push("/saju/result");
+                            }
+                        }}
+                        className="w-full py-4 bg-gradient-to-r from-gray-900 to-[#1e1e1e] text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-md hover:from-black hover:to-gray-900 transition-colors"
+                    >
+                        <Sparkles size={18} className="text-[#fbff3a]" /> 운세 풀이 보기
+                    </button>
+                </section>
 
-            <div className="fixed bottom-0 left-0 right-0 bg-[#1e1e1e] h-[72px] flex items-center justify-center cursor-pointer hover:bg-[#111] transition-colors z-40 max-w-md mx-auto"
-                onClick={() => {
-                    if (isCompatibility) {
-                        alert("궁합 대상 정보가 아직 추가되지 않았습니다. (Demo)");
-                    } else {
-                        router.push("/saju/result");
-                    }
-                }}>
-                <span className="text-white text-[16px] font-bold tracking-tight">
-                    {isCompatibility ? "운세 보기" : "운세풀이"}
-                </span>
-            </div>
+            </main>
 
             {/* Calendar Modal */}
             {isCalendarOpen && (
