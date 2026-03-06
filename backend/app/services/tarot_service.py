@@ -56,21 +56,20 @@ def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -
         except Exception:
             pass
 
-    results = []
-    
-    for i, category in enumerate(categories):
+    import concurrent.futures
+
+    def process_category(i, category):
         drawn_card = drawn_cards[i]
         
         if not llm:
             # Fallback
-            results.append({
+            return {
                 "category": category,
                 "card_name": drawn_card["name"],
                 "card_name_kr": drawn_card["name_kr"],
                 "emoji": drawn_card["emoji"],
                 "interpretation": f"[{reading_type} - {category} 운세]\n\n당신이 뽑은 카드는 '{drawn_card['name_kr']}' 입니다. 뜻밖의 행운이 찾아올 수 있습니다. 기회를 받아들이세요."
-            })
-            continue
+            }
 
         try:
             prompt = ChatPromptTemplate.from_template(
@@ -95,22 +94,26 @@ def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -
                 "category": category
             })
 
-            results.append({
+            return {
                 "category": category,
                 "card_name": drawn_card["name"],
                 "card_name_kr": drawn_card["name_kr"],
                 "emoji": drawn_card["emoji"],
                 "interpretation": interpretation
-            })
+            }
 
         except Exception as e:
             print(f"Tarot LLM Error for {category}: {e}")
-            results.append({
+            return {
                 "category": category,
                 "card_name": drawn_card["name"],
                 "card_name_kr": drawn_card["name_kr"],
                 "emoji": drawn_card["emoji"],
                 "interpretation": f"선택하신 '{drawn_card['name_kr']}' 카드는 운명적인 흐름을 뜻합니다. 직관을 믿고 나아가세요. (로딩 시스템 에러: {str(e)})"
-            })
+            }
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(10, len(categories))) as executor:
+        futures = [executor.submit(process_category, i, category) for i, category in enumerate(categories)]
+        results = [future.result() for future in futures]
 
     return results
