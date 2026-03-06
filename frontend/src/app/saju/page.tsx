@@ -55,17 +55,6 @@ const CircleIcon = ({ icon: Icon, bgColor = "bg-white" }: { icon: any, bgColor?:
 
 export default function FortuneHubPage() {
     const [userName, setUserName] = useState("");
-    const [selectedSajuType, setSelectedSajuType] = useState<string | null>(null);
-
-    const sajuTypes = [
-        { id: '신년운세', label: '신년운세', icon: Calendar, hasBadge: true, desc: '한 해의 전반적인 길흉화복을 미리 짚어봅니다.' },
-        { id: '토정비결', label: '토정비결', icon: BookOpen, hasBadge: true, desc: '조선시대부터 전해오는 전통 비서로 한 해의 운수를 봅니다.' },
-        { id: '정통사주', label: '정통사주', icon: FileText, hasBadge: true, desc: '태어난 연월일시를 바탕으로 평생의 운명과 길흉을 분석합니다.' },
-        { id: '오늘의운세', label: '오늘의 운세', icon: Sun, hasBadge: false, desc: '오늘 하루, 나를 둘러싼 기운과 조심해야 할 점을 알려드립니다.' },
-        { id: '내일의운세', label: '내일의 운세', icon: Clock, hasBadge: false, desc: '다가올 내일을 미리 준비할 수 있도록 내일의 운세를 짚어봅니다.' },
-        { id: '지정일 운세', label: '지정일 운세', icon: ClipboardCheck, hasBadge: false, desc: '중요한 일정을 앞두고, 특정 날짜의 운의 흐름을 확인합니다.' },
-        { id: '궁합', label: '궁합', icon: HeartHandshake, hasBadge: true, desc: '나와 상대방의 기운이 얼마나 조화로운지, 인연을 분석합니다.' }
-    ];
 
     useEffect(() => {
         const storedInfo = sessionStorage.getItem("saju_user_info");
@@ -124,36 +113,36 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">가장 정확한 사주 풀이</h2>
                     </div>
                     <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        {sajuTypes.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setSelectedSajuType(item.id)}
-                                className={`flex flex-col items-center gap-2 group cursor-pointer transition-all ${selectedSajuType === item.id ? 'scale-110' : 'hover:opacity-80'}`}
-                            >
-                                <SpotIcon icon={item.icon} hasBadge={item.hasBadge} />
-                                <span className={`text-[13px] tracking-tight ${selectedSajuType === item.id ? 'font-black text-amber-500' : 'font-medium text-gray-800'}`}>
-                                    {item.label}
-                                </span>
-                            </button>
-                        ))}
+                        <Link href="/saju/confirm?type=신년운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={Calendar} hasBadge />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">신년운세</span>
+                        </Link>
+                        <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={BookOpen} hasBadge />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">토정비결</span>
+                        </Link>
+                        <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={FileText} hasBadge />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">정통사주</span>
+                        </Link>
+                        <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={Sun} />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">오늘의 운세</span>
+                        </Link>
+                        <Link href="/saju/confirm?type=내일의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={Clock} />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">내일의 운세</span>
+                        </Link>
+                        <Link href="/saju/confirm?type=지정일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={ClipboardCheck} />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">지정일 운세</span>
+                        </Link>
+                        {/* Hidden rows from screenshot 2 but added for fullness */}
+                        <Link href="/saju/confirm?type=궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <SpotIcon icon={HeartHandshake} hasBadge />
+                            <span className="text-[13px] font-medium text-gray-800 tracking-tight">궁합</span>
+                        </Link>
                     </div>
-
-                    {/* Selected Item Info Box */}
-                    {selectedSajuType && (
-                        <div className="mt-8 p-5 bg-[#f8f9fb] rounded-2xl border border-gray-100 flex flex-col gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
-                            <div className="flex flex-col">
-                                <h3 className="text-[15px] font-bold text-[#111] mb-1">
-                                    {sajuTypes.find(t => t.id === selectedSajuType)?.label}
-                                </h3>
-                                <p className="text-[13px] text-gray-600 leading-relaxed">
-                                    {sajuTypes.find(t => t.id === selectedSajuType)?.desc}
-                                </p>
-                            </div>
-                            <Link href={`/saju/confirm?type=${selectedSajuType}`} className="w-full mt-2 py-3.5 bg-gradient-to-r from-gray-900 to-gray-800 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-md hover:from-gray-800 hover:to-gray-700 transition-colors">
-                                <Sparkles size={16} className="text-[#fbff3a]" /> 운세풀이 시작하기
-                            </Link>
-                        </div>
-                    )}
                 </section>
 
                 {/* Section 2: 액운 방지 (List) */}

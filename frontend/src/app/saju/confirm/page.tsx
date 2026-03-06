@@ -39,6 +39,24 @@ const ANIMAL_EMOJI: Record<string, string> = {
     "오": "🐴", "미": "🐑", "신": "🐵", "유": "🐔", "술": "🐶", "해": "🐷"
 };
 
+const SAJU_INFO: Record<string, string> = {
+    "신년운세": "한 해의 전반적인 길흉화복을 다각도로 분석하여 올 한 해 나아갈 방향을 제시해 드립니다.",
+    "토정비결": "조선시대부터 이어져 온 비결로, 한 해의 운수를 열두 달 단위로 촘촘하게 짚어봅니다.",
+    "정통사주": "태어난 연월일시를 바탕으로 평생의 운명, 성격, 재물, 길흉 등을 전문적으로 분석합니다.",
+    "오늘의운세": "오늘 하루 나를 둘러싼 오행의 흐름을 파악하여 하루를 지혜롭게 보낼 수 있도록 도와드립니다.",
+    "내일의운세": "다가올 내일의 특별한 기운을 미리 읽고, 조심할 점과 기회로 삼을 점을 안내해 드립니다.",
+    "지정일 운세": "중요한 일정을 앞두고, 특정 날짜의 특별한 운의 흐름과 기운 상생을 확인합니다.",
+    "궁합": "나와 매칭 대상의 기운이 조화로운지, 서로에게 어떤 영향을 주는지 인연의 합을 객관적으로 분석합니다.",
+    "짝궁합": "나와 특별한 인연의 감정선과 합/충을 섬세하게 분석하여 앞으로의 관계 발전을 짚어봅니다.",
+    "정통궁합": "결혼이나 깊은 동업 관계를 생각할 때, 두 사람의 운명적 궁합과 득실을 봅니다.",
+    "띠 운세": "내가 태어난 해의 띠(십이지)의 특성과, 다가올 흐름이 나와 어떻게 어울릴지 분석합니다.",
+    "별자리 운세": "서양 점성술의 별자리와 태어난 날짜의 행성 위치를 바탕으로 운명의 지도를 그려봅니다.",
+    "태어난 계절운": "봄, 여름, 가을, 겨울. 내가 태어난 계절의 온습도와 조후가 내 운명에 미치는 영향을 알아봅니다.",
+    "생년월일 운세": "특별한 날 태어난 당신의 기본적 숫자 에너지와 생일이 주는 타고난 매력을 풀어냅니다.",
+    "전생운": "내 영혼에 새겨진 과거의 흔적과 성향을 명리적으로 역추적하여 전생의 인연을 상상해 봅니다.",
+    "탄생석": "나의 태어난 달과 맞는 행운의 보석, 그리고 그 보석이 나의 사주에 어떤 부족한 기운을 채워줄지 봅니다.",
+};
+
 function ConfirmContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -138,6 +156,14 @@ function ConfirmContent() {
             </header>
 
             <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
+
+                {/* Saju Type Information Heading */}
+                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex flex-col gap-2">
+                    <h2 className="text-[20px] font-extrabold text-[#111] leading-tight"><span className="text-[#d4af37] tracking-tighter">[{type}]</span> 해석 준비 완료</h2>
+                    <p className="text-[14px] text-gray-600 leading-relaxed font-medium break-keep">
+                        {SAJU_INFO[type] || "선택하신 운세의 다양한 기운과 흐름을 명리학과 타로점, 점성술을 융합하여 입체적으로 풀어드립니다."}
+                    </p>
+                </section>
 
                 {/* 1. User Profile Box */}
                 <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
@@ -262,7 +288,6 @@ function ConfirmContent() {
 
             </main>
 
-            {/* Bottom Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-[#1e1e1e] h-[72px] flex items-center justify-center cursor-pointer hover:bg-[#111] transition-colors z-40 max-w-md mx-auto"
                 onClick={() => {
                     if (isCompatibility) {
@@ -272,7 +297,7 @@ function ConfirmContent() {
                     }
                 }}>
                 <span className="text-white text-[16px] font-bold tracking-tight">
-                    {isCompatibility ? "운세 보기" : "운세 풀이 보기"}
+                    {isCompatibility ? "운세 보기" : "운세풀이"}
                 </span>
             </div>
 
