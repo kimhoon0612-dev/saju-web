@@ -8,6 +8,18 @@ import { motion } from "framer-motion";
 import AgenticChatbot from "@/components/AgenticChatbot";
 import BirthDataForm from "@/components/BirthDataForm";
 
+const ELEMENT_COLORS_BG: Record<string, string> = {
+  "wood": "bg-[#4CAF50]",
+  "fire": "bg-[#F44336]",
+  "earth": "bg-[#FFC107]",
+  "metal": "bg-[#9E9E9E]",
+  "water": "bg-[#212121]",
+};
+
+const ELEMENT_KOR: Record<string, string> = {
+  "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수"
+};
+
 export default function Home() {
   const router = useRouter();
   const [matrixData, setMatrixData] = useState<any>(null);
@@ -56,6 +68,17 @@ export default function Home() {
       sajuStrength = supportCount >= 4 ? "신강(身強)" : "신약(身弱)";
     }
   }
+
+  // Helpers for Bazi Grid
+  const getHanja = (label?: string) => label ? label.split('(')[0] : "?";
+  const getHangul = (label?: string) => label && label.includes('(') ? label.split('(')[1].replace(')', '') : "?";
+
+  const pillars = matrixData ? [
+    { label: "시주", data: matrixData.time_pillar },
+    { label: "일주", data: matrixData.day_pillar },
+    { label: "월주", data: matrixData.month_pillar },
+    { label: "년주", data: matrixData.year_pillar }
+  ] : [];
 
   // Calculate dynamic radar chart points based on five elements counts
   const getRadarPoints = () => {
@@ -232,20 +255,51 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Promo Banner Image Area */}
+          {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
           <div className="px-4 pb-6">
-            <div className="w-full bg-[#3B705C] rounded-2xl overflow-hidden aspect-[16/8] relative shadow-sm cursor-pointer group">
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
-              {/* Fallback styling looking like the image */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-                <h2 className="text-[32px] font-black mb-1 drop-shadow-md tracking-tight text-white mb-3" style={{ textShadow: '-2px -2px 0 #3B705C, 2px -2px 0 #3B705C, -2px 2px 0 #3B705C, 2px 2px 0 #3B705C' }}>{sajuStrength || "사주 분석 완료"}</h2>
+            <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
+              <div className="flex justify-between items-center w-full mb-6 px-1">
+                <h2 className="text-[20px] font-extrabold text-[#111]">나의 명식 (사주팔자)</h2>
+                <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3 py-1 rounded-full">{sajuStrength}</span>
+              </div>
 
-                {/* Character placeholder box */}
-                <div className="w-20 h-20 rounded-full bg-white/20 blur-xl absolute bottom-0"></div>
+              <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
+                {pillars.map((pillar, idx) => (
+                  <div key={idx} className="flex flex-col items-center w-[23%] relative">
+                    <span className={`text-[12px] mb-4 font-medium tracking-tight ${pillar.label === '일주' ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                      {pillar.label}
+                    </span>
 
-                <div className="bg-white mt-auto text-[#3B705C] text-[15px] font-black px-6 py-2.5 rounded-sm shadow-md z-20">
-                  신령님이 대답하는 신점 상담
-                </div>
+                    <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
+                      {pillar.data?.heavenly?.ten_god || "-"}
+                    </div>
+
+                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold mb-2 shadow-sm relative overflow-hidden`}>
+                      <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.heavenly?.label)}</div>
+                      <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                        <span>{getHangul(pillar.data?.heavenly?.label)}</span>
+                        <span className="text-[7px]">,</span>
+                        <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
+                      </div>
+                    </div>
+
+                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold shadow-sm relative overflow-hidden mb-3`}>
+                      <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.earthly?.label)}</div>
+                      <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                        <span>{getHangul(pillar.data?.earthly?.label)}</span>
+                        <span className="text-[7px]">,</span>
+                        <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px] whitespace-nowrap">
+                      {pillar.data?.earthly?.ten_god || "-"}
+                    </div>
+                    <div className="text-[12px] font-bold text-gray-500 whitespace-nowrap">
+                      {pillar.data?.twelve_state || "-"}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
