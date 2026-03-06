@@ -196,8 +196,8 @@ function TarotPlayContent() {
                         </div>
 
                         <div className="relative z-10 flex flex-col items-center w-full max-w-md px-8 text-center pt-20 flex-1">
-                            <h2 className="text-white text-xl font-bold mb-16 opacity-90 tracking-wide pb-4">
-                                점신의 특별한 타로 해석을 경험해보세요.
+                            <h2 className="text-white font-bold mb-16 opacity-90 tracking-wide pb-4 whitespace-pre-wrap leading-relaxed text-[18px]">
+                                선택하신 타로카드를 분석하고 있습니다<br />잠시만 기다려 주세요
                             </h2>
 
                             {/* Glowing Zodiac/Astro Circle Animation */}
@@ -231,51 +231,54 @@ function TarotPlayContent() {
                             </div>
                         </div>
                     </div>
-                )}
+                )
+                }
 
                 {/* Results Screen */}
-                {step === 2 && readings.length > 0 && (
-                    <div className="animate-in slide-in-from-bottom-8 duration-700 flex flex-col gap-5 pt-2">
-                        <div className="text-center mb-4">
-                            <h2 className="text-2xl font-bold text-amber-200">
-                                {titleInfo} 풀이 결과
-                            </h2>
-                            <p className="text-white/60 text-sm mt-1">우주의 기운이 담긴 메시지입니다</p>
-                        </div>
-
-                        {readings.map((reading, idx) => (
-                            <div key={idx} className="bg-[#241c3a]/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-[#d4af37]/20 relative overflow-hidden">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="w-[72px] h-[110px] bg-[#100c19] rounded-lg border border-[#d4af37]/40 shadow-inner flex flex-col items-center justify-center shrink-0 relative overflow-hidden">
-                                        <span className="text-4xl mb-1 relative z-10">{reading.emoji}</span>
-                                    </div>
-                                    <div className="pt-2">
-                                        <span className="text-[11px] font-bold text-amber-200 bg-amber-900/40 border border-amber-500/30 px-2.5 py-1 rounded">
-                                            {reading.category}
-                                        </span>
-                                        <h3 className="text-[19px] font-bold mt-2.5 text-white leading-tight">
-                                            {reading.card_name_kr}
-                                        </h3>
-                                        <p className="text-[11px] text-white/40 uppercase mt-0.5">{reading.card_name}</p>
-                                    </div>
-                                </div>
-
-                                <div className="text-left text-[14px] leading-relaxed text-white/80 bg-black/20 p-4 rounded-xl whitespace-pre-wrap border border-white/5">
-                                    {reading.interpretation}
-                                </div>
+                {
+                    step === 2 && readings.length > 0 && (
+                        <div className="animate-in slide-in-from-bottom-8 duration-700 flex flex-col gap-5 pt-2">
+                            <div className="text-center mb-4">
+                                <h2 className="text-2xl font-bold text-amber-200">
+                                    {titleInfo} 풀이 결과
+                                </h2>
+                                <p className="text-white/60 text-sm mt-1">우주의 기운이 담긴 메시지입니다</p>
                             </div>
-                        ))}
 
-                        <button
-                            onClick={() => router.push('/tarot')}
-                            className="w-full mt-6 bg-amber-500 text-[#111] py-4 rounded-2xl font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] mb-8"
-                        >
-                            확인 완료
-                        </button>
-                    </div>
-                )}
-            </main>
-        </div>
+                            {readings.map((reading, idx) => (
+                                <div key={idx} className="bg-[#241c3a]/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-[#d4af37]/20 relative overflow-hidden">
+                                    <div className="flex items-start gap-4 mb-4">
+                                        <div className="w-[72px] h-[110px] bg-[#100c19] rounded-lg border border-[#d4af37]/40 shadow-inner flex flex-col items-center justify-center shrink-0 relative overflow-hidden">
+                                            <span className="text-4xl mb-1 relative z-10">{reading.emoji}</span>
+                                        </div>
+                                        <div className="pt-2">
+                                            <span className="text-[11px] font-bold text-amber-200 bg-amber-900/40 border border-amber-500/30 px-2.5 py-1 rounded">
+                                                {reading.category}
+                                            </span>
+                                            <h3 className="text-[19px] font-bold mt-2.5 text-white leading-tight">
+                                                {reading.card_name_kr}
+                                            </h3>
+                                            <p className="text-[11px] text-white/40 uppercase mt-0.5">{reading.card_name}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-left text-[14px] leading-relaxed text-white/80 bg-black/20 p-4 rounded-xl whitespace-pre-wrap border border-white/5">
+                                        {reading.interpretation}
+                                    </div>
+                                </div>
+                            ))}
+
+                            <button
+                                onClick={() => router.push('/tarot')}
+                                className="w-full mt-6 bg-amber-500 text-[#111] py-4 rounded-2xl font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] mb-8"
+                            >
+                                확인 완료
+                            </button>
+                        </div>
+                    )
+                }
+            </main >
+        </div >
     );
 }
 
