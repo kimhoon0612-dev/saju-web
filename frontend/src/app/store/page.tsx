@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ProductModal from "@/components/Store/ProductModal";
 import { Sparkles, Heart, BadgeDollarSign, Briefcase, Dumbbell, Clover, Star, ChevronRight } from "lucide-react";
 
@@ -10,8 +10,8 @@ export interface Product {
     name: string;
     description: string;
     price: number;
-    category: "elemental" | "wish" | "persona";
-    elementTheme?: "wood" | "fire" | "earth" | "metal" | "water";
+    category: string;
+    elementTheme?: string;
     imageUrl: string;
 }
 
@@ -106,17 +106,31 @@ export default function DirectStorePage() {
     };
 
     // Filter products based on active category
-    const filteredProducts = products.filter(p => {
-        if (!activeCategory) return true;
-        const target = (p.name + " " + p.description).toLowerCase();
-        if (activeCategory === "연애") return target.includes("인연") || target.includes("사랑") || target.includes("도화") || target.includes("연애") || p.elementTheme === "fire";
-        if (activeCategory === "금전") return target.includes("금전") || target.includes("재물") || target.includes("돈");
-        if (activeCategory === "건강") return target.includes("생명") || target.includes("건강") || p.elementTheme === "wood";
-        if (activeCategory === "한정판") return target.includes("한정판") || target.includes("nft");
-        if (activeCategory === "사업") return target.includes("사업") || target.includes("성공") || target.includes("리더십");
-        if (activeCategory === "행운") return target.includes("행운") || target.includes("럭키");
-        return true;
-    });
+    const filteredProducts = useMemo(() => {
+        return products.filter(p => {
+            if (!activeCategory || activeCategory === "전체보기") return true;
+            if (activeCategory === "재물/사업") return p.elementTheme === "wealth" || p.elementTheme === "metal";
+            if (activeCategory === "애정/인연") return p.elementTheme === "love" || p.elementTheme === "fire";
+            if (activeCategory === "건강/수호") return p.elementTheme === "health" || p.elementTheme === "water";
+            if (activeCategory === "소원/기타") return p.elementTheme === "wood" || p.elementTheme === "earth";
+            return true;
+        });
+    }, [products, activeCategory]);
+
+    // MZ 추천 잇템 - 테마별로 1개씩 선정
+    const mzPicks = useMemo(() => {
+        const picks: Product[] = [];
+        const themes = ["wealth", "love", "health", "wood"];
+        themes.forEach(theme => {
+            const items = products.filter(p => p.elementTheme === theme);
+            if (items.length > 0) {
+                // 당일 날짜 기반 슈도 랜덤
+                picks.push(items[new Date().getDate() % items.length]);
+            }
+        });
+        if (picks.length < 4) return [...picks, ...products].slice(0, 4);
+        return picks;
+    }, [products]);
 
     useEffect(() => {
         const fetchStoreDB = async () => {
@@ -203,20 +217,19 @@ export default function DirectStorePage() {
                 </div>
 
                 {/* Categories Grid */}
-                <div className="bg-white pt-8 pb-8 px-4 grid grid-cols-4 gap-y-6 sm:grid-cols-6 rounded-b-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative z-20 -mt-4">
+                <div className="bg-white pt-8 pb-8 px-4 grid grid-cols-5 gap-y-6 rounded-b-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative z-20 -mt-4">
                     {[
-                        { icon: Heart, label: "연애", color: "text-gray-700" },
-                        { icon: BadgeDollarSign, label: "금전", color: "text-gray-700" },
-                        { icon: Briefcase, label: "사업", color: "text-gray-700" },
-                        { icon: Dumbbell, label: "건강", color: "text-gray-700" },
-                        { icon: Clover, label: "행운", color: "text-gray-700" },
-                        { icon: Star, label: "한정판", color: "text-gray-700" },
+                        { icon: BadgeDollarSign, label: "재물/사업", color: "text-gray-700" },
+                        { icon: Heart, label: "애정/인연", color: "text-gray-700" },
+                        { icon: Dumbbell, label: "건강/수호", color: "text-gray-700" },
+                        { icon: Sparkles, label: "소원/기타", color: "text-gray-700" },
+                        { icon: Star, label: "전체보기", color: "text-gray-700" },
                     ].map((category, idx) => (
                         <button key={idx} onClick={() => setActiveCategory(activeCategory === category.label ? null : category.label)} className="flex flex-col items-center justify-center gap-2 group">
-                            <div className={`w-14 h-14 rounded-2xl bg-white border ${activeCategory === category.label ? 'border-yellow-400 border-2 shadow-[0_4px_12px_rgba(250,204,21,0.3)]' : 'border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'} flex items-center justify-center transition-all relative overflow-hidden`}>
-                                <category.icon className={`w-6 h-6 ${activeCategory === category.label ? 'text-yellow-500' : category.color} stroke-[1.5] relative z-10`} />
+                            <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border ${activeCategory === category.label ? 'border-yellow-400 border-2 shadow-[0_4px_12px_rgba(250,204,21,0.3)]' : 'border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'} flex items-center justify-center transition-all relative overflow-hidden`}>
+                                <category.icon className={`w-6 h-6 sm:w-7 sm:h-7 ${activeCategory === category.label ? 'text-yellow-500' : category.color} stroke-[1.5] relative z-10`} />
                             </div>
-                            <span className={`text-[13px] font-bold ${activeCategory === category.label ? 'text-yellow-600' : 'text-gray-600'} tracking-wide`}>{category.label}</span>
+                            <span className={`text-[12px] sm:text-[13px] font-bold ${activeCategory === category.label ? 'text-yellow-600' : 'text-gray-600'} tracking-tight sm:tracking-wide shrink-0 whitespace-nowrap`}>{category.label}</span>
                         </button>
                     ))}
                 </div>
@@ -262,15 +275,15 @@ export default function DirectStorePage() {
                 {/* Divider if Active Category */}
                 {activeCategory && <div className="w-full h-2 bg-gray-100 mt-4 mb-2"></div>}
 
-                {/* MD Recommended Horizon Scroll */}
+                {/* MZ Recommended Horizon Scroll */}
                 <div className="mt-8 px-4">
                     <div className="flex items-end justify-between mb-4">
-                        <h3 className="text-[18px] font-black tracking-tight text-gray-900">MD 추천 잇템!</h3>
-                        <button onClick={() => alert("현재 상점이 런칭 준비 중입니다.\n곧 전체 상품 보기 기능이 열립니다!")} className="text-[13px] font-bold text-gray-500 hover:text-gray-800 transition-colors">더보기 &gt;</button>
+                        <h3 className="text-[18px] font-black tracking-tight text-gray-900">요즘 MZ픽! 잇템</h3>
+                        <button onClick={() => setActiveCategory("전체보기")} className="text-[13px] font-bold text-gray-500 hover:text-gray-800 transition-colors">더보기 &gt;</button>
                     </div>
 
                     <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory hide-scrollbar">
-                        {products.slice(0, 4).map(product => (
+                        {mzPicks.map(product => (
                             <div
                                 key={`md_${product.id}`}
                                 onClick={() => handleProductClick(product)}
@@ -307,10 +320,10 @@ export default function DirectStorePage() {
 
                 {/* Real-time BEST List */}
                 <div className="mt-8 px-4 pb-20">
-                    <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-6">실시간 BEST</h3>
+                    <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-6">실시간 BEST 탑 10</h3>
 
                     <div className="flex flex-col gap-4">
-                        {products.slice(0, 5).map((product, idx) => (
+                        {products.sort((a, b) => b.price - a.price).slice(0, 10).map((product, idx) => (
                             <div
                                 key={`best_${product.id}`}
                                 onClick={() => handleProductClick(product)}
