@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Dict, Any, Optional
+from datetime import datetime
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -376,9 +377,9 @@ class SajuRAGChain:
 [분석 지침 및 출력 규칙]
 1. 분량: 약 2,000자 내외 (A4 용지 1.5장 분량). 취업 및 이직 준비생에게 실질적인 도움이 되도록 구체적인 시기와 방향성을 집어줄 것. 짧은 요약은 허용되지 않음.
 2. 구성: 반드시 아래의 섹션을 마크다운(##, ###, -, ** 등)으로 시각적으로 보기 좋게 나누어 작성할 것:
-   - ## 🏢 올해의 취업운 및 이직운 총평 (현재 운의 흐름에서 취업/이직의 유리함과 불리함)
+   - ## 🏢 {current_year}년 올해의 취업운 및 이직운 총평 (현재 {current_year}년 운의 흐름에서 취업/이직의 유리함과 불리함)
    - ## 🎯 나에게 유리한 산업군 및 직무 (사주의 강한 오행이나 십성을 바탕으로 한 추천 직무)
-   - ## 🗓️ 합격을 쟁취할 수 있는 최고의 골든타임 (월별로 가장 운기가 좋은 시기 및 준비 전략)
+   - ## 🗓️ 합격을 쟁취할 수 있는 최고의 골든타임 ({current_year}년 월별로 가장 운기가 좋은 시기 및 준비 전략)
    - ## 💼 면접 및 실무에서 주의해야 할 약점 (나도 모르게 드러나는 단점과 보완 방법)
    - ## 🔑 성공적인 커리어를 위한 개운 처방 (책상 방향, 옷 색깔, 마인드셋 등 실전 팁)
 3. "열심히 하면 됩니다" 식의 뻔한 말이 아닌, "관성(官星)이 약하니 프리랜서나 전문직으로 준비하세요" 같은 명리학적 기호에 기반한 단호한 조언을 해줄 것.
@@ -565,7 +566,8 @@ class SajuRAGChain:
                     "reading_type": reading_type,
                     "day_stem": day_stem,
                     "query_info": query,
-                    "saju_full": saju_full_text
+                    "saju_full": saju_full_text,
+                    "current_year": datetime.now().year
                 })
                 return result
             except Exception as e:
@@ -937,7 +939,8 @@ class SajuRAGChain:
                     "reading_type": reading_type,
                     "day_stem": day_stem,
                     "query_info": query,
-                    "saju_full": saju_full_text
+                    "saju_full": saju_full_text,
+                    "current_year": datetime.now().year
                 }):
                     yield chunk
             except Exception as e:
