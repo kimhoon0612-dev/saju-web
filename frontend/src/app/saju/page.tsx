@@ -200,7 +200,18 @@ export default function FortuneHubPage() {
         const MAX_HEIGHT = 600;
 
         const img = new Image();
+        img.onerror = () => {
+            setFaceResult("이미지를 불러오는데 실패했습니다.");
+            setIsAnalyzing(false);
+        };
+
+        // Use Object URL instead of Base64 FileReader to prevent mobile browser OOM crash
+        const objectUrl = URL.createObjectURL(file);
+
         img.onload = async () => {
+            // Clean up the object URL to free memory immediately
+            URL.revokeObjectURL(objectUrl);
+
             let width = img.width;
             let height = img.height;
 
@@ -252,18 +263,7 @@ export default function FortuneHubPage() {
             }
         };
 
-        img.onerror = () => {
-            setFaceResult("이미지를 불러오는데 실패했습니다.");
-            setIsAnalyzing(false);
-        };
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            if (event.target?.result) {
-                img.src = event.target.result as string;
-            }
-        };
-        reader.readAsDataURL(file);
+        img.src = objectUrl;
     };
 
     return (
