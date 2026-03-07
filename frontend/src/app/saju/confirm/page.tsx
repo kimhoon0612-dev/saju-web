@@ -39,6 +39,20 @@ const ANIMAL_EMOJI: Record<string, string> = {
     "오": "🐴", "미": "🐑", "신": "🐵", "유": "🐔", "술": "🐶", "해": "🐷"
 };
 
+const TRAIT_MAP: Record<string, { short: string, desc: string }> = {
+    "비견": { short: "독립", desc: "주관과 독립심" },
+    "겁재": { short: "승부", desc: "강한 승부욕" },
+    "식신": { short: "탐구", desc: "창의와 탐구" },
+    "상관": { short: "표현", desc: "탁월한 언변" },
+    "편재": { short: "인맥", desc: "넓은 인맥·재물" },
+    "정재": { short: "성실", desc: "치밀하고 꼼꼼함" },
+    "편관": { short: "카리스마", desc: "막중한 책임감" },
+    "정관": { short: "원칙", desc: "바르고 정직함" },
+    "편인": { short: "직관", desc: "예술적 직관력" },
+    "정인": { short: "포용", desc: "따뜻한 수용력" },
+    "본원": { short: "본질", desc: "나의 순수 근본" },
+};
+
 const SAJU_INFO: Record<string, string> = {
     "신년운세": "한 해의 전반적인 길흉화복을 다각도로 분석하여 올 한 해 나아갈 방향을 제시해 드립니다.",
     "토정비결": "조선시대부터 이어져 온 비결로, 한 해의 운수를 열두 달 단위로 촘촘하게 짚어봅니다.",
@@ -120,7 +134,8 @@ function ConfirmContent() {
 
     // Summary Elements Calculation
     const dayElement = matrix.day_pillar?.heavenly?.element || "earth";
-    const dayBranch = getHanja(matrix.day_pillar?.earthly?.label);
+    const dayBranchHanja = getHanja(matrix.day_pillar?.earthly?.label);
+    const dayBranchHangul = getHangul(matrix.day_pillar?.earthly?.label);
     const dominantTenGod = matrix.month_pillar?.earthly?.ten_god || "상관";
 
     // Calendar Helpers
@@ -185,18 +200,20 @@ function ConfirmContent() {
                     <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px] relative">
                         <div className="absolute top-3 right-3 w-5 h-5 bg-gray-800 text-white rounded-full text-[10px] flex items-center justify-center font-bold">?</div>
                         <div className="w-[52px] h-[52px] rounded-full bg-gray-50 flex items-center justify-center text-[30px] shadow-sm mb-3 border border-gray-100">
-                            {ANIMAL_EMOJI[dayBranch] || "🐾"}
+                            {ANIMAL_EMOJI[dayBranchHangul] || "🐾"}
                         </div>
-                        <span className="text-[15px] font-extrabold text-gray-900">{dayBranch} 동물</span>
+                        <span className="text-[15px] font-extrabold text-gray-900">{dayBranchHanja} 동물</span>
                         <span className="text-[12px] text-gray-400 mt-0.5">일주 동물</span>
                     </div>
 
                     <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
-                        <div className="w-[52px] h-[52px] rounded-full bg-gray-600 text-white flex items-center justify-center text-[18px] font-bold shadow-sm mb-3">
-                            {dominantTenGod.substring(0, 2)}
+                        <div className="w-[52px] h-[52px] rounded-full bg-gray-600 text-white flex items-center justify-center text-[15px] font-bold shadow-sm mb-3 shadow-[0_2px_10px_rgba(0,0,0,0.15)] leading-tight tracking-tighter">
+                            {TRAIT_MAP[dominantTenGod]?.short || dominantTenGod.substring(0, 2)}
                         </div>
-                        <span className="text-[15px] font-extrabold text-gray-900">{dominantTenGod}</span>
-                        <span className="text-[12px] text-gray-400 mt-0.5">타고난 성향</span>
+                        <span className="text-[13px] font-extrabold text-gray-900 text-center leading-tight whitespace-pre-line">
+                            {TRAIT_MAP[dominantTenGod]?.desc || dominantTenGod}
+                        </span>
+                        <span className="text-[11px] text-gray-400 mt-1">타고난 성향</span>
                     </div>
                 </section>
 
