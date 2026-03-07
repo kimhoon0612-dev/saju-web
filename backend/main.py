@@ -22,6 +22,7 @@ from fastapi.responses import PlainTextResponse
 from contextlib import asynccontextmanager
 from app.core.database import engine, Base
 import app.models.market_models  # Import to register models
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -183,14 +184,20 @@ def get_life_stages(matrix: SajuMatrix):
 def get_specific_reading(request: SpecificReadingRequest):
     """
     신년운세, 토정비결, 궁합 등 특정 운세에 대한 맞춤형 해석을 반환합니다.
+    Stream the response to prevent Safari/Vercel timeouts on 45s+ generations.
     """
     rag_chain = SajuRAGChain()
-    result = rag_chain.generate_specific_reading(
-        request.saju_matrix, 
-        request.reading_type,
-        request.partner_matrix
-    )
-    return {"reading": result}
+    
+    # We create a generator that yields text chunks from LangChain
+    def iter_stream():
+        for chunk in rag_chain.stream_specific_reading(
+            request.saju_matrix, 
+            request.reading_type,
+            request.partner_matrix
+        ):
+            yield chunk
+
+    return StreamingResponse(iter_stream(), media_type="text/plain")
 
 @app.post("/api/chat")
 def chat_with_agent(request: ChatRequest):

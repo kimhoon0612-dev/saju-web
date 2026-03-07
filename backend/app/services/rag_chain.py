@@ -370,6 +370,177 @@ class SajuRAGChain:
                 print(f"LLM Invoke Error: {e}")
                 return f"[{reading_type}] 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
 
+    def stream_specific_reading(self, saju_matrix: Dict[str, Any], reading_type: str, partner_matrix: Optional[Dict[str, Any]] = None):
+        """
+        사용자의 사주 매트릭스를 기반으로 특정 운세에 대한 맞춤형 해석을 스트리밍으로 생성합니다.
+        """
+        gemini_api_key = os.environ.get("GEMINI_API_KEY")
+        openai_api_key = os.environ.get("OPENAI_API_KEY")
+        
+        if not gemini_api_key and not openai_api_key:
+            yield f"[{reading_type}] 분석결과: 현재 AI 모델 연결이 설정되지 않아 임시 결과를 보여드립니다. 당신의 사주 구조상 올해는 새로운 시작과 성장이 기대되는 해입니다."
+            return
+
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+        except ImportError:
+            ChatGoogleGenerativeAI = None
+            
+        if gemini_api_key and ChatGoogleGenerativeAI is not None:
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+        else:
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
+            
+        query = self.analyze_saju_structure(saju_matrix)
+        try:
+            day_stem = saju_matrix['day_pillar']['heavenly']['label']
+        except Exception:
+            day_stem = "알 수 없음"
+
+        # 궁합 (Compatibility) 모드
+        if partner_matrix is not None:
+            try:
+                partner_day_stem = partner_matrix['day_pillar']['heavenly']['label']
+                partner_query = self.analyze_saju_structure(partner_matrix)
+            except Exception:
+                partner_day_stem = "알 수 없음"
+                partner_query = "알 수 없음"
+                
+            prompt = ChatPromptTemplate.from_template(
+                """당신은 세련되고 통찰력 있는 AI 명리학 및 궁합 컨설턴트입니다.
+사용자와 상대방의 사주 정보(4기둥)를 바탕으로 심층적인 '[ {reading_type} ]' 분석을 작성해 주세요.
+
+[본인 사주 정보]
+일간: {day_stem}
+특성 요약: {query_info}
+
+[상대방 사주 정보]
+일간: {partner_day_stem}
+특성 요약: {partner_query}
+
+[출력 규칙]
+1. 분량: 최소 4,000자 이상 (A4 용지 3장 분량). 각 항목마다 극도로 상세하게 예시와 비유를 섞어가며 깊이 있게 풀이할 것. 짧은 요약은 절대 피할 것.
+2. 구성: 반드시 아래의 섹션을 나누어 마크다운(##, ###, -, ** 등)으로 보기 좋게 정리할 것.
+   - ## 👩‍❤️‍👨 두 사람의 인연과 궁합 총평 (전반적인 상생/상극 및 전생에서 이어진 인연의 끈)
+   - ## 🔥 성향 시너지와 갈등 요소 (어떤 부분에서 소울메이트처럼 잘 맞고, 어떤 지점에서 폭발하는지 구체적 예시)
+   - ## 💬 관계 발전을 위한 조언 (위기가 왔을 때 극복하는 대화법, 더 깊은 관계로 나아가기 위한 실전 팁)
+3. 어려운 한자어는 현대적 의미로 쉽게 풀어서 설명하되, 명리학적 근거를 명확하게 제시할 것. (예: 일간의 합, 조후의 보완 등)
+
+운세 풀이:"""
+            )
+            chain = prompt | llm | StrOutputParser()
+            try:
+                for chunk in chain.stream({
+                    "reading_type": reading_type,
+                    "day_stem": day_stem,
+                    "query_info": query,
+                    "partner_day_stem": partner_day_stem,
+                    "partner_query": partner_query
+                }):
+                    yield chunk
+            except Exception as e:
+                print(f"LLM Stream Error: {e}")
+                yield f"\n\n[{reading_type}] 궁합 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+
+        # 일반 상세 운세 모드
+        else:
+            if reading_type == "정통사주":
+                prompt_text = """당신은 최고 수준의 정통 명리학자입니다.
+사용자의 연/월/일/시 8글자를 전체적으로 분석하는 정통사주(Master Blueprint) 풀이를 작성해 주세요.
+
+[사주 정보]
+일간: {day_stem}
+특성 요약 쿼리: {query_info}
+
+[분석 지침 및 출력 규칙]
+1. 분량: 최소 4,000자 이상 (A4 용지 3장 분량). 대운수와 연운을 교차 분석하며 소름 돋을 정도로 구체적이고 뼈때리는 조언을 담아낼 것. 절대 짧게 쓰지 말 것.
+2. 기술적 요소 강조: 서론에 반드시 "표준시가 아닌 실제 경도 127.5도 보정과 정밀한 진태양시 알고리즘을 적용하여 시주(時柱) 오차를 0%로 완벽하게 차단하여 분석했습니다."라는 문구를 포함할 것.
+3. 구성: 반드시 아래의 5가지 섹션을 마크다운(##, ###, -, ** 등)으로 시각적으로 보기 좋게 나누어 작성할 것:
+   - ## 🔮 명식 총평 (기질과 잠재력, 본질적 자아 분석)
+   - ## ☯️ 오행 분포와 기운의 균형 (사주의 강약, 조후 분석, 용신/희신 심층 해부)
+   - ## 👨‍👩‍👧‍👦 육친 및 인연 분석 (부모덕, 배우자복, 자식운 및 대인관계 카르마)
+   - ## 📈 10년 주기 대운(大運)의 흐름 (인생 4단계 황금기와 주의할 시기, 기복의 원인)
+   - ## 💡 평생을 꿰뚫는 개운 조언 (장점을 살리고 단점을 보완하는 실질적 팁, 피해야 할 방향과 색상)
+4. 전문 용어(예: 용신, 기신, 원진 등)를 사용하되 일반인이 쉽게 이해하도록 현대적으로 풀어서 설명할 것.
+
+정통사주 상세 풀이:"""
+
+            elif reading_type == "토정비결":
+                prompt_text = """당신은 혜안을 지닌 토정비결 전문가입니다.
+사용자의 생년, 월, 일만을 활용하여 한 해의 길흉화복을 내다보는 토정비결(Monthly Guide) 풀이를 작성해 주세요.
+
+[사주 정보]
+일간: {day_stem}
+특성 요약 쿼리: {query_info}
+
+[분석 지침 및 출력 규칙]
+1. 분량: 최소 4,000자 이상 (A4 용지 3장 분량). 열두 달 각각의 흐름을 날카롭고 섬세하게 묘사하여 마치 옆에서 상담해주듯 풍부하게 풀이할 것. 절대 짧게 쓰지 말 것.
+2. 기술적 요소 강조: 서론에 "태어난 시간(시주)을 제외하고, 생년월일만을 바탕으로 144개 점괘(卦) 도출 알고리즘을 정밀하게 적용한 전통 토정비결입니다."라는 문구를 포함할 것.
+3. 구성: 반드시 아래의 섹션을 마크다운(##, ###, -, ** 등)으로 시각적으로 보기 좋게 나누어 작성할 것:
+   - ## 📖 올해의 괘상 총평 (한 해를 지배하는 핵심 점괘와 상징적 의미 심층 해설)
+   - ## ✍️ 상반기(1월~6월) 월별 운세 및 주의사항 (각 월별 디테일한 길흉 분석과 맞춤 행동 지침)
+   - ## ✍️ 하반기(7월~12월) 월별 운세 및 주의사항 (각 월별 변화하는 기운 흐름과 재물/건강 조언)
+   - ## 🛡️ 액운을 피하고 복을 짓는 비법 (올해 집중해야 할 액땜 및 처방, 인간관계 처세술)
+4. 신비롭고 단호하면서도 희망을 주는 따뜻한 어조를 사용할 것.
+
+토정비결 상세 풀이:"""
+
+            elif reading_type == "신년운세":
+                prompt_text = """당신은 트렌디하고 예리한 신년운세 분석가입니다.
+사용자의 사주 원국과 다가오는 2026년(병오년, 丙午)의 기운을 대조 분석하는 신년운세(Annual Update) 풀이를 작성해 주세요.
+
+[사주 정보]
+일간: {day_stem}
+특성 요약 쿼리: {query_info}
+
+[분석 지침 및 출력 규칙]
+1. 분량: 최소 4,000자 이상 (A4 용지 3장 분량). 올해의 대운과 세운을 교차 분석하여 눈앞에 벌어질 일들을 스토리텔링 방식으로 극히 상세히 작성할 것. 짧은 요약은 허용되지 않음.
+2. 기술적 요소 강조: 현재 연도인 '2026년 병오년(붉은 말의 해)'의 강력한 화(火) 기운이 사용자의 사주({day_stem} 일간 및 조후)에 미치는 파장을 매우 구체적으로 해석할 것.
+3. 구성: 반드시 아래의 섹션을 마크다운(##, ###, -, ** 등)으로 시각적으로 보기 좋게 나누어 작성할 것:
+   - ## 🎇 2026년 병오년 운세 총평 (올해의 전체적인 테마와 기운의 변화, 내 사주와의 상호작용)
+   - ## 🎯 당해 연도 구체적 길흉화복 (재물, 직장, 연애, 건강에서의 디테일한 기회와 위기 분석)
+   - ## ⏳ 올해의 골든타임 (가장 승부를 걸어볼 만한 시기와 방법, 월별 타이밍)
+   - ## 🛑 피해야 할 함정 (올해 특별히 조심해야 할 유혹, 금전 손실구간, 구설수)
+   - ## 🍀 행운을 끌어당기는 핵심 액션 플랜 (올해 꼭 실천해야 할 3가지 행동 강령)
+4. 모호한 말보다는 명확한 결정(예: "9월에 이동수가 있으니 이직을 노려라", "상반기 투자는 보수적으로 해라" 등)을 구체적 예시와 함께 권해줄 것.
+
+신년운세 상세 풀이:"""
+
+            else:
+                prompt_text = """당신은 세련되고 통찰력 있는 AI 명리학 컨설턴트입니다.
+사용자의 사주 정보(4기둥)를 바탕으로 요청받은 특정 운세('[ {reading_type} ]')에 대한 상세한 풀이를 작성해 주세요.
+
+[사주 정보]
+일간: {day_stem}
+특성 요약 쿼리: {query_info}
+
+[출력 규칙]
+1. 분량: 최소 4,000자 이상 (A4 용지 3장 분량). 구체적이고 깊이 있는 통찰을 제공할 것. 내용이 길어질수록 좋음. 
+2. 구성: 반드시 아래의 섹션을 나누어 마크다운(##, ###, -, ** 등)으로 보기 좋게 정리할 것.
+   - ## 🌟 {reading_type} 총운 (전반적인 흐름과 핵심 테마 분석)
+   - ## 💰 재물 및 비즈니스 (금전 운세와 구체적 성취/투자/성장 가능성)
+   - ## 💼 직장 및 학업 (승진, 이직, 시험, 대내외적 역량 발휘 포인트)
+   - ## ❤️ 애정 및 대인관계 (연애운, 소울메이트 귀인, 반드시 조심해야 할 악연)
+   - ## 🌿 건강 및 행운의 조언 (컨디션 붕괴 예측 및 액운 방지 마인드셋)
+3. 막연한 긍정 보다는 사용자의 {day_stem} 일간 성향과 대운에 맞춘 날카롭고 실용적인 처방을 포함할 것.
+4. 어려운 한자어는 현대적 의미로 쉽게 풀어서 설명할 것.
+
+운세 풀이:"""
+
+            prompt = ChatPromptTemplate.from_template(prompt_text)
+            chain = prompt | llm | StrOutputParser()
+            try:
+                for chunk in chain.stream({
+                    "reading_type": reading_type,
+                    "day_stem": day_stem,
+                    "query_info": query
+                }):
+                    yield chunk
+            except Exception as e:
+                print(f"LLM Stream Error: {e}")
+                yield f"\n\n[{reading_type}] 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+
+
 # 테스트용 실행
 if __name__ == "__main__":
     chain = SajuRAGChain()

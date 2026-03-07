@@ -221,9 +221,21 @@ function SajuContent() {
                         });
 
                         if (specificRes.ok) {
-                            const readingData = await specificRes.json();
-                            console.log("Specific Reading Data:", readingData);
-                            setSpecificReading(readingData.reading);
+                            const reader = specificRes.body?.getReader();
+                            if (reader) {
+                                const decoder = new TextDecoder();
+                                let fullText = "";
+                                setSpecificReading(""); // Initialize to empty string before stream starts
+
+                                while (true) {
+                                    const { done, value } = await reader.read();
+                                    if (done) break;
+
+                                    const chunk = decoder.decode(value, { stream: true });
+                                    fullText += chunk;
+                                    setSpecificReading(fullText);
+                                }
+                            }
                         } else {
                             console.error("Specific Reading Error Status:", specificRes.status, await specificRes.text());
                             setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status})`);
