@@ -462,53 +462,7 @@ export default function FortuneHubPage() {
                     </div>
                 </section>
 
-                {/* Section 4: 해결책 (Cards) */}
-                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-medium tracking-tight">소원을 이뤄요</span>
-                        <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">지금 필요한 해결책</h2>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 pb-2">
-                        <Link href="#" className="bg-[#f8f9fb] rounded-[20px] p-4 h-[130px] flex flex-col justify-between group cursor-pointer hover:bg-gray-100 transition-colors relative overflow-hidden">
-                            <div>
-                                <h3 className="text-[15px] font-bold text-[#111]">소원담벼락</h3>
-                                <p className="text-[11px] text-gray-500 mt-1 leading-tight w-[80%]">함께 비는 소원은<br />더 빨리 이뤄져요</p>
-                            </div>
-                            <div className="absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
-                                <div className="absolute w-[14px] h-[14px] bg-[#fbff3a] rounded-full top-1 right-1 opacity-80"></div>
-                                <MessageSquareHeart size={20} className="relative z-10 text-[#222]" />
-                            </div>
-                        </Link>
-                        <Link href="#" className="bg-[#f8f9fb] rounded-[20px] p-4 h-[130px] flex flex-col justify-between group cursor-pointer hover:bg-gray-100 transition-colors relative overflow-hidden">
-                            <div>
-                                <h3 className="text-[15px] font-bold text-[#111]">고민구슬</h3>
-                                <p className="text-[11px] text-gray-500 mt-1 leading-tight w-[80%]">머리 아픈 고민!<br />3초만에 끝내기</p>
-                            </div>
-                            <div className="absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
-                                <div className="absolute w-[14px] h-[14px] bg-[#fbff3a] rounded-full bottom-1 right-1 opacity-80"></div>
-                                <Sparkles size={20} className="relative z-10 text-[#222]" />
-                            </div>
-                        </Link>
-                        <Link href="#" className="bg-[#f8f9fb] rounded-[20px] p-4 h-[130px] flex flex-col justify-between group cursor-pointer hover:bg-gray-100 transition-colors relative overflow-hidden">
-                            <div>
-                                <h3 className="text-[15px] font-bold text-[#111]">점신 1:1 상담</h3>
-                                <p className="text-[11px] text-gray-500 mt-1 leading-tight w-[85%]">혼자 해결하기 어려운<br />문제가 있다면</p>
-                            </div>
-                            <div className="absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-[#fbff3a]">
-                                <Headset size={20} className="text-[#222]" />
-                            </div>
-                        </Link>
-                        <Link href="#" className="bg-[#f8f9fb] rounded-[20px] p-4 h-[130px] flex flex-col justify-between group cursor-pointer hover:bg-gray-100 transition-colors relative overflow-hidden">
-                            <div>
-                                <h3 className="text-[15px] font-bold text-[#111]">포춘쿠키</h3>
-                                <p className="text-[11px] text-gray-500 mt-1 leading-tight w-[90%]">오늘의 당신에게<br />필요한 한마디</p>
-                            </div>
-                            <div className="absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
-                                <Cookie size={20} className="text-[#222]" />
-                            </div>
-                        </Link>
-                    </div>
-                </section>
+
 
                 {/* Section 5: 타고난 운명 (Grid) */}
                 <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
