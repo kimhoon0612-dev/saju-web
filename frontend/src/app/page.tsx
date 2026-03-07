@@ -182,6 +182,7 @@ export default function Home() {
 
       console.log("Data saved to sessionStorage. Showing dashboard...");
       setMatrixData(completeMatrix);
+      setUserGender(data.gender);
 
     } catch (error: any) {
       console.error("데이터 동기화 실패:", error);
