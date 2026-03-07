@@ -61,8 +61,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                         {/* Product Info Summary */}
                         <div className="p-5">
-                            <h1 className="text-[20px] font-bold text-gray-900 leading-[1.3] tracking-tight mb-2 break-keep">
-                                [{product.name}] {product.description}
+                            <h1 className="text-[22px] font-bold text-gray-900 leading-[1.3] tracking-tight mb-2 break-keep">
+                                {product.name}
                             </h1>
                             <div className="flex items-center justify-between mb-4">
                                 <strong className="text-[24px] font-black text-gray-900">{product.price.toLocaleString()}원</strong>
