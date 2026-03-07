@@ -436,8 +436,8 @@ export default function Home() {
                 <div
                   onClick={() => setElementDetailModal({
                     isOpen: true,
-                    title: "나의 일간",
-                    content: `사주의 중심이 되는 기운입니다. ${matrixData.day_pillar?.heavenly?.element === "wood" ? "나무처럼 곧고 성장하려는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "fire" ? "불처럼 열정적이고 밝은 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "earth" ? "흙처럼 포용력 있고 길러내는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "metal" ? "쇠처럼 단단하고 결단력 있는 본질적인 성향을" : "물처럼 유연하고 지혜로운 본질적인 성향을"} 가지고 태어나셨습니다. 이는 평생을 관통하는 나의 가장 강력한 무기입니다.`
+                    title: "나의 핵심 기운: 일간(日干)",
+                    content: `사주명리학에서 일간(日干)은 '나 자신'을 상징하는 가장 본질적인 기운이자, 평생토록 변하지 않는 내면의 코어를 의미합니다. 당신이 태어난 날의 하늘의 기운을 뜻하는 이 글자는, 당신의 잠재력, 고유한 성향, 그리고 대인관계를 맺는 방식을 결정짓습니다.\n\n당신은 [${matrixData.day_pillar?.heavenly?.element === "wood" ? "木(목) - 뻗어나가는 나무" : matrixData.day_pillar?.heavenly?.element === "fire" ? "火(화) - 타오르는 불꽃" : matrixData.day_pillar?.heavenly?.element === "earth" ? "土(토) - 품어주는 대지" : matrixData.day_pillar?.heavenly?.element === "metal" ? "金(금) - 단단한 바위나 보석" : "水(수) - 흐르는 강물이나 바다"}]의 에너지를 품고 태어났습니다. ${matrixData.day_pillar?.heavenly?.element === "wood" ? "이는 곧게 위로 성장하려는 진취력, 어떤 역경에도 꺾이지 않고 봄을 향해 나아가는 생명력을 상징합니다. 남을 보살피는 어진 마음(仁)이 기본 바탕에 깔려 있으며, 창도적이고 미래 지향적인 리더십을 발휘할 때 가장 큰 빛을 발합니다." : matrixData.day_pillar?.heavenly?.element === "fire" ? "이는 세상에 빛과 열기를 전하는 뜨거운 열정, 예의(禮)를 중시하며 언제나 솔직 담백하게 자신을 드러내는 성향을 상징합니다. 예술적 감각이 뛰어나고, 주변 사람들에게 영감을 주며, 무언가를 폭발적으로 시작해내는 에너지가 가장 매력적인 장점입니다." : matrixData.day_pillar?.heavenly?.element === "earth" ? "이는 만물을 길러내고 포용하는 넓은 대지와 같습니다. 묵묵히 중심을 지키고 다른 기운들이 조화를 이루도록 돕는 중재자 역할을 하며, 신의(信)와 균형 감각이 뛰어납니다. 쉽게 흔들리지 않는 든든함으로 주변 사람들의 절대적인 신뢰를 끄는 힘이 있습니다." : matrixData.day_pillar?.heavenly?.element === "metal" ? "이는 세월 속에 다듬어진 단단한 쇠나 제련된 보석을 의미합니다. 옳고 그름을 명확히 하는 결단력과 정의(義), 그리고 본사물의 핵심을 파악하는 분석력이 탁월합니다. 겉으로는 차가워 보일 수 있으나 한번 맺은 인연에 대해서는 무서운 의리를 보여주는 외유내강의 전형입니다." : "이는 쉼 없이 아래로 흐르며 생명을 이어나가는 지혜(智)와 유연함을 뜻합니다. 어떠한 형태의 그릇에 담겨도 스스로 모양을 바꾸듯 타인에 대한 공감 능력과 환경 적응력이 타의 추종을 불허합니다. 깊은 사유와 자유로운 사고방식이 성공의 가장 큰 열쇠가 됩니다."}\n\n이 작은 글자 하나가 당신이 세상과 소통하는 창문이 됩니다. 내 안의 기운을 스스로 사랑하고 긍정할 때, 운명의 주도권을 쥘 수 있습니다.`
                   })}
                   className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
                 >
@@ -449,8 +449,10 @@ export default function Home() {
                 <div
                   onClick={() => setElementDetailModal({
                     isOpen: true,
-                    title: "신강/신약 판별",
-                    content: `당신은 [${sajuStrength}] 체질입니다. 신강사주는 주관이 뚜렷하고 추진력이 강해 리더십을 발휘하기 좋으며, 신약사주는 유연함과 처세술이 뛰어나 주변 환경에 잘 적응하고 사람들의 조력을 끌어내는 능력이 탁월합니다.`
+                    title: "에너지의 중심: 신강/신약",
+                    content: `명리학에서 말하는 '신강(身強)'과 '신약(身弱)'은 체력적인 강함이 절대 아닙니다. 이는 내가 타고난 본질의 기운(일간)을 돕는 주변 환경이나 에너지가 내 사주 내에 얼마나 많이 포진되어 있는가를 나타내는 저울과 같습니다.\n\n당신의 사주는 **[${sajuStrength}]**의 형태를 띠고 있습니다.\n\n${sajuStrength === "신강(身強)"
+                      ? "신강한 사주는 자아와 줏대가 매우 뚜렷하여 어떠한 풍파가 닥쳐도 자신만의 길을 뚫고 나가는 강인한 멘탈과 불도저 같은 추진력을 상징합니다. 독립심이 강해 타인에게 기대기보다는 스스로 성취를 이루는 것을 선호합니다. 때로는 아집으로 비춰질 수 있으므로, 넘치는 에너지를 타인을 포용하고 돕는 데(식상, 재성, 관성의 기운) 사용하거나 밖으로 발산하는 취미를 가졌을 때 인생의 밸런스가 황금비율을 이루며 크게 발복합니다."
+                      : "신약한 사주는 딱딱한 참나무라기보다는 바람에 유연하게 휘어지는 대나무와 같습니다. 날카로운 감수성과 탁월한 처세술, 주변 사람들과 환경에 물 흐르듯 적응하는 친화력이 최대 강점입니다. 거친 세상 속에서도 타인의 힘을 빌리고 협력하여 거대한 결과를 이끌어내는 팀 플레이어이자 전략가입니다. 스스로 결정의 무게를 온전히 짊어지기보다는, 지식과 자격증(인성)을 갖추거나 믿을 수 있는 동료(비겁)와 결속할 때 폭발적인 시너지가 창출됩니다."}\n\n신강과 신약은 결코 좋고 나쁨의 우열이 아닙니다. 자동차에 비유하자면 사륜구동 SUV(신강)냐, 속도와 코너링에 특화된 스포츠카(신약)냐의 차이일 뿐입니다. 내 몸통의 특성을 명확히 이해하고, 나에게 맞는 도로(직업, 환경)를 선택하는 것이 개운(開運)의 첫걸음입니다.`
                   })}
                   className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
                 >
@@ -462,8 +464,8 @@ export default function Home() {
                 <div
                   onClick={() => setElementDetailModal({
                     isOpen: true,
-                    title: "선천적 기운 분포",
-                    content: `목(${elementCounts["목"]}), 화(${elementCounts["화"]}), 토(${elementCounts["토"]}), 금(${elementCounts["금"]}), 수(${elementCounts["수"]}) 비율로 구성된 사주입니다. 넘치는 기운은 덜어내고 부족한 기운은 채용(색상, 방향, 직업)하여 균형을 맞출 때 인생의 흐름이 가장 순탄하게 열립니다.`
+                    title: "오행의 교향곡: 선천적 기운 분포",
+                    content: `우주 만물은 목(木), 화(火), 토(土), 금(金), 수(水) 다섯 가지 에너지의 상호작용으로 이루어집니다. 당신의 태어난 생년월일시 여덟 글자(팔자)는 이 5대 기운의 특별한 바코드이자, 평생 변하지 않는 나의 선천적 재능 스탯표입니다.\n\n▶ 당신의 오행 성적부:\n🌿 목(木): ${elementCounts["목"]}개 - 기획력, 창조성, 인자함\n🔥 화(火): ${elementCounts["화"]}개 - 열정, 표현력, 화려함\n🪨 토(土): ${elementCounts["토"]}개 - 포용력, 신용, 중재 능력\n🪓 금(金): ${elementCounts["금"]}개 - 결단력, 분석, 강직함\n💧 수(水): ${elementCounts["수"]}개 - 유연성, 지혜, 수용력\n\n특정 오행이 3개 이상이라면 그 기운이 내 삶을 강하게 주도하는 무기가 되지만, 너무 지나치면 오히려 해당 기운의 부정적 단점(예: 나무가 너무 빽빽해 자라지 못함)이 발현될 가능성도 담고 있습니다.\n\n사주의 핵심은 **중용(中庸)**입니다. 그래프에서 유난히 뾰족하게 튀어나온(과도한) 에너지는 사회적 활동이나 승화(운동, 기부 등)를 통해 기운을 설기(빼내기)해 주어야 합니다. 반대로 전혀 없거나 1개 이하로 부족하여 움푹 패인 오행 부위는, 행운 코디 추천 색상의 의류를 입어 보완하거나 그 오행이 상징하는 행동 기질(예: 수가 부족하다면 유연하고 양보하는 태도 등)을 의식적으로 습관화하여 보완할 때 내 삶의 흐름이 막힘없이 둥글고 원만하게 돌아가게 됩니다.`
                   })}
                   className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
                 >
@@ -556,20 +558,37 @@ export default function Home() {
       {/* 1. Element Detail Modal */}
       {elementDetailModal.isOpen && (
         <div className="fixed inset-0 z-[110] flex justify-center items-end sm:items-center bg-black/60 backdrop-blur-sm sm:p-5 animate-in fade-in duration-200" onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}>
-          <div className="bg-white rounded-t-[32px] sm:rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-5 duration-300" onClick={e => e.stopPropagation()}>
-            <div className="p-6 pt-8 flex flex-col items-center">
+          <div className="bg-white rounded-t-[32px] sm:rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-5 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="p-6 pt-8 pb-4 flex flex-col items-center border-b border-gray-100 shrink-0 sticky top-0 bg-white z-10">
               <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-6 absolute top-3 sm:hidden"></div>
-              <h3 className="font-extrabold text-[22px] text-gray-900 mb-4">{elementDetailModal.title}</h3>
-              <p className="text-[16px] text-gray-700 leading-relaxed font-medium text-center break-keep px-2">
-                {elementDetailModal.content}
-              </p>
+              <h3 className="font-extrabold text-[22px] text-gray-900 mb-2">{elementDetailModal.title}</h3>
             </div>
-            <div className="p-5 w-full">
+
+            <div className="p-6 overflow-y-auto">
+              <div className="text-[15px] text-gray-700 leading-[1.8] font-medium break-keep">
+                {elementDetailModal.content.split('\n').map((line, i) => (
+                  <p key={i} className={line.trim() === '' ? 'h-4' : 'mb-1'}>
+                    {line.includes('**') ? (
+                      // Simple bold parser for **text**
+                      line.split(/(\*\*.*?\*\*)/).map((part, j) =>
+                        part.startsWith('**') && part.endsWith('**')
+                          ? <strong key={j} className="text-gray-900 font-extrabold">{part.slice(2, -2)}</strong>
+                          : part
+                      )
+                    ) : (
+                      line
+                    )}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-5 w-full shrink-0 sticky bottom-0 bg-white border-t border-gray-50">
               <button
                 onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}
                 className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
               >
-                확인
+                나의 기운 확인 완료
               </button>
             </div>
           </div>
