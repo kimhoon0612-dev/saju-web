@@ -219,11 +219,11 @@ export default function DirectStorePage() {
                 {/* Categories Grid */}
                 <div className="bg-white pt-8 pb-8 px-4 grid grid-cols-5 gap-y-6 rounded-b-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative z-20 -mt-4">
                     {[
+                        { icon: Star, label: "전체보기", color: "text-gray-700" },
                         { icon: BadgeDollarSign, label: "재물/사업", color: "text-gray-700" },
                         { icon: Heart, label: "애정/인연", color: "text-gray-700" },
                         { icon: Dumbbell, label: "건강/수호", color: "text-gray-700" },
                         { icon: Sparkles, label: "소원/기타", color: "text-gray-700" },
-                        { icon: Star, label: "전체보기", color: "text-gray-700" },
                     ].map((category, idx) => (
                         <button key={idx} onClick={() => setActiveCategory(activeCategory === category.label ? null : category.label)} className="flex flex-col items-center justify-center gap-2 group">
                             <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border ${activeCategory === category.label ? 'border-yellow-400 border-2 shadow-[0_4px_12px_rgba(250,204,21,0.3)]' : 'border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'} flex items-center justify-center transition-all relative overflow-hidden`}>
