@@ -97,72 +97,74 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     const minutes = Array.from({ length: 60 }, (_, i) => i);
 
     return (
-        <div className="w-full rounded-[24px] bg-[#1a142d]/80 backdrop-blur-md border border-[#d4af37]/20 p-6 sm:p-8 shadow-xl relative overflow-hidden">
-            <header className="mb-6 z-10 relative">
-                <h3 className="font-pretendard text-xl sm:text-2xl font-black text-amber-100 flex items-center gap-2 tracking-tight">
-                    <Sparkles className="w-6 h-6 text-[#d4af37]" />운명의 좌표 입력
+        <div className="w-full rounded-[32px] bg-white/95 backdrop-blur-md border border-gray-100 p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
+            <header className="mb-8 z-10 relative flex flex-col items-center">
+                <div className="w-14 h-14 bg-blue-50 rounded-[20px] flex items-center justify-center mb-4 text-blue-500 shadow-sm border border-blue-100/50">
+                    <Sparkles className="w-7 h-7" />
+                </div>
+                <h3 className="font-pretendard text-[24px] sm:text-[28px] font-black text-gray-900 tracking-tight text-center">
+                    나의 운명 코드
                 </h3>
-                <p className="font-outfit text-xs text-[#d4af37]/60 mt-1 uppercase tracking-widest font-medium">Input Birth Coordinates</p>
+                <p className="text-[14px] text-gray-500 mt-2 font-bold text-center">정확한 사주 분석을 위해 정보를 입력해주세요</p>
             </header>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
-
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6 relative z-10">
                 {/* 이름 입력 */}
-                <div className="flex flex-col gap-2.5">
-                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
-                        <User className="w-[18px] h-[18px] text-[#d4af37]/60" />이름
+                <div className="flex flex-col gap-2">
+                    <label className="font-pretendard text-[13px] text-gray-600 flex items-center gap-1.5 font-extrabold px-1">
+                        어떻게 불러드릴까요?
                     </label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="이름을 입력해주세요 (선택)"
-                        className="w-full h-14 bg-[#110e1b]/80 border border-[#d4af37]/30 rounded-xl px-4 font-pretendard text-[15px] font-medium text-white placeholder-[#d4af37]/40 focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:bg-[#1a142d] transition-all shadow-inner"
+                        placeholder="이름이나 닉네임을 입력해주세요 (선택)"
+                        className="w-full h-14 bg-gray-50/50 border border-gray-200 rounded-[18px] px-5 font-pretendard text-[16px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
                     />
                 </div>
 
                 {/* 성별 선택 */}
-                <div className="flex flex-col gap-2.5">
-                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
-                        성별 <span className="text-[#d4af37]/50 text-[10px] font-medium tracking-wide">대운 주행 결정</span>
+                <div className="flex flex-col gap-2">
+                    <label className="font-pretendard text-[13px] text-gray-600 flex items-center gap-1.5 font-extrabold px-1">
+                        성별
                     </label>
-                    <div className="flex flex-row w-full gap-2">
+                    <div className="flex flex-row w-full gap-2.5">
                         <button
                             type="button"
                             onClick={(e) => { e.preventDefault(); setGender('M'); }}
                             className={cn(
-                                "flex-1 py-3.5 rounded-xl text-[15px] font-bold transition-all duration-200 border",
-                                gender === 'M' ? "bg-amber-600/20 text-amber-200 border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]" : "bg-[#110e1b]/60 text-white/50 border-white/10 hover:bg-[#110e1b]"
+                                "flex-1 py-4 rounded-[18px] text-[16px] font-black transition-all duration-200 border",
+                                gender === 'M' ? "bg-blue-50 text-blue-600 border-blue-200 shadow-sm" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
                             )}
                         >
-                            남성 (乾)
+                            남성
                         </button>
                         <button
                             type="button"
                             onClick={(e) => { e.preventDefault(); setGender('F'); }}
                             className={cn(
-                                "flex-1 py-3.5 rounded-xl text-[15px] font-bold transition-all duration-200 border",
-                                gender === 'F' ? "bg-purple-600/20 text-purple-200 border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)]" : "bg-[#110e1b]/60 text-white/50 border-white/10 hover:bg-[#110e1b]"
+                                "flex-1 py-4 rounded-[18px] text-[16px] font-black transition-all duration-200 border",
+                                gender === 'F' ? "bg-red-50 text-red-500 border-red-200 shadow-sm" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
                             )}
                         >
-                            여성 (坤)
+                            여성
                         </button>
                     </div>
                 </div>
 
                 {/* 양력/음력 선택 및 출생 일자 */}
-                <div className="flex flex-col gap-2.5 mt-3">
-                    <div className="flex items-center justify-between">
-                        <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
-                            출생 일자
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between px-1 mb-1">
+                        <label className="font-pretendard text-[13px] text-gray-600 flex items-center gap-1.5 font-extrabold">
+                            생년월일
                         </label>
-                        <div className="flex items-center bg-[#110e1b]/80 border border-white/10 rounded-lg p-1">
+                        <div className="flex items-center bg-gray-100/80 rounded-xl p-1">
                             <button
                                 type="button"
                                 onClick={() => setIsLunar(false)}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-md text-sm font-bold transition-all duration-200",
-                                    !isLunar ? "bg-[#d4af37]/20 text-[#d4af37] shadow-sm" : "text-white/40 hover:text-white/70"
+                                    "px-4 py-1.5 rounded-lg text-[13px] font-extrabold transition-all duration-200",
+                                    !isLunar ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                                 )}
                             >
                                 양력
@@ -171,8 +173,8 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 type="button"
                                 onClick={() => setIsLunar(true)}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-md text-sm font-bold transition-all duration-200",
-                                    isLunar ? "bg-[#d4af37]/20 text-[#d4af37] shadow-sm" : "text-white/40 hover:text-white/70"
+                                    "px-4 py-1.5 rounded-lg text-[13px] font-extrabold transition-all duration-200",
+                                    isLunar ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                                 )}
                             >
                                 음력
@@ -181,92 +183,92 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     </div>
 
                     {isLunar && (
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-2 px-1">
                             <input
                                 type="checkbox"
                                 id="leap_month"
                                 checked={isLeapMonth}
                                 onChange={(e) => setIsLeapMonth(e.target.checked)}
-                                className="w-4 h-4 rounded border-[#d4af37]/40 bg-[#110e1b] text-[#d4af37] focus:ring-[#d4af37] focus:ring-offset-[#1a142d]"
+                                className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                             />
-                            <label htmlFor="leap_month" className="text-sm text-white/70 font-bold cursor-pointer select-none">
+                            <label htmlFor="leap_month" className="text-[14px] text-gray-700 font-bold cursor-pointer select-none">
                                 윤달입니다
                             </label>
                         </div>
                     )}
 
-                    <div className="flex items-center gap-1.5 w-full">
-                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {years.map(y => <option key={y} value={y} className="bg-[#1a142d] text-white">{y}</option>)}
+                    <div className="flex items-center gap-2 w-full">
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {years.map(y => <option key={y} value={y} className="text-gray-900">{y}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {months.map(m => <option key={m} value={m} className="bg-[#1a142d] text-white">{m}</option>)}
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {months.map(m => <option key={m} value={m} className="text-gray-900">{m}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {days.map(d => <option key={d} value={d} className="bg-[#1a142d] text-white">{d}</option>)}
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {days.map(d => <option key={d} value={d} className="text-gray-900">{d}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
                         </div>
                     </div>
                 </div>
 
-                {/* 태어난 시간 (Full Width) */}
-                <div className="flex flex-col gap-2.5 mt-2 mb-2">
-                    <label className="font-pretendard text-sm text-[#d4af37]/80 flex items-center gap-2 font-bold">
-                        출생 시간
+                {/* 태어난 시간 */}
+                <div className="flex flex-col gap-2 mb-2">
+                    <label className="font-pretendard text-[13px] text-gray-600 flex items-center gap-1.5 font-extrabold px-1">
+                        태어난 시간
                     </label>
-                    <div className="flex items-center gap-1.5 w-full">
-                        <div className="flex-[0.8] flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={ampm} onChange={(e) => setAmpm(e.target.value)} className="bg-transparent text-[#d4af37] font-pretendard font-bold text-sm sm:text-[15px] outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                <option value="오전" className="bg-[#1a142d] text-white">오전</option>
-                                <option value="오후" className="bg-[#1a142d] text-white">오후</option>
+                    <div className="flex items-center gap-2 w-full">
+                        <div className="flex-[0.8] flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={ampm} onChange={(e) => setAmpm(e.target.value)} className="bg-transparent text-gray-900 font-pretendard font-black text-[16px] outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                <option value="오전" className="text-gray-900">오전</option>
+                                <option value="오후" className="text-gray-900">오후</option>
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/80 absolute right-2 pointer-events-none" />
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 pointer-events-none" />
                         </div>
-                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {hours.map(h => <option key={h} value={h} className="bg-[#1a142d] text-white">{h}</option>)}
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {hours.map(h => <option key={h} value={h} className="text-gray-900">{h}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-[#110e1b]/80 border border-white/10 rounded-xl px-2 sm:px-3 py-3.5 hover:border-[#d4af37]/40 transition-all focus-within:border-[#d4af37] focus-within:bg-[#1a142d] relative shadow-inner">
-                            <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-white font-outfit text-base sm:text-lg font-bold outline-none w-full appearance-none cursor-pointer text-center relative z-10">
-                                {minutes.map(m => <option key={m} value={m} className="bg-[#1a142d] text-white">{m.toString().padStart(2, '0')}</option>)}
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                            <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
+                                {minutes.map(m => <option key={m} value={m} className="text-gray-900">{m.toString().padStart(2, '0')}</option>)}
                             </select>
-                            <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]/50 absolute right-6 sm:right-8 pointer-events-none" />
-                            <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
                         </div>
                     </div>
                 </div>
 
                 {/* 내 정보 기억하기 Checkbox */}
-                <div className="flex items-center justify-end w-full px-1">
+                <div className="flex items-center justify-end w-full px-2">
                     <button
                         type="button"
                         onClick={() => setIsRemembered(!isRemembered)}
                         className="flex items-center gap-2 group outline-none"
                     >
-                        <div className="relative flex items-center justify-center w-[18px] h-[18px]">
+                        <div className="relative flex items-center justify-center w-5 h-5">
                             {isRemembered ? (
-                                <CheckSquare className="w-5 h-5 text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] transition-all" />
+                                <CheckSquare className="w-5 h-5 text-blue-500" />
                             ) : (
-                                <Square className="w-5 h-5 text-white/30 group-hover:text-white/50 transition-all" />
+                                <Square className="w-5 h-5 text-gray-300 group-hover:text-gray-400 transition-colors" />
                             )}
                         </div>
                         <span className={cn(
-                            "text-[13px] font-pretendard transition-all",
-                            isRemembered ? "text-amber-200/90 font-bold" : "text-white/50 font-medium group-hover:text-white/70"
+                            "text-[14px] font-pretendard transition-all",
+                            isRemembered ? "text-blue-600 font-black" : "text-gray-500 font-bold group-hover:text-gray-700"
                         )}>
                             내 정보 기억하기
                         </span>
@@ -278,19 +280,19 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     type="submit"
                     disabled={isLoading}
                     className={cn(
-                        "mt-4 w-full py-4.5 rounded-xl font-pretendard font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2",
+                        "mt-2 w-full h-[60px] rounded-[20px] font-pretendard font-extrabold text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
                         isLoading
-                            ? "bg-[#110e1b] text-white/50 border border-white/10 cursor-not-allowed"
-                            : "bg-gradient-to-r from-amber-500 to-amber-400 text-[#111] shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 border border-amber-300"
+                            ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
+                            : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0"
                     )}
                 >
                     {isLoading ? (
                         <>
-                            <div className="w-5 h-5 border-2 border-white/20 border-t-white/80 rounded-full animate-spin" />
-                            운명의 좌표 확인 중...
+                            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+                            정보 분석 중...
                         </>
                     ) : (
-                        buttonText || "사주 명식 확인하기"
+                        buttonText || "나의 사주 보러가기"
                     )}
                 </button>
 
