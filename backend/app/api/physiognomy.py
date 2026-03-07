@@ -30,7 +30,7 @@ async def analyze_face(request: PhysiognomyRequest):
         image_bytes = base64.b64decode(image_data)
         
         # Prepare the model
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
         
         prompt = (
             "당신은 한국의 전통 관상학 및 얼음결 분석을 통달한 명리학자입니다. "
