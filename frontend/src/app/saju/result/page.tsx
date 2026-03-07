@@ -6,7 +6,6 @@ import ActionableInsightWidget from "@/components/ActionableInsightWidget";
 import DaewunTimeline, { DaewunPillar } from "@/components/DaewunTimeline";
 import FortuneCycleDashboard from "@/components/FortuneCycleDashboard";
 import DailyGuideCard, { DailyFortuneData } from "@/components/DailyGuideCard";
-import AgenticChatbot from "@/components/AgenticChatbot";
 import MonthlyReportTemplate from "@/components/MonthlyReportTemplate";
 import ElementalRadarChart from "@/components/ElementalRadarChart";
 import { ArrowLeft } from "lucide-react";
@@ -321,8 +320,6 @@ function SajuContent() {
                     </div>
                 )}
             </main>
-
-            <AgenticChatbot sajuContext={matrix} />
         </div>
     );
 }
