@@ -2,12 +2,7 @@ import json
 import os
 from typing import Dict, Any
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-try:
-    from langchain_chroma import Chroma
-except Exception as e:
-    print(f"ChromaDB import failed: {e}")
-    Chroma = None
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -21,33 +16,19 @@ class SajuRAGChain:
     3. 생성 (Generation): 고전 문헌을 인용한 현대적이고 실용적인 인사이트 문서 생성
     """
 
-    def __init__(self, llm_model_name: str = "gpt-4o-mini", db_path: str = "./chroma_db"):
+    def __init__(self, llm_model_name: str = "gpt-4o-mini"):
         self.llm_model_name = llm_model_name
-        self.db_path = db_path
-        
-        # 실제 운영에서는 os.environ.get("OPENAI_API_KEY") 확인
-        # 여기서는 LLM 초기화를 지연시키기 위해 None으로 둠 (API 키 없을 시 대비)
         self.llm = None 
-        self.embeddings = None
-        self.vector_store = None
-        self._db_initialized = False
 
-    def _init_db(self):
-        if self._db_initialized: return
-        self._db_initialized = True
-        try:
-            from langchain_chroma import Chroma
-            self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-            self.vector_store = Chroma(
-                collection_name="classical_saju_texts",
-                embedding_function=self.embeddings,
-                persist_directory=self.db_path
-            )
-        except Exception as e:
-            import traceback
-            print(f"Failed to load Vector DB: {e}")
-            traceback.print_exc()
-            self.vector_store = None
+    def _init_llm(self):
+        if self.llm is None:
+            # 실제 서비스시에는 os.environ.get 사용
+            api_key = os.environ.get("OPENAI_API_KEY", "dummy_key_for_local_testing")
+            try:
+                self.llm = ChatOpenAI(model=self.llm_model_name, temperature=0.7, openai_api_key=api_key)
+            except Exception as e:
+                print(f"LLM Init Error: {e}")
+                self.llm = None
 
     def analyze_saju_structure(self, saju_matrix: Dict[str, Any]) -> str:
         """
@@ -68,25 +49,10 @@ class SajuRAGChain:
 
     def retrieve_classical_texts(self, search_query: str) -> str:
         """
-        Step 2: 하이브리드 검색 (Vector DB 호출)
+        No Vector DB used to save memory on Render Free Tier.
+        The LLM's internal knowledge of Jeokcheonsu and Gungtongbogam will suffice.
         """
-        self._init_db()
-        if not self.vector_store:
-            return "[데이터베이스 연결 실패] 적천수: 甲木參天 脫胎要火 (갑목은 성장을 위해 반드시 화가 필요함)"
-            
-        # 상위 2개 유사 문서 검색
-        results = self.vector_store.similarity_search(search_query, k=2)
-        
-        if not results:
-            return "[검색 결과 없음] 관련 고전 문헌을 찾을 수 없습니다."
-            
-        context_str = ""
-        for i, doc in enumerate(results):
-            context_str += f"- 출처: {doc.metadata.get('source', '알 수 없음')}\n"
-            context_str += f"- 원문: {doc.metadata.get('original_text', '')}\n"
-            context_str += f"- 해설: {doc.metadata.get('modern_meaning', '')}\n\n"
-            
-        return context_str
+        return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다."
 
     def generate_insight(self, saju_matrix: Dict[str, Any]) -> str:
         """
@@ -98,19 +64,14 @@ class SajuRAGChain:
         # 2. 관련 문헌 로드
         docs_context = self.retrieve_classical_texts(query)
         
-        # 3. LLM 생성 (API 키 예외 처리)
-        api_key = os.environ.get("OPENAI_API_KEY")
-        if not api_key or api_key == "":
-            print("WARNING: OPENAI_API_KEY is not set. Using Mock RAG Output.")
-            # Fallback mock UI
+        # 3. LLM 생성
+        self._init_llm()
+        if self.llm is None:
             return f"""오늘의 에너지는 당신의 내재된 잠재력을 끌어올리는 시기입니다. 
 당신의 사주 구조 상, 현재의 상황을 극복하기 위해서는 일상의 루틴을 비틀어보는 과감함이 필요합니다.
 
 📌 고전문헌 레퍼런스
 {docs_context}"""
-            
-        if self.llm is None:
-            self.llm = ChatOpenAI(model=self.llm_model_name, temperature=0.7)
             
         prompt = ChatPromptTemplate.from_template(
             """당신은 MZ세대를 대상으로 하는 세련된 AI 명리학 컨설턴트입니다.
