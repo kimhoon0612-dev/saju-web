@@ -11,7 +11,7 @@ def transcribe_audio_gemini(audio_bytes: bytes, mime_type: str = "audio/webm") -
         return "GEMINI_API_KEY가 설정되지 않아 시스템(Mock) 응답으로 대체합니다. 테스트용 음성입니다."
     
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-flash-latest")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     
     try:
         # Pass the bytes directly as inline data
