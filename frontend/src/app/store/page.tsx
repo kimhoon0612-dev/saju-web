@@ -156,7 +156,9 @@ export default function DirectStorePage() {
                             elementTheme: p.theme,
                             imageUrl: p.image_url || '/talismans/health.png'
                         }));
-                        setProducts([...dbProducts, ...storeProducts]);
+                        const allProducts = [...storeProducts, ...dbProducts];
+                        const uniqueProducts = Array.from(new Map(allProducts.map(item => [item.name, item])).values());
+                        setProducts(uniqueProducts);
                     }
                 }
             } catch (error) {
