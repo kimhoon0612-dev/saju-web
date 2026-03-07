@@ -438,21 +438,21 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">내게 맞는 직업 찾기</h2>
                     </div>
                     <div className="grid grid-cols-3 gap-x-2">
-                        <Link href="#" className="flex flex-col items-center gap-2 group cursor-pointer">
+                        <Link href="/saju/confirm?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-[18px] shadow-sm flex items-center justify-center relative mb-1">
                                 <div className="absolute w-[22px] h-[22px] bg-[#fbff3a] rounded-full bottom-1 right-1 opacity-80"></div>
                                 <Briefcase size={28} strokeWidth={1.5} className="relative z-10 text-[#222] group-hover:-translate-y-1 transition-transform" />
                             </div>
                             <span className="text-[13px] font-bold text-gray-800">취업 운세</span>
                         </Link>
-                        <Link href="#" className="flex flex-col items-center gap-2 group cursor-pointer">
+                        <Link href="/saju/confirm?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-[18px] shadow-sm flex items-center justify-center relative mb-1">
                                 <div className="absolute w-[22px] h-[22px] bg-[#fbff3a] rounded-full top-2 right-1 opacity-80"></div>
                                 <LineChart size={28} strokeWidth={1.5} className="relative z-10 text-[#222] group-hover:-translate-y-1 transition-transform" />
                             </div>
                             <span className="text-[13px] font-bold text-gray-800">능력 평가</span>
                         </Link>
-                        <Link href="#" className="flex flex-col items-center gap-2 group cursor-pointer">
+                        <Link href="/saju/confirm?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-[18px] shadow-sm flex items-center justify-center relative mb-1">
                                 <div className="absolute w-[22px] h-[22px] bg-[#fbff3a] rounded-full bottom-2 left-1 opacity-80"></div>
                                 <BrainCircuit size={28} strokeWidth={1.5} className="relative z-10 text-[#222] group-hover:-translate-y-1 transition-transform" />
