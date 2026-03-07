@@ -498,35 +498,6 @@ export default function FortuneHubPage() {
                     </div>
                 </section>
 
-                {/* Section 6: 궁합 파헤치기 (List Variant) */}
-                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-medium tracking-tight">궁합 파헤치기</span>
-                        <h2 className="text-[20px] font-extrabold mt-0.5 text-[#111]">우리는 어떻게 될까?</h2>
-                    </div>
-                    <div className="flex flex-col gap-5">
-                        <Link href="/saju/confirm?type=짝궁합" className="flex items-center gap-4 group cursor-pointer">
-                            <div className="w-[52px] h-[52px] rounded-full bg-[#f8f9fb] flex items-center justify-center border border-gray-100 shadow-sm shrink-0">
-                                <div className="absolute w-[18px] h-[18px] bg-[#fbff3a] rounded-full opacity-80"></div>
-                                <HeartHandshake size={24} strokeWidth={1.5} className="relative z-10 text-[#222]" />
-                            </div>
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-bold text-[#222]">짝궁합</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5">쉽고 자세한 해석을 원한다면!</p>
-                            </div>
-                        </Link>
-                        <Link href="/saju/confirm?type=정통궁합" className="flex items-center gap-4 group cursor-pointer">
-                            <div className="w-[52px] h-[52px] rounded-full bg-[#f8f9fb] flex items-center justify-center border border-gray-100 shadow-sm shrink-0">
-                                <div className="absolute w-[18px] h-[18px] bg-[#fbff3a] rounded-full translate-x-1 opacity-80"></div>
-                                <Puzzle size={24} strokeWidth={1.5} className="relative z-10 text-[#222]" />
-                            </div>
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-bold text-[#222]">정통궁합</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5">연애 시작 전 확인 필수!</p>
-                            </div>
-                        </Link>
-                    </div>
-                </section>
 
             </main>
 
