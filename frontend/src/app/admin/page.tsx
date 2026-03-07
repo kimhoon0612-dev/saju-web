@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, ShoppingBag, Users, ShieldAlert, Activity, DollarSign, Eye, Search, AlertTriangle, CheckCircle, Database, Sparkles } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, ShieldAlert, Activity, DollarSign, Eye, Search, AlertTriangle, CheckCircle, Database, Sparkles, X, UploadCloud, Edit2 } from 'lucide-react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, PieChart, Pie, Cell, Legend
@@ -26,6 +26,23 @@ export default function AdminDashboard() {
     const [sandboxResult, setSandboxResult] = useState<any>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [goodsStats, setGoodsStats] = useState<any>(null);
+
+    // Upload/Edit State
+    const [uploadMode, setUploadMode] = useState<'sandbox' | 'direct'>('sandbox');
+    const [directName, setDirectName] = useState("");
+    const [directPrice, setDirectPrice] = useState<number>(15000);
+    const [directDescription, setDirectDescription] = useState("");
+    const [directTheme, setDirectTheme] = useState("wealth");
+    const [directImageFile, setDirectImageFile] = useState<File | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    // Edit Modal State
+    const [editingProduct, setEditingProduct] = useState<any>(null);
+    const [editName, setEditName] = useState("");
+    const [editPrice, setEditPrice] = useState<number>(0);
+    const [editDescription, setEditDescription] = useState("");
+    const [editTheme, setEditTheme] = useState("wealth");
+    const [editImageFile, setEditImageFile] = useState<File | null>(null);
 
     // Expert Registration State
     const [expertName, setExpertName] = useState("");
@@ -163,6 +180,91 @@ export default function AdminDashboard() {
             fetchInventory();
         } catch (e) {
             console.error(e);
+        }
+    };
+
+    const handleDirectUploadImage = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch('/api/admin/talisman/upload', {
+            method: 'POST',
+            body: formData
+        });
+        if (!res.ok) throw new Error("업로드 실패");
+        const data = await res.json();
+        return data.document_url;
+    };
+
+    const handleDirectSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!directName || !directImageFile) return alert("상품명과 부적 이미지를 등록해주세요");
+        setIsUploading(true);
+        try {
+            const imageUrl = await handleDirectUploadImage(directImageFile);
+
+            await fetch('/api/admin/talisman/inventory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: directName,
+                    theme: directTheme,
+                    price_points: directPrice,
+                    prompt_template: directDescription || "관리자 직접 업로드 상품",
+                    is_active: true,
+                    image_url: imageUrl
+                })
+            });
+            alert('인벤토리에 성공적으로 등록되었습니다.');
+            setDirectName("");
+            setDirectDescription("");
+            setDirectImageFile(null);
+            fetchInventory();
+        } catch (e) {
+            console.error(e);
+            alert("등록 실패");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleEditOpen = (product: any) => {
+        setEditingProduct(product);
+        setEditName(product.name);
+        setEditPrice(product.price);
+        setEditDescription(product.description || "");
+        setEditTheme(product.theme);
+        setEditImageFile(null);
+    };
+
+    const handleEditSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsUploading(true);
+        try {
+            let imageUrl = editingProduct.image_url;
+            if (editImageFile) {
+                imageUrl = await handleDirectUploadImage(editImageFile);
+            }
+
+            await fetch(`/api/admin/talisman/inventory/${editingProduct.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: editName,
+                    theme: editTheme,
+                    price_points: editPrice,
+                    prompt_template: editDescription || "수정된 상품",
+                    is_active: true,
+                    image_url: imageUrl
+                })
+            });
+            alert('상품이 수정되었습니다.');
+            setEditingProduct(null);
+            fetchInventory();
+        } catch (e) {
+            console.error(e);
+            alert("수정 실패");
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -319,53 +421,95 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Prompt Sandbox */}
                 <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20">
-                    <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 mb-4 flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-amber-400" /> AI 이미지 프롬프트 샌드박스
-                    </h3>
-                    <form onSubmit={handleSandboxSubmit} className="flex flex-col gap-4">
-                        <div>
-                            <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
-                            <select
-                                value={sandboxTheme} onChange={e => setSandboxTheme(e.target.value)}
-                                className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
-                            >
-                                <option value="wealth">재물/성공 (Wealth)</option>
-                                <option value="love">애정/궁합 (Love)</option>
-                                <option value="health">건강/평안 (Health)</option>
-                            </select>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-amber-400" /> 상품 추가
+                        </h3>
+                        <div className="flex bg-[#110e1b] rounded-lg p-1 border border-[#d4af37]/20">
+                            <button type="button" onClick={() => setUploadMode('sandbox')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${uploadMode === 'sandbox' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>AI 샌드박스</button>
+                            <button type="button" onClick={() => setUploadMode('direct')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${uploadMode === 'direct' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>직접 업로드</button>
                         </div>
-                        <div>
-                            <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
-                            <input
-                                type="number"
-                                value={sandboxPrice} onChange={e => setSandboxPrice(Number(e.target.value))}
-                                className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
-                                placeholder="예: 15000"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-sm font-bold text-white/70 mb-1 block">프롬프트 상세 템플릿</label>
-                            <textarea
-                                value={sandboxPrompt} onChange={e => setSandboxPrompt(e.target.value)}
-                                rows={4}
-                                className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none"
-                                placeholder="예: neon cyberpunk style lucky charm, detailed elements..."
-                            />
-                        </div>
-                        <button
-                            type="submit" disabled={isGenerating}
-                            className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-[#111] font-bold transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
-                        >
-                            {isGenerating ? "제작 중 (AI 호출)..." : "프롬프트 시뮬레이션 엔진 가동"}
-                        </button>
-                    </form>
+                    </div>
 
-                    {sandboxResult && (
-                        <div className="mt-6 border-t border-[#d4af37]/20 pt-6">
-                            <h4 className="text-sm font-bold text-white/70 mb-2">테스트 렌더링 결과 (생성시간: {sandboxResult.generation_time_ms}ms)</h4>
-                            <img src={sandboxResult.preview_image_url} alt="sandbox result" className="w-full h-48 object-cover rounded-xl border border-[#d4af37]/30 shadow-sm" />
-                            <button onClick={handlePublish} className="mt-3 w-full py-2 bg-[#d4af37] hover:bg-amber-400 rounded-lg text-[#111] text-sm font-bold transition-colors shadow-[0_0_10px_rgba(212,175,55,0.3)]">상점 인벤토리에 정식 등록하기</button>
-                        </div>
+                    {uploadMode === 'sandbox' ? (
+                        <>
+                            <form onSubmit={handleSandboxSubmit} className="flex flex-col gap-4">
+                                <div>
+                                    <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
+                                    <select
+                                        value={sandboxTheme} onChange={e => setSandboxTheme(e.target.value)}
+                                        className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
+                                    >
+                                        <option value="wealth">재물/성공 (Wealth)</option>
+                                        <option value="love">애정/궁합 (Love)</option>
+                                        <option value="health">건강/평안 (Health)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
+                                    <input
+                                        type="number"
+                                        value={sandboxPrice} onChange={e => setSandboxPrice(Number(e.target.value))}
+                                        className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
+                                        placeholder="예: 15000"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-bold text-white/70 mb-1 block">프롬프트 상세 템플릿</label>
+                                    <textarea
+                                        value={sandboxPrompt} onChange={e => setSandboxPrompt(e.target.value)}
+                                        rows={4}
+                                        className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none"
+                                        placeholder="예: neon cyberpunk style lucky charm, detailed elements..."
+                                    />
+                                </div>
+                                <button
+                                    type="submit" disabled={isGenerating}
+                                    className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-[#111] font-bold transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                                >
+                                    {isGenerating ? "제작 중 (AI 호출)..." : "프롬프트 시뮬레이션 엔진 가동"}
+                                </button>
+                            </form>
+
+                            {sandboxResult && (
+                                <div className="mt-6 border-t border-[#d4af37]/20 pt-6">
+                                    <h4 className="text-sm font-bold text-white/70 mb-2">테스트 렌더링 결과 (생성시간: {sandboxResult.generation_time_ms}ms)</h4>
+                                    <img src={sandboxResult.preview_image_url} alt="sandbox result" className="w-full h-48 object-cover rounded-xl border border-[#d4af37]/30 shadow-sm" />
+                                    <button onClick={handlePublish} className="mt-3 w-full py-2 bg-[#d4af37] hover:bg-amber-400 rounded-lg text-[#111] text-sm font-bold transition-colors shadow-[0_0_10px_rgba(212,175,55,0.3)]">상점 인벤토리에 정식 등록하기</button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <form onSubmit={handleDirectSubmit} className="flex flex-col gap-4">
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상품명</label>
+                                <input required type="text" value={directName} onChange={e => setDirectName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 무병장수부" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
+                                <select value={directTheme} onChange={e => setDirectTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                    <option value="wealth">재물/사업 (Wealth)</option>
+                                    <option value="love">애정/인연 (Love)</option>
+                                    <option value="health">건강/수호 (Health)</option>
+                                    <option value="wood">기타 소원 (Wish)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
+                                <input required type="number" value={directPrice} onChange={e => setDirectPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명</label>
+                                <textarea required value={directDescription} onChange={e => setDirectDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" placeholder="부적의 효능과 설명" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">이미지 업로드</label>
+                                <input required type="file" accept="image/*" onChange={e => setDirectImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
+                            </div>
+                            <button type="submit" disabled={isUploading} className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-[#2AC1BC] to-[#1F9B96] hover:from-[#1F9B96] hover:to-[#177874] text-white font-bold transition-all disabled:opacity-50">
+                                {isUploading ? "업로드 중..." : "직접 업로드하여 정식 배포"}
+                            </button>
+                        </form>
                     )}
                 </div>
 
@@ -393,7 +537,10 @@ export default function AdminDashboard() {
                                         <td className="p-3 font-bold text-amber-400">{item.price.toLocaleString()} 원</td>
                                         <td className="p-3"><span className="bg-green-500/20 text-green-300 px-2 py-1 rounded-md text-xs font-bold border border-green-500/30">판매중</span></td>
                                         <td className="p-3">
-                                            <button onClick={() => handleDeleteProduct(item.id)} className="text-red-400 hover:text-red-300 text-xs font-semibold focus:outline-none">삭제</button>
+                                            <div className="flex gap-3">
+                                                <button onClick={() => handleEditOpen(item)} className="text-blue-400 hover:text-blue-300 text-xs font-semibold focus:outline-none">수정</button>
+                                                <button onClick={() => handleDeleteProduct(item.id)} className="text-red-400 hover:text-red-300 text-xs font-semibold focus:outline-none">삭제</button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -661,6 +808,48 @@ export default function AdminDashboard() {
                 {activeTab === 'market' && renderMarket()}
                 {activeTab === 'system' && renderSystem()}
             </main>
+
+            {/* Edit Modal */}
+            {editingProduct && (
+                <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+                    <div className="bg-[#1a142d] border border-[#d4af37]/30 rounded-3xl w-full max-w-md p-6 shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-amber-100 flex items-center gap-2"><Edit2 className="w-5 h-5 text-[#d4af37]" /> 부적 수정</h3>
+                            <button onClick={() => setEditingProduct(null)} className="text-white/50 hover:text-white"><X className="w-6 h-6" /></button>
+                        </div>
+                        <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상품명</label>
+                                <input required type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
+                                <select value={editTheme} onChange={e => setEditTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                    <option value="wealth">재물/사업 (Wealth)</option>
+                                    <option value="love">애정/인연 (Love)</option>
+                                    <option value="health">건강/수호 (Health)</option>
+                                    <option value="wood">기타 소원 (Wish)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
+                                <input required type="number" value={editPrice} onChange={e => setEditPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명</label>
+                                <textarea required value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">이미지 업로드 (선택, 기존 이미지 유지됨)</label>
+                                <input type="file" accept="image/*" onChange={e => setEditImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
+                            </div>
+                            <button type="submit" disabled={isUploading} className="mt-4 w-full py-3 rounded-xl bg-[#d4af37] hover:bg-amber-400 text-black font-bold transition-all disabled:opacity-50">
+                                {isUploading ? "수정 중..." : "상품 수정 완료"}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

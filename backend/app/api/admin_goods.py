@@ -1,14 +1,15 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 import asyncio
 import time
+import os
+import shutil
 
 from app.core.database import get_db
 from app.models.market_models import Product
 
-import os
 from openai import OpenAI
 
 try:
@@ -118,6 +119,31 @@ async def get_inventory(db: AsyncSession = Depends(get_db)):
     products = result.scalars().all()
     return {"catalog": products}
 
+@router.put("/inventory/{product_id}")
+async def update_product(product_id: int, req: InventoryRequest, db: AsyncSession = Depends(get_db)):
+    """
+    [Admin] 기존 상점 인벤토리 상품 정보 수정
+    """
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
+        
+    product.name = req.name
+    product.description = req.prompt_template
+    product.price = req.price_points
+    product.theme = req.theme
+    product.is_active = req.is_active
+    
+    if req.image_url:
+        product.image_url = req.image_url
+        
+    await db.commit()
+    await db.refresh(product)
+    
+    return {"status": "success", "message": f"상품(ID:{product_id})이 수정되었습니다."}
+
 @router.delete("/inventory/{product_id}")
 async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
     """
@@ -133,3 +159,32 @@ async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     
     return {"status": "success", "message": f"상품(ID:{product_id})이 삭제되었습니다."}
+
+@router.post("/upload")
+async def upload_talisman_image(file: UploadFile = File(...)):
+    """
+    [Admin] 직접 부적 이미지를 업로드하여 프론트엔드 public 폴더에 저장합니다.
+    """
+    # 프론트엔드의 public/talismans/uploads 폴더 경로 설정
+    # backend/app/api 폴더를 기준으로 상대경로를 사용하여 frontend 폴더로 이동합니다.
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    frontend_public_dir = os.path.join(base_dir, "frontend", "public", "talismans", "uploads")
+    
+    # 폴더가 없으면 생성
+    os.makedirs(frontend_public_dir, exist_ok=True)
+    
+    try:
+        # 안전한 파일명 생성 (타임스탬프 추가)
+        timestamp = int(time.time())
+        safe_filename = f"{timestamp}_{file.filename}"
+        file_path = os.path.join(frontend_public_dir, safe_filename)
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        # 프론트엔드에서 접근할 수 있는 상대 경로 반환
+        public_url = f"/talismans/uploads/{safe_filename}"
+        return {"document_url": public_url, "message": "파일이 성공적으로 업로드되었습니다."}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"파일 업로드 실패: {str(e)}")

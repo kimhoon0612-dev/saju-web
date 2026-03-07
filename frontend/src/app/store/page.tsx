@@ -164,20 +164,41 @@ export default function DirectStorePage() {
             </div>
 
             <main className="w-full">
-                {/* Top Promotional Banner */}
-                <div className="w-full bg-[#FFE5B4] relative overflow-hidden px-6 pt-10 pb-8 rounded-b-[2rem]">
-                    <div className="absolute top-0 right-[-30px] w-64 h-64 opacity-20 pointer-events-none">
-                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#FFB020" d="M47.7,-57.2C59.4,-45.3,64.8,-27.1,68.5,-8.3C72.2,10.5,74.2,29.8,65.3,44.2C56.4,58.6,36.5,68,16.5,70.6C-3.5,73.1,-23.5,68.8,-40.4,57.1C-57.3,45.4,-70.9,26.4,-74,-6.2C-77.1,-38.8,-69.6,-69.8,-52.1,-80.6C-34.6,-91.4,-7.1,-82,-0.5,-81.4C6,-80.7,21,-89,35.9,-69.1C50.8,-49.2,35.9,-69.1,47.7,-57.2Z" transform="translate(100 100) scale(1.1)" />
-                        </svg>
+                {/* Animated Ad Banner Placeholder */}
+                <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden h-48 flex items-center justify-center border-b border-gray-100 rounded-b-[2rem]">
+                    {/* Background decorative elements */}
+                    <div className="absolute inset-0 opacity-40">
+                        <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+                        <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
                     </div>
-                    <div className="relative z-10 flex flex-col justify-center">
-                        <span className="inline-block bg-black text-white text-[10px] font-bold px-3 py-1.5 rounded-full mb-3 w-fit tracking-wide">금슬연리지부</span>
-                        <h2 className="text-[28px] font-black text-gray-900 leading-[1.15] tracking-tight mb-2">
-                            우리 두 사람,<br />
-                            한눈팔지 않게
+
+                    {/* Animated animals layer */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
+                        <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
+                        <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
+                        <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
+                        <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-8 py-5 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
+                        <span className="inline-block bg-indigo-100 text-indigo-700 text-[11px] font-black px-3 py-1 rounded-full mb-3 tracking-wide">
+                            NOTICE
+                        </span>
+                        <h2 className="text-[20px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
+                            광고 오픈 준비 중입니다
                         </h2>
-                        <p className="text-[15px] font-bold text-gray-700 max-w-[200px]">서로에게만 시선 고정</p>
+                        <p className="text-[14px] font-bold text-gray-600">
+                            동물 친구들이 열심히 공간을<br />꾸미고 있어요! 🐾
+                        </p>
+                    </div>
+
+                    {/* Pagination Dots (Decorative) */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
                     </div>
                 </div>
 

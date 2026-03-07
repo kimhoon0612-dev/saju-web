@@ -311,27 +311,41 @@ export default function FortuneHubPage() {
 
             <main className="max-w-md mx-auto flex flex-col gap-3 px-4 pt-3">
 
-                {/* Banner */}
-                <div className="w-full bg-[#ffcc99] rounded-[24px] p-6 relative overflow-hidden shadow-sm h-[130px] flex items-center cursor-pointer">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#ffd4a6] to-[#ffb870] z-0"></div>
-                    <div className="relative z-10 flex flex-col h-full justify-center pb-2">
-                        <span className="bg-[#111] text-white text-[10px] px-2.5 py-1 rounded-full w-max font-bold mb-2">복주머니 모으기 {'>'}</span>
-                        <h2 className="text-[20px] font-extrabold leading-tight text-[#222]">
-                            미션하면 복이<br />몽글몽글
+                {/* Animated Ad Banner Placeholder */}
+                <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-[24px] relative overflow-hidden h-40 flex items-center justify-center border border-gray-100 shadow-sm">
+                    {/* Background decorative elements */}
+                    <div className="absolute inset-0 opacity-40">
+                        <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+                        <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    </div>
+
+                    {/* Animated animals layer */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
+                        <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
+                        <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
+                        <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
+                        <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
+                        <span className="inline-block bg-indigo-100 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide">
+                            NOTICE
+                        </span>
+                        <h2 className="text-[18px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
+                            광고 오픈 준비 중입니다
                         </h2>
-                        <p className="text-[12px] text-gray-800 mt-1.5 font-medium">복주머니 톡, 봄이 톡!</p>
+                        <p className="text-[13px] font-bold text-gray-600">
+                            동물 친구들이 공간을 꾸미고 있어요! 🐾
+                        </p>
                     </div>
-                    {/* Dummy 3D illustration representation */}
-                    <div className="absolute right-[-10px] bottom-[-30px] w-[140px] h-[150px] bg-gradient-to-t from-orange-400 to-orange-200 rounded-full blur-2xl opacity-60 z-0"></div>
-                    <div className="absolute right-1 bottom-0 text-[100px] leading-none z-10 drop-shadow-lg">
-                        🐴
-                    </div>
-                    {/* Pagination Dots */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white opacity-100"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40"></div>
+
+                    {/* Pagination Dots (Decorative) */}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
                     </div>
                 </div>
 
