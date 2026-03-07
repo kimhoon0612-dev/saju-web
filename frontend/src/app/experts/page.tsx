@@ -18,7 +18,8 @@ export default function ExpertsPage() {
     useEffect(() => {
         const fetchExperts = async () => {
             try {
-                const res = await fetch('/api/experts');
+                const host = window.location.origin;
+                const res = await fetch(`${host}/api/experts?t=${Date.now()}`, { cache: 'no-store' });
                 if (res.ok) {
                     const data = await res.json();
                     setExperts(data);
