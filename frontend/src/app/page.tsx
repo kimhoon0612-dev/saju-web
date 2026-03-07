@@ -602,7 +602,7 @@ export default function Home() {
                   ))}
                 </div>
                 {/* Days Grid */}
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                   {Array.from({ length: 30 }).map((_, i) => {
                     const day = i + 1;
                     const isToday = day === new Date().getDate();
@@ -616,14 +616,20 @@ export default function Home() {
                     const dayAnimal = animals[day % animals.length];
 
                     return (
-                      <div key={day} className={`aspect-square rounded-2xl flex flex-col items-center justify-center relative ${isToday ? 'bg-blue-500 text-white shadow-md ring-2 ring-blue-300 ring-offset-2' : 'bg-gray-50 text-gray-600'}`}>
-                        <span className={`text-[12px] font-bold ${isToday ? 'text-white' : ''} z-10`}>{day}</span>
-                        {isChecked && (
-                          <div className="absolute inset-0 flex items-center justify-center text-[22px] drop-shadow-sm z-0 opacity-80 mt-3">{dayAnimal}</div>
-                        )}
-                        {isToday && (
-                          <div className="absolute -bottom-1 text-[18px]">✨</div>
-                        )}
+                      <div key={day} className={`aspect-[4/5] sm:aspect-square rounded-xl flex flex-col items-center justify-between p-1.5 relative ${isToday ? 'bg-blue-500 text-white shadow-md ring-2 ring-blue-300 ring-offset-1' : 'bg-gray-50 text-gray-600 border border-transparent hover:border-blue-200 transition-colors'}`}>
+                        <div className="w-full flex justify-start leading-none">
+                          <span className={`text-[11px] sm:text-[13px] font-bold ${isToday ? 'text-white' : 'text-gray-400'}`}>{day}</span>
+                        </div>
+
+                        <div className="flex-1 flex items-center justify-center w-full mt-0.5">
+                          {isChecked ? (
+                            <span className="text-[22px] sm:text-[28px] drop-shadow-sm leading-none">{dayAnimal}</span>
+                          ) : isToday ? (
+                            <span className="text-[18px] sm:text-[22px] animate-pulse">✨</span>
+                          ) : (
+                            <span className="text-[14px] sm:text-[18px] opacity-20 grayscale">{dayAnimal}</span>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
