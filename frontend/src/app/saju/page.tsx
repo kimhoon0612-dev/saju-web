@@ -71,7 +71,7 @@ export default function FortuneHubPage() {
     const [movingMonth, setMovingMonth] = useState(new Date().getMonth() + 1);
 
     const [showTalisman, setShowTalisman] = useState(false);
-    const [talismanResult, setTalismanResult] = useState({ type: "", title: "", desc: "" });
+    const [talismanResults, setTalismanResults] = useState<{ type: string, title: string, desc: string }[]>([]);
 
     // Physiognomy States
     const [showFace, setShowFace] = useState(false);
@@ -141,29 +141,60 @@ export default function FortuneHubPage() {
         setShowTrait(true);
     };
 
-    // 3. Talisman Logic
+    // 3. Talisman Logic (Multiple)
     const handleTalisman = () => {
-        let type = "wealth";
-        let title = "재물 넉넉 부적";
-        let desc = "뜻밖의 금전운이 따르고 지출이 줄어드는 강력한 재물 부적입니다.";
+        const results = [];
+        // Base wealth talisman is always good to have
+        results.push({
+            type: "wealth",
+            title: "재물 넉넉 부적",
+            desc: "뜻밖의 금전운이 따르고 지출이 줄어드는 강력한 재물 부적입니다."
+        });
 
         if (userSaju && userSaju.month_pillar) {
-            const mg = userSaju.month_pillar.earthly.ten_god;
-            if (mg?.includes("관성")) {
-                type = "career";
-                title = "직장 탄탄 부적";
-                desc = "직장에서 능력을 인정받고 승진이나 이직 운을 틔워주는 부적입니다.";
-            } else if (mg?.includes("인성")) {
-                type = "health";
-                title = "무병 무탈 부적";
-                desc = "잔병치레를 막아주고 몸과 마음의 평온을 지켜주는 건강 부적입니다.";
-            } else if (mg?.includes("비겁")) {
-                type = "love";
-                title = "애정 만발 부적";
-                desc = "주변 인연이 좋아지고 좋은 짝을 찾아주는 사랑 부적입니다.";
+            const mg = userSaju.month_pillar.earthly.ten_god || "";
+            if (mg.includes("관성")) {
+                results.push({
+                    type: "career",
+                    title: "직장 탄탄 부적",
+                    desc: "직장에서 능력을 인정받고 승진이나 이직 운을 틔워주는 부적입니다."
+                });
+            } else if (mg.includes("인성")) {
+                results.push({
+                    type: "health",
+                    title: "무병 무탈 부적",
+                    desc: "잔병치레를 막아주고 몸과 마음의 평온을 지켜주는 건강 부적입니다."
+                });
+            } else if (mg.includes("비겁")) {
+                results.push({
+                    type: "love",
+                    title: "애정 만발 부적",
+                    desc: "주변 인연이 좋아지고 좋은 짝을 찾아주는 사랑 부적입니다."
+                });
             }
         }
-        setTalismanResult({ type, title, desc });
+
+        // Add a secondary default if only one was added
+        if (results.length === 1) {
+            results.push({
+                type: "health",
+                title: "무병 무탈 부적",
+                desc: "올 한해 잔병치레를 막아주고 당신의 체력을 든든하게 지켜줍니다."
+            });
+            results.push({
+                type: "love",
+                title: "애정 만발 부적",
+                desc: "어디를 가나 사람들에게 호감을 얻고 따뜻한 인연을 맺게 돕습니다."
+            });
+        } else if (results.length === 2) {
+            results.push({
+                type: "love",
+                title: "귀인 상봉 부적",
+                desc: "조용히 나를 돕는 귀인이 나타나 위기를 기회로 바꿔주는 신비한 부적입니다."
+            });
+        }
+
+        setTalismanResults(results);
         setShowTalisman(true);
     };
 
@@ -605,19 +636,25 @@ export default function FortuneHubPage() {
                             <FileBadge size={24} className="text-red-600" />
                         </div>
                         <span className="text-xs font-bold text-red-500 bg-red-100 px-2.5 py-1 rounded-full mb-3">맞춤 추천 부적</span>
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">{talismanResult.title}</h3>
-                        <p className="text-sm text-gray-500 mb-4 max-w-[220px] mx-auto leading-relaxed">{talismanResult.desc}</p>
 
-                        {/* Fake Talisman Image Placeholder */}
-                        <div className="w-[120px] h-[180px] bg-gradient-to-b from-yellow-50 to-orange-100 rounded-xl border-2 border-orange-200 flex flex-col items-center justify-center mb-4 shadow-sm relative overflow-hidden">
-                            <div className="absolute inset-x-0 top-2 bottom-2 border-2 border-dashed border-orange-300 opacity-40 mx-2"></div>
-                            <span className="text-[32px] opacity-70">
-                                {talismanResult.type === "wealth" ? "🪙" : talismanResult.type === "career" ? "💼" : talismanResult.type === "health" ? "🌿" : "💖"}
-                            </span>
+                        <div className="flex overflow-x-auto gap-4 w-full pb-4 hidden-scrollbar snap-x snap-mandatory">
+                            {talismanResults.map((t, idx) => (
+                                <div key={idx} className="flex flex-col items-center min-w-[160px] snap-center shrink-0">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">{t.title}</h3>
+                                    <p className="text-xs text-gray-500 mb-3 max-w-[140px] mx-auto leading-relaxed">{t.desc}</p>
+
+                                    <div className="w-[110px] h-[160px] bg-gradient-to-b from-yellow-50 to-orange-100 rounded-xl border-2 border-orange-200 flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+                                        <div className="absolute inset-x-0 top-2 bottom-2 border-2 border-dashed border-orange-300 opacity-40 mx-2"></div>
+                                        <span className="text-[32px] opacity-70">
+                                            {t.type === "wealth" ? "🪙" : t.type === "career" ? "💼" : t.type === "health" ? "🌿" : "💖"}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
-                        <p className="text-[11px] text-gray-400">더 필요한 부적이 있다면 부적 상점을 이용해 보세요.</p>
-                        <button onClick={() => router.push('/store')} className="mt-3 w-full py-3 bg-gray-900 text-white rounded-xl text-[14px] font-bold">부적 상점 가기</button>
+                        <p className="text-[11px] text-gray-400 mt-2">좌우로 스와이프하여 더 많은 부적을 확인하세요.</p>
+                        <button onClick={() => router.push('/store')} className="mt-4 w-full py-3 bg-gray-900 text-white rounded-xl text-[14px] font-bold">부적 상점 가기</button>
                     </div>
                 </div>
             )}
