@@ -237,26 +237,38 @@ function SajuContent() {
                     });
                 }
 
-                // 2. Fire Vercel Proxied APIs (Background tasks)
+                // 2. Fire Vercel Proxied APIs (Background tasks) with session caching to prevent Rate Limit (15 RPM)
                 try {
-                    const insightRes = await fetch(`${API_BASE}/api/insight`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(parsedMatrix)
-                    });
-                    if (insightRes.ok) {
-                        const insightData = await insightRes.json();
-                        setInsight(insightData.insight);
+                    const cachedInsight = sessionStorage.getItem("saju_insight");
+                    if (cachedInsight) {
+                        setInsight(cachedInsight);
+                    } else {
+                        const insightRes = await fetch(`${API_BASE}/api/insight`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(parsedMatrix)
+                        });
+                        if (insightRes.ok) {
+                            const insightData = await insightRes.json();
+                            setInsight(insightData.insight);
+                            sessionStorage.setItem("saju_insight", insightData.insight);
+                        }
                     }
 
-                    const lifeRes = await fetch(`${API_BASE}/api/life-stages`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(parsedMatrix)
-                    });
-                    if (lifeRes.ok) {
-                        const lifeData = await lifeRes.json();
-                        setLifeStages(lifeData.stages || []);
+                    const cachedLifeStages = sessionStorage.getItem("saju_lifestages");
+                    if (cachedLifeStages) {
+                        setLifeStages(JSON.parse(cachedLifeStages));
+                    } else {
+                        const lifeRes = await fetch(`${API_BASE}/api/life-stages`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(parsedMatrix)
+                        });
+                        if (lifeRes.ok) {
+                            const lifeData = await lifeRes.json();
+                            setLifeStages(lifeData.stages || []);
+                            sessionStorage.setItem("saju_lifestages", JSON.stringify(lifeData.stages || []));
+                        }
                     }
                 } catch (error) {
                     console.error("추가 데이터 로드 실패:", error);

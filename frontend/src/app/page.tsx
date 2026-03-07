@@ -179,6 +179,9 @@ export default function Home() {
         total_correction_min: responseData.total_correction_min
       }));
       sessionStorage.setItem("saju_user_info", JSON.stringify(data));
+      sessionStorage.removeItem("saju_insight");
+      sessionStorage.removeItem("saju_lifestages");
+      sessionStorage.removeItem("saju_partner_matrix");
 
       console.log("Data saved to sessionStorage. Showing dashboard...");
       setMatrixData(completeMatrix);
@@ -195,6 +198,9 @@ export default function Home() {
   const clearMatrix = () => {
     sessionStorage.removeItem("saju_matrix");
     sessionStorage.removeItem("saju_time_info");
+    sessionStorage.removeItem("saju_insight");
+    sessionStorage.removeItem("saju_lifestages");
+    sessionStorage.removeItem("saju_partner_matrix");
   };
   // Render a full-screen loading skeleton instead of 'null' to prevent FOUC
   if (isInitializing) {
