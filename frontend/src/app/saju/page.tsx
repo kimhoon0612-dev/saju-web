@@ -195,15 +195,50 @@ export default function FortuneHubPage() {
         setIsAnalyzing(true);
         setFaceResult("");
 
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            const base64Str = event.target?.result as string;
+        // Resize the image using HTML Canvas to prevent mobile browser crashes from large base64 strings
+        const MAX_WIDTH = 600;
+        const MAX_HEIGHT = 600;
+
+        const img = new Image();
+        img.onload = async () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height = Math.round((height *= MAX_WIDTH / width));
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width = Math.round((width *= MAX_HEIGHT / height));
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+
+            if (!ctx) {
+                setFaceResult("이미지 처리 중 오류가 발생했습니다.");
+                setIsAnalyzing(false);
+                return;
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Compress as JPEG
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
             try {
                 const res = await fetch("https://saju-web.onrender.com/api/physiognomy", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image_base64: base64Str })
+                    body: JSON.stringify({ image_base64: compressedBase64 })
                 });
+
                 if (res.ok) {
                     const data = await res.json();
                     setFaceResult(data.result);
@@ -214,6 +249,18 @@ export default function FortuneHubPage() {
                 setFaceResult("분석 중 오류가 발생했습니다.");
             } finally {
                 setIsAnalyzing(false);
+            }
+        };
+
+        img.onerror = () => {
+            setFaceResult("이미지를 불러오는데 실패했습니다.");
+            setIsAnalyzing(false);
+        };
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result) {
+                img.src = event.target.result as string;
             }
         };
         reader.readAsDataURL(file);

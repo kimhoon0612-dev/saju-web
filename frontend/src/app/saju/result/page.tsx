@@ -141,10 +141,16 @@ function SajuContent() {
                     }
 
                     if (paramsType) {
+                        const storedPartnerMatrix = sessionStorage.getItem("saju_partner_matrix");
+                        const specificPayload: any = { saju_matrix: parsedMatrix, reading_type: paramsType };
+                        if (storedPartnerMatrix) {
+                            specificPayload.partner_matrix = JSON.parse(storedPartnerMatrix);
+                        }
+
                         const specificRes = await fetch(`${API_BASE}/api/specific-reading`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ saju_matrix: parsedMatrix, reading_type: paramsType })
+                            body: JSON.stringify(specificPayload)
                         });
                         if (specificRes.ok) {
                             const readingData = await specificRes.json();
@@ -185,11 +191,48 @@ function SajuContent() {
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#d4af37]/30 mb-2 mt-2">
                                 <h2 className="text-xl font-black text-gray-900 mb-4">{readingType} 상세 풀이</h2>
                                 {specificReading ? (
-                                    <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed font-medium">
-                                        {/* Simple rendering for markdown-like text */}
-                                        {specificReading.split('\n').map((line, i) => (
-                                            <p key={i} className="mb-2">{line.replace(/\*\*/g, '')}</p>
-                                        ))}
+                                    <div className="max-w-none text-gray-800 leading-relaxed font-medium text-[15px] space-y-3">
+                                        {specificReading.split('\n').map((line, i) => {
+                                            if (!line.trim()) return null;
+
+                                            // Handling Headers
+                                            if (line.startsWith('## ')) {
+                                                return <h3 key={i} className="text-lg font-bold text-gray-900 mt-6 mb-2 border-b border-gray-100 pb-2">{line.replace('## ', '').replace(/\*\*/g, '')}</h3>;
+                                            }
+                                            if (line.startsWith('### ')) {
+                                                return <h4 key={i} className="text-base font-bold text-gray-800 mt-4 mb-1">{line.replace('### ', '').replace(/\*\*/g, '')}</h4>;
+                                            }
+
+                                            // Handling List items
+                                            if (line.trim().startsWith('- ')) {
+                                                // Bold parsing for lists
+                                                const parts = line.replace('- ', '').split(/(\*\*.*?\*\*)/g);
+                                                return (
+                                                    <div key={i} className="flex gap-2 mb-1 ml-2">
+                                                        <span className="text-[#d4af37] font-bold">•</span>
+                                                        <p className="flex-1">
+                                                            {parts.map((part, idx) =>
+                                                                part.startsWith('**') && part.endsWith('**')
+                                                                    ? <strong key={idx} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>
+                                                                    : part
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            }
+
+                                            // Normal paragraphs with bold parsing
+                                            const paragraphParts = line.split(/(\*\*.*?\*\*)/g);
+                                            return (
+                                                <p key={i} className="mb-2 break-keep text-[14.5px]">
+                                                    {paragraphParts.map((part, idx) =>
+                                                        part.startsWith('**') && part.endsWith('**')
+                                                            ? <strong key={idx} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>
+                                                            : part
+                                                    )}
+                                                </p>
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center py-10 gap-4">

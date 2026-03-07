@@ -82,6 +82,11 @@ function ConfirmContent() {
     const [matrix, setMatrix] = useState<any>(null);
     const [userInfo, setUserInfo] = useState<SajuUserInfo | null>(null);
 
+    // Partner State
+    const [partnerMatrix, setPartnerMatrix] = useState<any>(null);
+    const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
+    const [isCalculatingPartner, setIsCalculatingPartner] = useState(false);
+
     // Calendar State
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -153,6 +158,58 @@ function ConfirmContent() {
     const handleSelectDate = (day: number) => {
         setSelectedDate(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day));
         setIsCalendarOpen(false);
+    };
+
+    const handlePartnerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsCalculatingPartner(true);
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get("partner_name") as string;
+        const dateStr = formData.get("partner_date") as string;
+        const timeStr = formData.get("partner_time") as string;
+        const isUnknownTime = formData.get("partner_time_unknown") === "on";
+        const gender = formData.get("partner_gender") as string;
+        const calendarType = formData.get("partner_calendar") as string;
+
+        try {
+            // Default to 12:00 if unknown time
+            const finalTimeStr = isUnknownTime ? "12:00" : (timeStr || "12:00");
+
+            // Generate ISO string
+            const isoString = `${dateStr}T${finalTimeStr}:00`;
+
+            const payload = {
+                birth_time_iso: isoString,
+                longitude: 126.978, // Defaulting to Seoul
+                is_lunar: calendarType === "lunar",
+                is_leap_month: false,
+                gender: gender
+            };
+
+            const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+            const response = await fetch(`${API_BASE}/api/calculate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to calculate partner saju");
+            }
+
+            const data = await response.json();
+
+            setPartnerMatrix(data.matrix);
+            sessionStorage.setItem("saju_partner_matrix", JSON.stringify(data.matrix));
+            sessionStorage.setItem("saju_partner_info", JSON.stringify({ name, ...payload }));
+            setIsPartnerModalOpen(false);
+
+        } catch (error) {
+            console.error("Error calculating partner:", error);
+            alert("상대방 정보를 계산하는 중 오류가 발생했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsCalculatingPartner(false);
+        }
     };
 
     return (
@@ -267,11 +324,34 @@ function ConfirmContent() {
 
                 {/* Compatibility Target Add Section */}
                 {isCompatibility && (
-                    <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex flex-col items-center justify-center gap-4 py-10">
-                        <div className="w-[64px] h-[64px] rounded-[20px] border border-gray-300 flex items-center justify-center text-gray-400 hover:bg-gray-50 cursor-pointer transition-colors">
-                            <Plus size={32} strokeWidth={1} />
-                        </div>
-                        <p className="text-[13px] text-gray-500 font-medium">궁합을 볼 대상의 정보를 추가해주세요</p>
+                    <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex flex-col items-center justify-center gap-4 py-8 relative">
+                        {partnerMatrix ? (
+                            <div className="flex flex-col items-center gap-3 w-full">
+                                <div className="w-[64px] h-[64px] rounded-[20px] bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-600 shadow-sm relative">
+                                    <div className="text-2xl font-bold">♥</div>
+                                    <button
+                                        onClick={() => { setPartnerMatrix(null); sessionStorage.removeItem("saju_partner_matrix"); sessionStorage.removeItem("saju_partner_info"); }}
+                                        className="absolute -top-2 -right-2 bg-white rounded-full p-1 text-gray-500 shadow hover:text-red-500"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[15px] font-bold text-gray-900">상대방 정보가 추가되었습니다</p>
+                                    <p className="text-[13px] text-gray-500 mt-1">이제 분석을 시작할 수 있습니다.</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => setIsPartnerModalOpen(true)}
+                                    className="w-[64px] h-[64px] rounded-[20px] border border-gray-300 flex items-center justify-center text-gray-400 hover:bg-gray-50 cursor-pointer transition-colors"
+                                >
+                                    <Plus size={32} strokeWidth={1} />
+                                </button>
+                                <p className="text-[13px] text-gray-500 font-medium">궁합을 볼 상대방의 정보를 추가해주세요</p>
+                            </>
+                        )}
                     </section>
                 )}
 
@@ -305,8 +385,8 @@ function ConfirmContent() {
                     </div>
                     <button
                         onClick={() => {
-                            if (isCompatibility) {
-                                alert("궁합 대상 정보가 아직 추가되지 않았습니다. (Demo)");
+                            if (isCompatibility && !partnerMatrix) {
+                                alert("궁합을 볼 상대방의 정보를 먼저 추가해주세요.");
                             } else {
                                 router.push(`/saju/result?type=${encodeURIComponent(type)}`);
                             }
@@ -380,6 +460,102 @@ function ConfirmContent() {
                                 <button onClick={() => setIsCalendarOpen(false)} className="hover:opacity-80">취소</button>
                                 <button onClick={() => setIsCalendarOpen(false)} className="hover:opacity-80">확인</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Partner Input Modal */}
+            {isPartnerModalOpen && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/60 backdrop-blur-sm p-5 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col animate-in slide-in-from-bottom-8">
+                        <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="font-bold text-gray-900">상대방 정보 입력</h3>
+                            <button onClick={() => setIsPartnerModalOpen(false)} className="text-gray-400 hover:text-gray-900">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-5 max-h-[70vh] overflow-y-auto">
+                            <form id="partner-form" onSubmit={handlePartnerSubmit} className="flex flex-col gap-5">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[13px] font-bold text-gray-700">이름</label>
+                                    <input type="text" name="partner_name" required placeholder="예: 홍길동" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium placeholder-gray-400" />
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="flex-1 flex flex-col gap-1.5">
+                                        <label className="text-[13px] font-bold text-gray-700">성별</label>
+                                        <div className="flex bg-gray-50 p-1.5 rounded-xl border border-gray-200">
+                                            <label className="flex-1 text-center cursor-pointer relative">
+                                                <input type="radio" name="partner_gender" value="male" className="peer sr-only" defaultChecked />
+                                                <div className="py-2 text-[14px] font-bold text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm transition-all">남성</div>
+                                            </label>
+                                            <label className="flex-1 text-center cursor-pointer relative">
+                                                <input type="radio" name="partner_gender" value="female" className="peer sr-only" />
+                                                <div className="py-2 text-[14px] font-bold text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-pink-600 peer-checked:shadow-sm transition-all">여성</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="flex-1 flex flex-col gap-1.5">
+                                        <label className="text-[13px] font-bold text-gray-700">생년월일</label>
+                                        <div className="flex bg-gray-50 p-1.5 rounded-xl border border-gray-200 mb-2">
+                                            <label className="flex-1 text-center cursor-pointer relative">
+                                                <input type="radio" name="partner_calendar" value="solar" className="peer sr-only" defaultChecked />
+                                                <div className="py-2 text-[14px] font-bold text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-gray-900 peer-checked:shadow-sm transition-all">양력</div>
+                                            </label>
+                                            <label className="flex-1 text-center cursor-pointer relative">
+                                                <input type="radio" name="partner_calendar" value="lunar" className="peer sr-only" />
+                                                <div className="py-2 text-[14px] font-bold text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-gray-900 peer-checked:shadow-sm transition-all">음력</div>
+                                            </label>
+                                        </div>
+                                        <input type="date" name="partner_date" required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium uppercase" />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-[13px] font-bold text-gray-700">태어난 시간</label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" name="partner_time_unknown" className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500" />
+                                            <span className="text-[12px] text-gray-500 font-medium">잘 모름</span>
+                                        </label>
+                                    </div>
+                                    <select name="partner_time" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium appearance-none">
+                                        <option value="">선택해주세요</option>
+                                        <option value="23:30">자시 (23:30 ~ 01:29)</option>
+                                        <option value="01:30">축시 (01:30 ~ 03:29)</option>
+                                        <option value="03:30">인시 (03:30 ~ 05:29)</option>
+                                        <option value="05:30">묘시 (05:30 ~ 07:29)</option>
+                                        <option value="07:30">진시 (07:30 ~ 09:29)</option>
+                                        <option value="09:30">사시 (09:30 ~ 11:29)</option>
+                                        <option value="11:30">오시 (11:30 ~ 13:29)</option>
+                                        <option value="13:30">미시 (13:30 ~ 15:29)</option>
+                                        <option value="15:30">신시 (15:30 ~ 17:29)</option>
+                                        <option value="17:30">유시 (17:30 ~ 19:29)</option>
+                                        <option value="19:30">술시 (19:30 ~ 21:29)</option>
+                                        <option value="21:30">해시 (21:30 ~ 23:29)</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setIsPartnerModalOpen(false)}
+                                className="flex-1 py-3.5 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors"
+                            >
+                                취소
+                            </button>
+                            <button
+                                type="submit"
+                                form="partner-form"
+                                disabled={isCalculatingPartner}
+                                className="flex-[2] py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                                {isCalculatingPartner ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                ) : "저장하기"}
+                            </button>
                         </div>
                     </div>
                 </div>

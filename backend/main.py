@@ -82,6 +82,7 @@ class ReportRequest(BaseModel):
 class SpecificReadingRequest(BaseModel):
     saju_matrix: Dict[str, Any]
     reading_type: str
+    partner_matrix: Optional[Dict[str, Any]] = None
 
 class DigitalGoodsRequest(BaseModel):
     saju_params: Dict[str, Any]
@@ -184,7 +185,11 @@ def get_specific_reading(request: SpecificReadingRequest):
     신년운세, 토정비결, 궁합 등 특정 운세에 대한 맞춤형 해석을 반환합니다.
     """
     rag_chain = SajuRAGChain()
-    result = rag_chain.generate_specific_reading(request.saju_matrix, request.reading_type)
+    result = rag_chain.generate_specific_reading(
+        request.saju_matrix, 
+        request.reading_type,
+        request.partner_matrix
+    )
     return {"reading": result}
 
 @app.post("/api/chat")
