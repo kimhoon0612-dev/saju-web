@@ -221,30 +221,39 @@ function SajuContent() {
                         });
 
                         if (specificRes.ok) {
-                            const reader = specificRes.body?.getReader();
-                            if (reader) {
-                                const decoder = new TextDecoder();
-                                let fullText = "";
-                                setSpecificReading(""); // Initialize to empty string before stream starts
+                            try {
+                                const reader = specificRes.body?.getReader();
+                                if (reader) {
+                                    const decoder = new TextDecoder();
+                                    let fullText = "";
+                                    setSpecificReading(""); // Initialize to empty string before stream starts
 
-                                while (true) {
-                                    const { done, value } = await reader.read();
-                                    if (done) break;
+                                    while (true) {
+                                        const { done, value } = await reader.read();
+                                        if (done) break;
 
-                                    const chunk = decoder.decode(value, { stream: true });
-                                    fullText += chunk;
-                                    setSpecificReading(fullText);
+                                        const chunk = decoder.decode(value, { stream: true });
+                                        fullText += chunk;
+                                        setSpecificReading(fullText);
+                                    }
+                                } else {
+                                    // Fallback if reader is somehow unavailable
+                                    const text = await specificRes.text();
+                                    setSpecificReading(text);
                                 }
+                            } catch (streamError) {
+                                console.error("Stream reading interrupted:", streamError);
+                                setSpecificReading(prev => `${prev}\n\n[네트워크 지연으로 인해 응답이 중단되었습니다. 새로고침 후 다시 시도해주세요.]`);
                             }
                         } else {
                             console.error("Specific Reading Error Status:", specificRes.status, await specificRes.text());
-                            setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status})`);
+                            setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status}). 새로고침을 권장합니다.`);
                         }
                     }
 
                 } catch (error) {
                     console.error("추가 데이터 로드 실패:", error);
-                    setSpecificReading(`[오류] 네트워크 또는 서버 연결에 실패했습니다.`);
+                    setSpecificReading(`[오류] 네트워크 또는 서버 연결에 실패했습니다. (인터넷 상태 확인)`);
                 } finally {
                     setIsLoading(false);
                 }
