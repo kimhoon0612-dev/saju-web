@@ -64,9 +64,14 @@ export default function FortuneHubPage() {
     const [lottoNumbers, setLottoNumbers] = useState<number[]>([]);
 
     const [showTrait, setShowTrait] = useState(false);
-    const [traitResult, setTraitResult] = useState({ title: "", desc: "" });
+    const [traitResult, setTraitResult] = useState({ title: "", desc: "", reason: "" });
 
     const [showMoving, setShowMoving] = useState(false);
+    const [movingYear, setMovingYear] = useState(new Date().getFullYear());
+    const [movingMonth, setMovingMonth] = useState(new Date().getMonth() + 1);
+
+    const [showTalisman, setShowTalisman] = useState(false);
+    const [talismanResult, setTalismanResult] = useState({ type: "", title: "", desc: "" });
 
     // Physiognomy States
     const [showFace, setShowFace] = useState(false);
@@ -104,44 +109,81 @@ export default function FortuneHubPage() {
     const handleTrait = () => {
         let title = "평인복덕";
         let desc = "평범함 속에 비범함이 감춰진 사주입니다. 작은 행운이 자주 찾아옵니다.";
+        let reason = "당신의 사주는 오행이 고루 분포되어 있어 특별한 치우침 없이 무난한 평온함을 누리는 에너지입니다.";
+
         if (userSaju && userSaju.day_pillar) {
             const dayElem = userSaju.day_pillar.heavenly.element;
-            if (dayElem === "목") { title = "태을귀인"; desc = "학문과 지혜를 돕는 강력한 귀인의 기운이 있습니다." }
-            else if (dayElem === "화") { title = "천을귀인"; desc = "주변의 도움으로 위기를 모면하는 최고의 길신이 함께합니다." }
-            else if (dayElem === "토") { title = "문창귀인"; desc = "글재주가 뛰어나고 지혜로우며 흉운을 길운으로 바꿉니다." }
-            else if (dayElem === "금") { title = "천주귀인"; desc = "의식이 풍부하고 평생 의식주 걱정이 없는 복덕운입니다." }
-            else if (dayElem === "수") { title = "금여록"; desc = "부귀와 안락을 상징하며 좋은 배우자를 만날 귀한 운입니다." }
+            const dayLabel = userSaju.day_pillar.heavenly.label;
+
+            if (dayElem === "목") {
+                title = "태을귀인";
+                desc = "학문과 지혜를 돕는 강력한 귀인의 기운이 있습니다.";
+                reason = `당신의 일간인 '${dayLabel}(${dayElem})'과 사주의 기운이 만나, 학업이나 연구, 지적인 활동에서 뜻밖의 조력자를 만나게 되는 길신이 찾아옵니다.`;
+            } else if (dayElem === "화") {
+                title = "천을귀인";
+                desc = "주변의 도움으로 위기를 모면하는 최고의 길신이 함께합니다.";
+                reason = `당신의 일간인 '${dayLabel}(${dayElem})' 특유의 에너지 덕분에, 위험한 순간마다 보이지 않는 귀인의 도움을 받아 흉몽이 길몽으로 바뀌는 강력한 복을 타고 났습니다.`;
+            } else if (dayElem === "토") {
+                title = "문창귀인";
+                desc = "글재주가 뛰어나고 지혜로우며 흉운을 길운으로 바꿉니다.";
+                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 단단한 기반 위에 총명함이 수놓아져, 말을 조리 있게 하고 학문적 성취나 창작 활동에서 큰 행운을 얻게 됩니다.`;
+            } else if (dayElem === "금") {
+                title = "천주귀인";
+                desc = "의식이 풍부하고 평생 의식주 걱정이 없는 복덕운입니다.";
+                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 결실을 맺는 성질이 작용하여, 타고난 식록(먹을 복)이 풍부해 평생 경제적인 안락함을 누릴 수 있는 든든한 사주입니다.`;
+            } else if (dayElem === "수") {
+                title = "금여록";
+                desc = "부귀와 안락을 상징하며 좋은 사람들을 만날 귀한 운입니다.";
+                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 유연하고 맑은 성질이 좋은 배우자나 훌륭한 파트너를 이끌어, 인생의 수레를 타고 편안히 나아가는 복을 지녔습니다.`;
+            }
         }
-        setTraitResult({ title, desc });
+        setTraitResult({ title, desc, reason });
         setShowTrait(true);
     };
 
     // 3. Talisman Logic
     const handleTalisman = () => {
         let type = "wealth";
+        let title = "재물 넉넉 부적";
+        let desc = "뜻밖의 금전운이 따르고 지출이 줄어드는 강력한 재물 부적입니다.";
+
         if (userSaju && userSaju.month_pillar) {
             const mg = userSaju.month_pillar.earthly.ten_god;
-            if (mg?.includes("관성")) type = "career";
-            else if (mg?.includes("재성")) type = "wealth";
-            else if (mg?.includes("인성")) type = "health";
-            else if (mg?.includes("비겁")) type = "love";
+            if (mg?.includes("관성")) {
+                type = "career";
+                title = "직장 탄탄 부적";
+                desc = "직장에서 능력을 인정받고 승진이나 이직 운을 틔워주는 부적입니다.";
+            } else if (mg?.includes("인성")) {
+                type = "health";
+                title = "무병 무탈 부적";
+                desc = "잔병치레를 막아주고 몸과 마음의 평온을 지켜주는 건강 부적입니다.";
+            } else if (mg?.includes("비겁")) {
+                type = "love";
+                title = "애정 만발 부적";
+                desc = "주변 인연이 좋아지고 좋은 짝을 찾아주는 사랑 부적입니다.";
+            }
         }
-        router.push(`/store?type=${type}`);
+        setTalismanResult({ type, title, desc });
+        setShowTalisman(true);
     };
 
     // 4. Moving Logic
     const getMovingDates = () => {
-        const today = new Date();
         const dates = [];
-        for (let i = 1; i <= 14; i++) {
-            const d = new Date(today.getTime() + i * 24 * 60 * 60 * 1000);
-            // 심플화: 태양력 날짜 숫자 끝이 9, 0 인 경우를 손없는 날로 대체하여 샘플 표시 (실제는 음력이어야함)
-            const dayStr = d.getDate().toString();
+        // 지정된 연/월의 1일부터 말일까지 순회하며 일자가 9, 0으로 끝나는 날짜 수집
+        const daysInMonth = new Date(movingYear, movingMonth, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayStr = day.toString();
             if (dayStr.endsWith("9") || dayStr.endsWith("0")) {
-                dates.push(`${d.getMonth() + 1}월 ${d.getDate()}일`);
+                // 요일 계산
+                const objDate = new Date(movingYear, movingMonth - 1, day);
+                const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+                const weekDay = daysOfWeek[objDate.getDay()];
+                dates.push(`${movingMonth}월 ${day}일 (${weekDay})`);
             }
         }
-        return dates.slice(0, 3);
+        // 최근 날짜순이므로 전체 다 보여주거나 적절히 자름 (보통 한 달에 5~6개 정도)
+        return dates;
     };
 
     // 5. Face Reading Logic
@@ -303,7 +345,6 @@ export default function FortuneHubPage() {
                             <input
                                 type="file"
                                 accept="image/*"
-                                capture="user"
                                 ref={fileInputRef}
                                 className="hidden"
                                 onChange={handlePhotoUpload}
@@ -500,9 +541,36 @@ export default function FortuneHubPage() {
                             <Gift size={24} className="text-purple-600" />
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 mb-2">{traitResult.title}</h3>
+                        <p className="text-sm text-gray-500 mb-4">{traitResult.reason}</p>
                         <div className="bg-gray-50 p-4 rounded-2xl w-full text-center">
-                            <p className="text-sm text-gray-700 leading-relaxed font-medium break-keep">{traitResult.desc}</p>
+                            <p className="text-[14px] text-gray-800 leading-relaxed font-medium break-keep">{traitResult.desc}</p>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 2-B. Talisman Modal */}
+            {showTalisman && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center">
+                        <button onClick={() => setShowTalisman(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4">
+                            <FileBadge size={24} className="text-red-600" />
+                        </div>
+                        <span className="text-xs font-bold text-red-500 bg-red-100 px-2.5 py-1 rounded-full mb-3">맞춤 추천 부적</span>
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">{talismanResult.title}</h3>
+                        <p className="text-sm text-gray-500 mb-4 max-w-[220px] mx-auto leading-relaxed">{talismanResult.desc}</p>
+
+                        {/* Fake Talisman Image Placeholder */}
+                        <div className="w-[120px] h-[180px] bg-gradient-to-b from-yellow-50 to-orange-100 rounded-xl border-2 border-orange-200 flex flex-col items-center justify-center mb-4 shadow-sm relative overflow-hidden">
+                            <div className="absolute inset-x-0 top-2 bottom-2 border-2 border-dashed border-orange-300 opacity-40 mx-2"></div>
+                            <span className="text-[32px] opacity-70">
+                                {talismanResult.type === "wealth" ? "🪙" : talismanResult.type === "career" ? "💼" : talismanResult.type === "health" ? "🌿" : "💖"}
+                            </span>
+                        </div>
+
+                        <p className="text-[11px] text-gray-400">더 필요한 부적이 있다면 부적 상점을 이용해 보세요.</p>
+                        <button onClick={() => router.push('/store')} className="mt-3 w-full py-3 bg-gray-900 text-white rounded-xl text-[14px] font-bold">부적 상점 가기</button>
                     </div>
                 </div>
             )}
@@ -516,10 +584,31 @@ export default function FortuneHubPage() {
                             <CalendarCheck size={24} className="text-blue-600" />
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 mb-2">길일 (손 없는 날)</h3>
-                        <p className="text-sm text-gray-500 mb-4">다음에 다가오는 이사하기 좋은 날입니다.</p>
-                        <div className="flex flex-col gap-2 w-full">
+                        <p className="text-sm text-gray-500 mb-4">이사하기 좋은 날을 월별로 확인해 보세요.</p>
+
+                        <div className="flex items-center gap-2 mb-4 w-full justify-center">
+                            <select
+                                className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold outline-none"
+                                value={movingYear}
+                                onChange={(e) => setMovingYear(Number(e.target.value))}
+                            >
+                                <option value={new Date().getFullYear()}>{new Date().getFullYear()}년</option>
+                                <option value={new Date().getFullYear() + 1}>{new Date().getFullYear() + 1}년</option>
+                            </select>
+                            <select
+                                className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold outline-none"
+                                value={movingMonth}
+                                onChange={(e) => setMovingMonth(Number(e.target.value))}
+                            >
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                                    <option key={m} value={m}>{m}월</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex flex-col gap-2 w-full max-h-[160px] overflow-y-auto hidden-scrollbar">
                             {getMovingDates().map((date, i) => (
-                                <div key={i} className="bg-blue-50 text-blue-800 font-bold py-3 rounded-xl">
+                                <div key={i} className="bg-blue-50 text-blue-800 text-[14px] font-bold py-3 rounded-xl">
                                     {date}
                                 </div>
                             ))}
