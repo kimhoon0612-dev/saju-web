@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Sparkles, ChevronDown, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, MapPin, Sparkles, ChevronDown, User, CheckSquare, Square } from 'lucide-react';
 import { cn } from './DestinyMatrixCard';
 
 interface BirthDataFormProps {
@@ -23,6 +23,30 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     const [isLeapMonth, setIsLeapMonth] = useState(false);
     const [gender, setGender] = useState('F');
     const [name, setName] = useState('');
+    const [isRemembered, setIsRemembered] = useState(false);
+
+    // 컴포넌트 마운트 시 로컬 스토리지에서 저장된 정보 불러오기
+    useEffect(() => {
+        const savedData = localStorage.getItem('saju_saved_user_info');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                if (parsed.year) setYear(parsed.year);
+                if (parsed.month) setMonth(parsed.month);
+                if (parsed.day) setDay(parsed.day);
+                if (parsed.ampm) setAmpm(parsed.ampm);
+                if (parsed.hour) setHour(parsed.hour);
+                if (parsed.minute) setMinute(parsed.minute);
+                if (parsed.gender) setGender(parsed.gender);
+                if (parsed.isLunar !== undefined) setIsLunar(parsed.isLunar);
+                if (parsed.isLeapMonth !== undefined) setIsLeapMonth(parsed.isLeapMonth);
+                if (parsed.name) setName(parsed.name);
+                setIsRemembered(true);
+            } catch (e) {
+                console.error("Failed to parse saved user info", e);
+            }
+        }
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,6 +64,17 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         const min = minute.padStart(2, '0');
 
         const isoString = `${year}-${m}-${d}T${h}:${min}:00`;
+
+        // "내 정보 기억하기" 설정 저장 로직
+        if (isRemembered) {
+            const dataToSave = {
+                year, month, day, ampm, hour, minute,
+                gender, isLunar, isLeapMonth, name
+            };
+            localStorage.setItem('saju_saved_user_info', JSON.stringify(dataToSave));
+        } else {
+            localStorage.removeItem('saju_saved_user_info');
+        }
 
         onCalculate({
             name: name.trim() || "방문자",
@@ -213,6 +248,29 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             <span className="text-[#d4af37]/50 font-pretendard text-sm shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
                         </div>
                     </div>
+                </div>
+
+                {/* 내 정보 기억하기 Checkbox */}
+                <div className="flex items-center justify-end w-full px-1">
+                    <button
+                        type="button"
+                        onClick={() => setIsRemembered(!isRemembered)}
+                        className="flex items-center gap-2 group outline-none"
+                    >
+                        <div className="relative flex items-center justify-center w-[18px] h-[18px]">
+                            {isRemembered ? (
+                                <CheckSquare className="w-5 h-5 text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] transition-all" />
+                            ) : (
+                                <Square className="w-5 h-5 text-white/30 group-hover:text-white/50 transition-all" />
+                            )}
+                        </div>
+                        <span className={cn(
+                            "text-[13px] font-pretendard transition-all",
+                            isRemembered ? "text-amber-200/90 font-bold" : "text-white/50 font-medium group-hover:text-white/70"
+                        )}>
+                            내 정보 기억하기
+                        </span>
+                    </button>
                 </div>
 
                 {/* Submit Button */}
