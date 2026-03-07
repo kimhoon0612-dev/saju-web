@@ -27,6 +27,16 @@ export default function Home() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
 
+  // New Modal States
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
+  const [isOutfitModalOpen, setIsOutfitModalOpen] = useState(false);
+
+  // Insight Modal State
+  const [elementDetailModal, setElementDetailModal] = useState<{ isOpen: boolean, title: string, content: string }>({ isOpen: false, title: "", content: "" });
+
+  // User Profile
+  const [userGender, setUserGender] = useState<string>("female");
+
   // Parse daily score locally based on harmony/clash backend logic
   let dailyScore = 75;
   if (matrixData?.daily_fortune) {
@@ -112,9 +122,18 @@ export default function Home() {
   // Check if we have matrix data in sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem("saju_matrix");
+    const storedUserInfo = sessionStorage.getItem("saju_user_info");
+
     if (stored) {
       setMatrixData(JSON.parse(stored));
     }
+    if (storedUserInfo) {
+      try {
+        const parsed = JSON.parse(storedUserInfo);
+        if (parsed.gender) setUserGender(parsed.gender);
+      } catch (e) { }
+    }
+
     setIsInitializing(false);
   }, []);
 
@@ -242,15 +261,8 @@ export default function Home() {
           className="max-w-md mx-auto relative z-10 w-full pb-36 bg-[#F5F6F8]"
         >
 
-          {/* Top Title & Weather */}
-          <div className="flex items-center justify-between px-4 pt-4 pb-5">
-            <div className="flex items-center gap-2">
-              <span className="text-[26px]">☁️</span>
-              <div className="flex flex-col">
-                <span className="text-[15px] font-black text-gray-900 leading-none mb-0.5">18°C 구름많음</span>
-                <span className="text-[12px] font-bold text-[#2AC1BC] leading-none tracking-tight">미세 좋음 · 초미세 좋음</span>
-              </div>
-            </div>
+          {/* Top Title */}
+          <div className="flex items-center justify-end px-4 pt-4 pb-5">
             <button onClick={clearMatrix} className="flex items-center gap-1.5 text-[14px] font-bold text-gray-700 hover:text-gray-900 transition-colors">
               <RefreshCw className="w-4 h-4" />
               <span>{matrixData.user_name || "방문자"}님</span>
@@ -308,12 +320,19 @@ export default function Home() {
 
           {/* Quick Links Grid */}
           <div className="px-4 pb-8">
-            <div className="flex flex-wrap items-center justify-center gap-2.5 px-3">
-              <button className="bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-4 py-2 text-[14px] font-bold text-gray-800 flex items-center gap-1.5 whitespace-nowrap">👀 심리풀이</button>
-              <button className="bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-4 py-2 text-[14px] font-bold text-gray-800 flex items-center gap-1.5 whitespace-nowrap"><span className="text-blue-500 text-[16px] leading-[1]">👣</span> 출석체크</button>
-              <Link href="/saju" className="bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-5 py-2.5 text-[14px] font-bold text-gray-800 whitespace-nowrap">정통사주</Link>
-              <button className="bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-5 py-2.5 text-[14px] font-bold text-gray-800 whitespace-nowrap">신년운</button>
-              <button className="bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-5 py-2.5 text-[14px] font-bold text-gray-800 whitespace-nowrap">행운코디</button>
+            <div className="flex items-center justify-center gap-3 px-3">
+              <button
+                onClick={() => setIsAttendanceModalOpen(true)}
+                className="flex-1 bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full py-3 text-[15px] font-bold text-gray-800 flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-blue-500 text-[18px] leading-[1]">👣</span> 출석체크
+              </button>
+              <button
+                onClick={() => setIsOutfitModalOpen(true)}
+                className="flex-1 bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full py-3 text-[15px] font-bold text-gray-800 flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-[#d4af37] text-[18px] leading-[1]">👔</span> 행운코디
+              </button>
             </div>
           </div>
 
@@ -414,22 +433,43 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col gap-5 mt-2">
-                <div>
+                <div
+                  onClick={() => setElementDetailModal({
+                    isOpen: true,
+                    title: "나의 일간",
+                    content: `사주의 중심이 되는 기운입니다. ${matrixData.day_pillar?.heavenly?.element === "wood" ? "나무처럼 곧고 성장하려는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "fire" ? "불처럼 열정적이고 밝은 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "earth" ? "흙처럼 포용력 있고 길러내는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "metal" ? "쇠처럼 단단하고 결단력 있는 본질적인 성향을" : "물처럼 유연하고 지혜로운 본질적인 성향을"} 가지고 태어나셨습니다. 이는 평생을 관통하는 나의 가장 강력한 무기입니다.`
+                  })}
+                  className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                >
                   <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">나의 일간: {matrixData.day_pillar?.heavenly?.label || "알 수 없음"} <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
-                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep">
+                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
                     사주의 중심이 되는 기운입니다. {matrixData.day_pillar?.heavenly?.element === "wood" ? "나무처럼 곧고 성장하려는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "fire" ? "불처럼 열정적이고 밝은 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "earth" ? "흙처럼 포용력 있고 길러내는 본질적인 성향을" : matrixData.day_pillar?.heavenly?.element === "metal" ? "쇠처럼 단단하고 결단력 있는 본질적인 성향을" : "물처럼 유연하고 지혜로운 본질적인 성향을"} 가지고 있습니다.
                   </p>
                 </div>
-                <div>
+                <div
+                  onClick={() => setElementDetailModal({
+                    isOpen: true,
+                    title: "신강/신약 판별",
+                    content: `당신은 [${sajuStrength}] 체질입니다. 신강사주는 주관이 뚜렷하고 추진력이 강해 리더십을 발휘하기 좋으며, 신약사주는 유연함과 처세술이 뛰어나 주변 환경에 잘 적응하고 사람들의 조력을 끌어내는 능력이 탁월합니다.`
+                  })}
+                  className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                >
                   <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">신강/신약 판별 <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
-                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep">
+                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
                     {sajuStrength} 체질입니다. 일간을 도와주는 세력이 내 기운을 어떻게 지탱하는지 분석했습니다.
                   </p>
                 </div>
-                <div>
+                <div
+                  onClick={() => setElementDetailModal({
+                    isOpen: true,
+                    title: "선천적 기운 분포",
+                    content: `목(${elementCounts["목"]}), 화(${elementCounts["화"]}), 토(${elementCounts["토"]}), 금(${elementCounts["금"]}), 수(${elementCounts["수"]}) 비율로 구성된 사주입니다. 넘치는 기운은 덜어내고 부족한 기운은 채용(색상, 방향, 직업)하여 균형을 맞출 때 인생의 흐름이 가장 순탄하게 열립니다.`
+                  })}
+                  className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                >
                   <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">선천적 기운 분포 <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
-                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep">
-                    {matrixData ? `목(${elementCounts["목"]}), 화(${elementCounts["화"]}), 토(${elementCounts["토"]}), 금(${elementCounts["금"]}), 수(${elementCounts["수"]})` : "음양오행"}로 이루어져 있습니다. 위 그래프를 통해 본인의 오행 밸런스를 확인해 보세요. 중심의 기운과 상생상극을 확인하면 삶의 밸런스가 더욱 단단해집니다.
+                  <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
+                    {matrixData ? `목(${elementCounts["목"]}), 화(${elementCounts["화"]}), 토(${elementCounts["토"]}), 금(${elementCounts["금"]}), 수(${elementCounts["수"]})` : "음양오행"}로 이루어져 있습니다. 위 그래프를 통해 본인의 오행 밸런스를 확인해 보세요.
                   </p>
                 </div>
               </div>
@@ -508,6 +548,149 @@ export default function Home() {
               >
                 닫기
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 1. Element Detail Modal */}
+      {elementDetailModal.isOpen && (
+        <div className="fixed inset-0 z-[110] flex justify-center items-end sm:items-center bg-black/60 backdrop-blur-sm sm:p-5 animate-in fade-in duration-200" onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}>
+          <div className="bg-white rounded-t-[32px] sm:rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-5 duration-300" onClick={e => e.stopPropagation()}>
+            <div className="p-6 pt-8 flex flex-col items-center">
+              <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-6 absolute top-3 sm:hidden"></div>
+              <h3 className="font-extrabold text-[22px] text-gray-900 mb-4">{elementDetailModal.title}</h3>
+              <p className="text-[16px] text-gray-700 leading-relaxed font-medium text-center break-keep px-2">
+                {elementDetailModal.content}
+              </p>
+            </div>
+            <div className="p-5 w-full">
+              <button
+                onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}
+                className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Attendance Calendar Modal */}
+      {isAttendanceModalOpen && (
+        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsAttendanceModalOpen(false)}>
+          <div className="bg-[#f0f9ff] border border-blue-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="p-5 flex justify-between items-center bg-white/50 border-b border-blue-100/50 shrink-0 sticky top-0 z-10">
+              <div>
+                <h3 className="font-extrabold text-[19px] text-gray-900 flex items-center gap-1.5"><span className="text-2xl text-blue-500">🗓️</span> 나의 명리 출석부</h3>
+                <p className="text-[12px] font-bold text-gray-500 mt-0.5">꾸준함이 운명을 바꿉니다</p>
+              </div>
+              <button onClick={() => setIsAttendanceModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-500 hover:bg-white transition-colors shadow-sm">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto">
+              {/* Calendar Grid Mockup */}
+              <div className="bg-white rounded-3xl p-5 shadow-sm border border-blue-50/50">
+                {/* Days of Week */}
+                <div className="grid grid-cols-7 gap-1 mb-3">
+                  {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
+                    <div key={day} className={`text-center text-[12px] font-bold ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                {/* Days Grid */}
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: 30 }).map((_, i) => {
+                    const day = i + 1;
+                    const isToday = day === new Date().getDate();
+                    const isPast = day < new Date().getDate();
+
+                    // Mock attendance check (random past days checked)
+                    const isChecked = isPast && Math.random() > 0.3;
+
+                    // Fixed set of animals for the mockup
+                    const animals = ['🐴', '🐯', '🐰', '🐉', '🐍', '🐮'];
+                    const dayAnimal = animals[day % animals.length];
+
+                    return (
+                      <div key={day} className={`aspect-square rounded-2xl flex flex-col items-center justify-center relative ${isToday ? 'bg-blue-500 text-white shadow-md ring-2 ring-blue-300 ring-offset-2' : 'bg-gray-50 text-gray-600'}`}>
+                        <span className={`text-[12px] font-bold ${isToday ? 'text-white' : ''} z-10`}>{day}</span>
+                        {isChecked && (
+                          <div className="absolute inset-0 flex items-center justify-center text-[22px] drop-shadow-sm z-0 opacity-80 mt-3">{dayAnimal}</div>
+                        )}
+                        {isToday && (
+                          <div className="absolute -bottom-1 text-[18px]">✨</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 bg-white shrink-0 sticky bottom-0 z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(0,0,0,0.03)] text-center">
+              <button
+                onClick={() => {
+                  alert("오늘의 운석(도장)이 찍혔습니다!");
+                  setIsAttendanceModalOpen(false);
+                }}
+                className="w-full bg-[#1E90FF] text-white font-extrabold text-[17px] h-[54px] rounded-[20px] hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 mb-2 flex flex-col items-center justify-center leading-none gap-1"
+              >
+                <span>오늘 출석 체크하기</span>
+              </button>
+              <span className="text-[12px] font-medium text-gray-400">매일 접속하여 나만의 일진 동물을 모아보세요</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Lucky Outfit Modal */}
+      {isOutfitModalOpen && (
+        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsOutfitModalOpen(false)}>
+          <div className="bg-[#fff9f0] border border-[#ffe0b2] rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#ffd54f]/20 rounded-bl-full filter blur-xl z-0"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#ffcc80]/20 rounded-tr-full filter blur-2xl z-0"></div>
+
+            <div className="p-5 flex justify-between items-center bg-white/40 border-b border-[#ffe0b2]/50 shrink-0 sticky top-0 z-10">
+              <div className="relative z-10">
+                <h3 className="font-extrabold text-[19px] text-[#8d6e63] flex items-center gap-1.5"><span className="text-2xl">✨</span> 맞춤 행운 코디</h3>
+                <p className="text-[12px] font-bold text-[#bcaaa4] mt-0.5">내 기운을 올려주는 마법의 컬러</p>
+              </div>
+              <button onClick={() => setIsOutfitModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-500 hover:bg-white transition-colors shadow-sm relative z-10">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto relative z-10 flex flex-col items-center">
+              {/* Daily Element Card */}
+              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#ffe0b2]/40 w-full mb-5 flex flex-col text-center relative overflow-hidden group">
+                <div className="w-16 h-16 bg-[#27ae60]/10 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(39,174,96,0.15)]">
+                  <span className="text-[32px] drop-shadow-md transform group-hover:scale-110 transition-transform">🌿</span>
+                </div>
+                <h4 className="text-[18px] font-black text-gray-900 mb-1">오늘의 기운: 푸른 목(木) 기운</h4>
+                <p className="text-[14px] text-gray-600 font-medium leading-relaxed break-keep">
+                  상생의 흐름을 만들어 일의 추진력을 얻기 위해 차분한 파란색 계열이나 싱그러운 그린 계열의 착장이 유리합니다.
+                </p>
+              </div>
+
+              {/* Gender Specific Outfit Suggestion */}
+              <div className="bg-gradient-to-br from-white to-[#fafafa] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
+                <div className="text-[40px] mb-3 inline-block drop-shadow-md">
+                  {userGender === "male" ? "👔" : "👗"}
+                </div>
+                <h4 className="text-[16px] font-bold text-gray-900 mb-2">
+                  {userGender === "male" ? "깔끔한 네이비 셋업 수트" : "화사한 민트/네이비 원피스"}
+                </h4>
+                <p className="text-[14px] text-gray-600 font-medium break-keep leading-relaxed px-2">
+                  {userGender === "male"
+                    ? "단정한 네이비 톤의 자켓 혹은 니트와 슬랙스 조합은 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
+                    : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 하고 행운을 부릅니다."
+                  }
+                </p>
+              </div>
             </div>
           </div>
         </div>
