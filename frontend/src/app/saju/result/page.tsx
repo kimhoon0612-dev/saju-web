@@ -29,6 +29,70 @@ interface MatrixData {
     fortune_cycle?: any;
 }
 
+// Helper component for the cute animal loading animation
+const AnimatedAnimalLoader = ({ dayStem, readingType }: { dayStem: string | null, readingType: string }) => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        // Fast fake progress up to 99%
+        const interval = setInterval(() => {
+            setProgress(p => {
+                if (p < 99) {
+                    return p + Math.floor(Math.random() * 5) + 1; // Increment by 1-5
+                }
+                return 99;
+            });
+        }, 300);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Determine animal based on Heavenly Stem (Day Master)
+    let animalEmoji = "🔮"; // Default
+    let animalAction = "걸어오는 중...";
+
+    if (dayStem) {
+        if (['갑', '을', '甲', '乙'].includes(dayStem)) {
+            animalEmoji = "🐰"; // Wood
+            animalAction = "토끼가 폴짝폴짝 뛰어오는 중...";
+        } else if (['병', '정', '丙', '丁'].includes(dayStem)) {
+            animalEmoji = "🐴"; // Fire
+            animalAction = "말이 힘차게 달려오는 중...";
+        } else if (['무', '기', '戊', '己'].includes(dayStem)) {
+            animalEmoji = "🐶"; // Earth
+            animalAction = "강아지가 신나게 쫓아오는 중...";
+        } else if (['경', '신', '庚', '辛'].includes(dayStem)) {
+            animalEmoji = "🐒"; // Metal
+            animalAction = "원숭이가 나무를 타고 오는 중...";
+        } else if (['임', '계', '壬', '癸'].includes(dayStem)) {
+            animalEmoji = "🐷"; // Water
+            animalAction = "돼지가 통통통 굴러오는 중...";
+        }
+    }
+
+    return (
+        <div className="flex flex-col items-center justify-center py-16 gap-6 relative overflow-hidden">
+            {/* The Animal */}
+            <div className="relative text-7xl animate-bounce" style={{ animationDuration: '0.8s' }}>
+                {animalEmoji}
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/10 rounded-full blur-[2px] animate-pulse"></div>
+            </div>
+
+            {/* The Message & Progress */}
+            <div className="flex flex-col items-center gap-2">
+                <p className="text-[#d4af37] font-black text-2xl tracking-tight">
+                    {Math.min(progress, 99)}%
+                </p>
+                <h3 className="text-gray-900 font-bold text-lg text-center leading-tight">
+                    당신의 {readingType}를<br />세밀하게 분석하고 있습니다.
+                </h3>
+                <p className="text-sm font-medium text-gray-500 mt-1">
+                    {animalAction}
+                </p>
+            </div>
+        </div>
+    );
+};
+
 function SajuContent() {
     const [matrix, setMatrix] = useState<MatrixData | null>(null);
     const [insight, setInsight] = useState<string | null>(null);
@@ -235,10 +299,10 @@ function SajuContent() {
                                         })}
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center py-10 gap-4">
-                                        <div className="w-8 h-8 rounded-full border-t-[3px] border-r-[3px] border-[#d4af37] border-solid animate-spin"></div>
-                                        <p className="text-sm font-bold text-gray-500">당신의 {readingType}를 세밀하게 분석하고 있습니다...</p>
-                                    </div>
+                                    <AnimatedAnimalLoader
+                                        dayStem={matrix?.day_pillar?.heavenly?.label?.[0] || null}
+                                        readingType={readingType}
+                                    />
                                 )}
                             </div>
                         ) : (
