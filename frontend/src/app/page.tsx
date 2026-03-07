@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RefreshCw, ChevronRight, User, Sparkles } from "lucide-react";
+import { RefreshCw, ChevronRight, User, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -25,6 +25,7 @@ export default function Home() {
   const [matrixData, setMatrixData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
 
   // Parse daily score locally based on harmony/clash backend logic
   let dailyScore = 75;
@@ -367,9 +368,9 @@ export default function Home() {
                   {matrixData.daily_fortune?.description || "문을 두드리면 반드시 열리는 하루입니다."}
                 </p>
 
-                <Link href="/saju" className="mt-8 mb-2 text-[15px] font-bold text-gray-900 flex items-center gap-1 hover:text-gray-600 transition-colors">
+                <button onClick={() => setIsDailyModalOpen(true)} className="mt-8 mb-2 text-[15px] font-bold text-gray-900 flex items-center gap-1 hover:text-gray-600 transition-colors">
                   오늘 하루 자세히 보기 <ChevronRight className="w-4 h-4 ml-0.5" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -436,6 +437,80 @@ export default function Home() {
           </div>
 
         </motion.div>
+      )}
+
+      {/* Daily Fortune Detail Modal */}
+      {isDailyModalOpen && matrixData && (
+        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-5 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom-5 duration-300 max-h-[90vh]">
+            <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
+              <h3 className="font-extrabold text-[18px] text-gray-900">오늘의 운세 리포트</h3>
+              <button onClick={() => setIsDailyModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              {/* Daily Overall */}
+              <div className="flex flex-col items-center mb-6">
+                <div className="bg-[#2AC1BC] text-white text-[15px] font-extrabold px-3 py-1 rounded-full mb-3">
+                  전체 {matrixData?.daily_fortune?.monthly_score || dailyScore}점
+                </div>
+                <p className="text-[15px] text-gray-700 font-bold leading-relaxed text-center break-keep">
+                  {matrixData?.daily_fortune?.daily_message || "문을 두드리면 반드시 열리는 하루입니다."}
+                </p>
+              </div>
+
+              <div className="h-px bg-gray-100 w-full my-6"></div>
+
+              {/* Breakdown */}
+              <div className="flex flex-col gap-4">
+                {/* Morning */}
+                <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 flex gap-4 items-start">
+                  <div className="flex flex-col items-center justify-center min-w-[50px]">
+                    <span className="text-[13px] font-bold text-gray-500 mb-1">오전</span>
+                    <span className="text-[22px] font-black text-blue-600">{matrixData?.daily_fortune?.morning_score || 70}</span>
+                  </div>
+                  <div className="w-px h-12 bg-blue-200/50 mt-1"></div>
+                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                    {matrixData?.daily_fortune?.morning_msg || "활기찬 시작이 예상되는 상쾌한 기운입니다."}
+                  </p>
+                </div>
+                {/* Afternoon */}
+                <div className="bg-orange-50/50 rounded-2xl p-4 border border-orange-100 flex gap-4 items-start">
+                  <div className="flex flex-col items-center justify-center min-w-[50px]">
+                    <span className="text-[13px] font-bold text-gray-500 mb-1">오후</span>
+                    <span className="text-[22px] font-black text-orange-500">{matrixData?.daily_fortune?.afternoon_score || 70}</span>
+                  </div>
+                  <div className="w-px h-12 bg-orange-200/50 mt-1"></div>
+                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                    {matrixData?.daily_fortune?.afternoon_msg || "집중력이 높아지고 목표를 달성하기 좋은 시간입니다."}
+                  </p>
+                </div>
+                {/* Evening */}
+                <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100 flex gap-4 items-start">
+                  <div className="flex flex-col items-center justify-center min-w-[50px]">
+                    <span className="text-[13px] font-bold text-gray-500 mb-1">저녁</span>
+                    <span className="text-[22px] font-black text-indigo-600">{matrixData?.daily_fortune?.evening_score || 70}</span>
+                  </div>
+                  <div className="w-px h-12 bg-indigo-200/50 mt-1"></div>
+                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                    {matrixData?.daily_fortune?.evening_msg || "하루를 성공적으로 마무리하며 편안한 휴식을 취하세요."}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+            {/* Modal Bottom Sticky Button */}
+            <div className="p-4 bg-white border-t border-gray-100 shrink-0 sticky bottom-0 z-10">
+              <button
+                onClick={() => setIsDailyModalOpen(false)}
+                className="w-full bg-gray-900 text-white font-bold text-[16px] h-12 rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

@@ -81,6 +81,12 @@ class DailyFortune(BaseModel):
     clash_with: List[str] = []
     harmony_with: List[str] = []
     daily_message: str = ""
+    morning_score: int = 70
+    afternoon_score: int = 70
+    evening_score: int = 70
+    morning_msg: str = ""
+    afternoon_msg: str = ""
+    evening_msg: str = ""
 
 class FortuneCycle(BaseModel):
     current_daewun: Optional[DaewunPillar] = None
@@ -564,13 +570,52 @@ def get_comprehensive_fortune(saju_matrix: SajuMatrix, current_kst: datetime) ->
     else:
         msg += "무난하고 평온하게 내실을 다지기 좋은 하루입니다."
             
+    # 오전/오후/저녁 점수 및 텍스트 (간단한 일진-오행 논리)
+    base_m_score, base_a_score, base_e_score = 70, 70, 70
+    if daily_h.element in ["wood", "fire"]:
+        base_m_score += 15
+        base_a_score += 5
+        base_e_score -= 5
+    elif daily_h.element in ["earth", "metal"]:
+        base_m_score -= 5
+        base_a_score += 15
+        base_e_score += 5
+    else:  # water
+        base_m_score -= 10
+        base_a_score -= 5
+        base_e_score += 20
+        
+    if "일지" in harmonies:
+        base_m_score += 10
+        base_a_score += 10
+        base_e_score += 10
+        
+    if "일지" in clashes:
+        base_m_score -= 10
+        base_a_score -= 10
+        base_e_score -= 10
+
+    m_score = max(50, min(100, base_m_score))
+    a_score = max(50, min(100, base_a_score))
+    e_score = max(50, min(100, base_e_score))
+    
+    m_msg = "활기찬 시작이 예상되는 상쾌한 기운입니다." if m_score >= 80 else "차분하게 하루를 계획하기 좋은 아침입니다."
+    a_msg = "집중력이 높아지고 목표를 달성하기 좋은 시간입니다." if a_score >= 80 else "여유를 가지고 무리한 진행은 피하는 것이 좋습니다."
+    e_msg = "하루를 성공적으로 마무리하며 편안한 휴식을 취하세요." if e_score >= 80 else "지친 심신을 달래고 내일을 준비하는 시간이 필요합니다."
+
     iljin = DailyFortune(
         date=current_kst.strftime("%Y-%m-%d"),
         heavenly=daily_h,
         earthly=daily_e,
         clash_with=clashes,
         harmony_with=harmonies,
-        daily_message=msg
+        daily_message=msg,
+        morning_score=m_score,
+        afternoon_score=a_score,
+        evening_score=e_score,
+        morning_msg=m_msg,
+        afternoon_msg=a_msg,
+        evening_msg=e_msg
     )
 
     # 5. 현재 대운 (Current Daewun) 찾기
