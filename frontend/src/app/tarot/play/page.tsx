@@ -175,64 +175,69 @@ function TarotPlayContent() {
                 )}
 
                 {/* Generating Loading Overlay inspired by user screenshot */}
+                {/* Generating Loading Overlay with Bouncing Cards */}
                 {isFetching && (
-                    <div className="fixed inset-0 bg-[#16122d] z-50 flex flex-col items-center justify-center overflow-hidden">
+                    <div className="fixed inset-0 bg-[#0e0a1a] z-50 flex flex-col items-center justify-center overflow-hidden">
                         {/* Starry Background for analyzing screen */}
-                        <div className="absolute inset-0 z-0">
-                            {/* Dummy stars scattered */}
-                            {Array.from({ length: 20 }).map((_, i) => (
+                        <div className="absolute inset-0 z-0 pointer-events-none">
+                            {Array.from({ length: 30 }).map((_, i) => (
                                 <Star
                                     key={i}
-                                    className="absolute text-white/40 fill-white"
-                                    size={Math.random() * 12 + 4}
+                                    className="absolute text-yellow-100/30 fill-yellow-100/30"
+                                    size={Math.random() * 8 + 2}
                                     style={{
                                         top: `${Math.random() * 100}%`,
                                         left: `${Math.random() * 100}%`,
-                                        opacity: Math.random() * 0.5 + 0.2,
-                                        animation: `pulse ${Math.random() * 3 + 2}s infinite`
+                                        opacity: Math.random() * 0.5 + 0.1,
+                                        animation: `pulse ${Math.random() * 3 + 1}s infinite`
                                     }}
                                 />
                             ))}
                         </div>
 
-                        <div className="relative z-10 flex flex-col items-center w-full max-w-md px-8 text-center pt-20 flex-1">
-                            <h2 className="text-white font-bold mb-16 opacity-90 tracking-wide pb-4 whitespace-pre-wrap leading-relaxed text-[18px]">
-                                선택하신 타로카드를 분석하고 있습니다<br />잠시만 기다려 주세요
-                            </h2>
+                        <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md px-6 text-center h-full">
 
-                            {/* Glowing Zodiac/Astro Circle Animation */}
-                            <div className="relative w-64 h-64 flex items-center justify-center">
-                                {/* Outer rings */}
-                                <div className="absolute w-[280px] h-[280px] rounded-full border border-blue-300/20 animate-[spin_30s_linear_infinite]"></div>
-                                <div className="absolute w-[240px] h-[240px] rounded-full border border-pink-300/30 animate-[spin_20s_linear_infinite_reverse]"></div>
-                                {/* Inner Zodiac symbols mockup */}
-                                <div className="absolute w-[200px] h-[200px] border-[0.5px] border-yellow-200/20 rounded-full animate-[spin_25s_linear_infinite] flex items-center justify-center">
-                                    <div className="w-full h-full rotate-45 border-t border-yellow-200/20 absolute"></div>
-                                    <div className="w-full h-full rotate-90 border-t border-yellow-200/20 absolute"></div>
-                                    <div className="w-full h-full -rotate-45 border-t border-yellow-200/20 absolute"></div>
+                            {/* Bouncing/Flipping Cards Animation */}
+                            <div className="relative w-full h-[200px] flex items-center justify-center mb-8">
+                                {/* Center Card */}
+                                <div className="absolute z-30 w-[80px] h-[120px] bg-[#1e1030] border border-[#d4af37] rounded-lg shadow-[0_0_30px_rgba(212,175,55,0.4)] flex flex-col items-center justify-center animate-[bounce_2s_infinite]">
+                                    <div className="absolute inset-1 border-[0.5px] border-[#d4af37]/40 rounded"></div>
+                                    <Star className="text-[#d4af37] w-6 h-6 fill-[#d4af37] mb-1" />
+                                    <Moon className="text-[#d4af37] w-4 h-4 fill-[#d4af37] rotate-[130deg]" />
                                 </div>
-                                {/* Inner glowing moon */}
-                                <div className="w-24 h-24 bg-gradient-to-tr from-amber-100 to-amber-300 rounded-full shadow-[0_0_50px_rgba(251,191,36,0.6)] flex flex-col items-center justify-center animate-pulse relative overflow-hidden">
-                                    <Moon className="absolute text-amber-600/20 w-16 h-16 -right-2 top-2 fill-amber-600/20" />
+                                {/* Left Card */}
+                                <div className="absolute z-20 w-[70px] h-[105px] bg-[#1a0e29] border border-[#d4af37]/70 rounded-lg shadow-lg flex flex-col items-center justify-center -translate-x-[60px] translate-y-[20px] -rotate-12 animate-[bounce_2s_infinite_0.4s]">
+                                    <div className="absolute inset-1 border-[0.5px] border-[#d4af37]/30 rounded"></div>
+                                    <Star className="text-[#d4af37]/70 w-5 h-5 fill-[#d4af37]/70" />
+                                </div>
+                                {/* Right Card */}
+                                <div className="absolute z-20 w-[70px] h-[105px] bg-[#1a0e29] border border-[#d4af37]/70 rounded-lg shadow-lg flex flex-col items-center justify-center translate-x-[60px] translate-y-[10px] rotate-12 animate-[bounce_2s_infinite_0.8s]">
+                                    <div className="absolute inset-1 border-[0.5px] border-[#d4af37]/30 rounded"></div>
+                                    <Moon className="text-[#d4af37]/70 w-5 h-5 fill-[#d4af37]/70" />
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Bottom loading bar area (Progress Bar) */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-[#e4e7ee] h-[60px] flex items-center relative overflow-hidden z-20">
-                            <div
-                                className="absolute left-0 top-0 bottom-0 bg-[#fcff4b] transition-all duration-300 ease-out"
-                                style={{ width: `${progress}%` }}
-                            ></div>
-                            <div className="absolute inset-0 flex items-center justify-center MixBlend">
-                                <span className="text-[14px] font-bold text-gray-800 tracking-tight z-10 mix-blend-difference filter">
-                                    선택한 타로를 분석하고 있어요...{progress}%
+                            {/* Large Percentage Text */}
+                            <div className="mb-6 flex flex-col items-center">
+                                <span className="text-[64px] font-black text-transparent bg-clip-text bg-gradient-to-b from-[#fde68a] to-[#d4af37] drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)] tabular-nums leading-none">
+                                    {progress}<span className="text-[32px] ml-1">%</span>
                                 </span>
+                            </div>
+
+                            <h2 className="text-white/90 font-bold tracking-wide leading-relaxed text-[18px]">
+                                신비로운 우주의 에너지를 모아<br />타로 카드를 해석하고 있어요...
+                            </h2>
+
+                            {/* Small progress bar directly under text */}
+                            <div className="w-48 h-1.5 bg-white/10 rounded-full mt-8 overflow-hidden">
+                                <div
+                                    className="h-full bg-gradient-to-r from-[#d4af37] to-[#fef08a] transition-all duration-300 ease-out"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
                             </div>
                         </div>
                     </div>
-                )
-                }
+                )}
 
                 {/* Results Screen */}
                 {
