@@ -14,8 +14,6 @@ langchain-openai
 langchain-chroma
 langchain-core
 langchain-google-genai
-sentence-transformers
-chromadb
 pillow
 google-generativeai
 openai

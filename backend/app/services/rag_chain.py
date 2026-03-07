@@ -2,7 +2,7 @@ import json
 import os
 from typing import Dict, Any
 
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 try:
     from langchain_chroma import Chroma
 except Exception as e:
@@ -10,21 +10,6 @@ except Exception as e:
     Chroma = None
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-# 로컬 임베딩용 래퍼 클래스
-class LocalHuggingFaceEmbeddings:
-    def __init__(self, model_name: str = "jhgan/ko-sbert-nli"):
-        import threading
-        try:
-            from sentence_transformers import SentenceTransformer
-            self.model = SentenceTransformer(model_name)
-        except ImportError:
-            self.model = None
-        
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        return self.model.encode(texts).tolist()
-
-    def embed_query(self, text: str) -> list[float]:
-        return self.model.encode(text).tolist()
 
 class SajuRAGChain:
     """
@@ -52,7 +37,7 @@ class SajuRAGChain:
         self._db_initialized = True
         try:
             from langchain_chroma import Chroma
-            self.embeddings = LocalHuggingFaceEmbeddings()
+            self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
             self.vector_store = Chroma(
                 collection_name="classical_saju_texts",
                 embedding_function=self.embeddings,
