@@ -12,6 +12,17 @@ class PhysiognomyRequest(BaseModel):
 class PhysiognomyResponse(BaseModel):
     result: str
 
+@router.get("/physiognomy/models")
+async def list_models():
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key: return {"error": "no key"}
+    genai.configure(api_key=api_key)
+    try:
+        models = [m.name for m in genai.list_models()]
+        return {"models": models}
+    except Exception as e:
+        return {"error": str(e)}
+
 @router.post("/physiognomy", response_model=PhysiognomyResponse)
 async def analyze_face(request: PhysiognomyRequest):
     try:
