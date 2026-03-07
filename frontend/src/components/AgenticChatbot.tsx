@@ -40,7 +40,7 @@ export default function AgenticChatbot({ sajuContext, isFullScreen = false }: Ag
             } else {
                 setMessages([{
                     role: 'ai',
-                    content: `안녕하세요! 1:1 라이프 코치 AI입니다. 정확한 맞춤형 코칭을 위해서는 화면 위쪽에서 출생 정보를 입력하고 [운명 분석하기]를 눌러주세요. 그 전에는 일반적인 명리/운세 관련된 질문만 간단히 답변해 드립니다!`,
+                    content: `안녕하세요! 1:1 라이프 코치 AI입니다. 정확한 맞춤형 코칭을 위해서는 홈 화면(운세 탭)으로 돌아가 출생 정보를 먼저 입력하고 [운명 분석하기]를 눌러주세요. 그 전에는 일반적인 운세나 명리학 질문만 간단히 답변해 드립니다!`,
                 }]);
             }
         }

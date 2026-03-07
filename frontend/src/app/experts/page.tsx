@@ -109,8 +109,8 @@ export default function ExpertsPage() {
                 <div className="grid grid-cols-4 gap-y-6">
                     {/* Simplified category icons */}
                     {[
-                        { icon: '📜', label: '운세상담' },
-                        { icon: '🃏', label: '타로상담' },
+                        { icon: '📜', label: '운세상담', tab: '운세' },
+                        { icon: '🃏', label: '타로상담', tab: '타로' },
                         { icon: '🤖', label: 'AI상담', href: '/experts/ai-chat' },
                         { icon: '📖', label: '이용가이드' },
                     ].map((item, i) => {
@@ -128,7 +128,7 @@ export default function ExpertsPage() {
                                 {content}
                             </Link>
                         ) : (
-                            <div key={i} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                            <div key={i} onClick={() => item.tab && setSelectedTab(item.tab)} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
                                 {content}
                             </div>
                         );
