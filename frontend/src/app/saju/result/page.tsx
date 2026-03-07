@@ -35,6 +35,8 @@ interface MatrixData {
 const AnimatedAnimalLoader = ({ dayStem, readingType }: { dayStem: string | null, readingType: string }) => {
     const [progress, setProgress] = useState(0);
 
+    const [animal, setAnimal] = useState({ emoji: "🔮", action: "운명의 수레바퀴가 도는 중..." });
+
     useEffect(() => {
         // Fast fake progress up to 99%
         const interval = setInterval(() => {
@@ -45,37 +47,31 @@ const AnimatedAnimalLoader = ({ dayStem, readingType }: { dayStem: string | null
                 return 99;
             });
         }, 300);
+
+        // Pick a random zodiac animal!
+        const animals = [
+            { emoji: "🐰", action: "토끼가 폴짝폴짝 뛰어오는 중..." },
+            { emoji: "🐴", action: "말이 힘차게 달려오는 중..." },
+            { emoji: "🐶", action: "강아지가 신나게 쫓아오는 중..." },
+            { emoji: "🐒", action: "원숭이가 나무를 타고 오는 중..." },
+            { emoji: "🐷", action: "돼지가 통통통 굴러오는 중..." },
+            { emoji: "🐔", action: "수탉이 날갯짓하며 날아오는 중..." },
+            { emoji: "🐭", action: "생쥐가 쪼르르 달려오는 중..." },
+            { emoji: "🐯", action: "호랑이가 어흥하며 다가오는 중..." },
+            { emoji: "🐉", action: "용이 여의주를 물고 날아오는 중..." },
+            { emoji: "🐮", action: "소가 우직하게 짐을 끌고 오는 중..." }
+        ];
+
+        setAnimal(animals[Math.floor(Math.random() * animals.length)]);
+
         return () => clearInterval(interval);
     }, []);
-
-    // Determine animal based on Heavenly Stem (Day Master)
-    let animalEmoji = "🔮"; // Default
-    let animalAction = "걸어오는 중...";
-
-    if (dayStem) {
-        if (['갑', '을', '甲', '乙'].includes(dayStem)) {
-            animalEmoji = "🐰"; // Wood
-            animalAction = "토끼가 폴짝폴짝 뛰어오는 중...";
-        } else if (['병', '정', '丙', '丁'].includes(dayStem)) {
-            animalEmoji = "🐴"; // Fire
-            animalAction = "말이 힘차게 달려오는 중...";
-        } else if (['무', '기', '戊', '己'].includes(dayStem)) {
-            animalEmoji = "🐶"; // Earth
-            animalAction = "강아지가 신나게 쫓아오는 중...";
-        } else if (['경', '신', '庚', '辛'].includes(dayStem)) {
-            animalEmoji = "🐒"; // Metal
-            animalAction = "원숭이가 나무를 타고 오는 중...";
-        } else if (['임', '계', '壬', '癸'].includes(dayStem)) {
-            animalEmoji = "🐷"; // Water
-            animalAction = "돼지가 통통통 굴러오는 중...";
-        }
-    }
 
     return (
         <div className="flex flex-col items-center justify-center py-16 gap-6 relative overflow-hidden">
             {/* The Animal */}
             <div className="relative text-7xl animate-bounce" style={{ animationDuration: '0.8s' }}>
-                {animalEmoji}
+                {animal.emoji}
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/10 rounded-full blur-[2px] animate-pulse"></div>
             </div>
 
@@ -88,7 +84,7 @@ const AnimatedAnimalLoader = ({ dayStem, readingType }: { dayStem: string | null
                     당신의 {readingType}를<br />세밀하게 분석하고 있습니다.
                 </h3>
                 <p className="text-sm font-medium text-gray-500 mt-1">
-                    {animalAction}
+                    {animal.action}
                 </p>
             </div>
         </div>

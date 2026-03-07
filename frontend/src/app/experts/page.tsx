@@ -128,7 +128,13 @@ export default function ExpertsPage() {
                                 {content}
                             </Link>
                         ) : (
-                            <div key={i} onClick={() => item.tab && setSelectedTab(item.tab)} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
+                            <div key={i} onClick={() => {
+                                if (item.label === '이용가이드') {
+                                    alert('현재 이용가이드 내용을 리뉴얼 중입니다. 조금만 기다려주세요! 🛠️');
+                                } else if (item.tab) {
+                                    setSelectedTab(item.tab);
+                                }
+                            }} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
                                 {content}
                             </div>
                         );
