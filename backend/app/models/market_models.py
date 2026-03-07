@@ -79,3 +79,40 @@ class Product(Base):
     image_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class VirtualExpert(Base):
+    __tablename__ = "virtual_experts"
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String, default="운세") # 운세, 타로
+    display_name = Column(String, nullable=False)
+    code = Column(String, nullable=False)
+    tags = Column(String, nullable=True) # Stored as comma separated or JSON string
+    rating = Column(Integer, default=5) # Can be Float, using Integer based on existing mock structure or Float
+    reviews_count = Column(Integer, default=0)
+    avg_minutes = Column(Integer, default=10)
+    total_consults = Column(Integer, default=0)
+    image_url = Column(String, nullable=True)
+    is_online = Column(Boolean, default=True)
+    banner_text = Column(String, nullable=True)
+    is_free_available = Column(Boolean, default=False)
+    introduction_text = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class ExpertReview(Base):
+    __tablename__ = "expert_reviews"
+    id = Column(Integer, primary_key=True, index=True)
+    expert_id = Column(Integer, ForeignKey("virtual_experts.id", ondelete="CASCADE"))
+    author_name = Column(String, nullable=False)
+    rating = Column(Integer, default=5)
+    content = Column(Text, nullable=False)
+    is_hidden = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class ExpertSettlement(Base):
+    __tablename__ = "expert_settlements"
+    id = Column(Integer, primary_key=True, index=True)
+    expert_id = Column(Integer, ForeignKey("virtual_experts.id", ondelete="CASCADE"))
+    amount = Column(Integer, nullable=False)
+    status = Column(String, default="PENDING") # PENDING, COMPLETED, CANCELLED
+    created_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)

@@ -5,13 +5,13 @@ import { ArrowLeft, Share2, Star, Clock, Volume2, Heart, Bell } from 'lucide-rea
 import { cn } from './DestinyMatrixCard';
 
 export interface Expert {
-    expert_id: number;
+    id: number;
     category: string;
     display_name: string;
     code: string;
-    tags: string[];
+    tags: string;
     rating: number;
-    reviews: number;
+    reviews_count: number;
     avg_minutes: number;
     total_consults: number;
     image_url: string;
@@ -54,11 +54,22 @@ export default function ExpertProfileModal({ expert, onClose }: Props) {
         // The popstate listener will trigger onClose
     };
 
-    // Mock data for modal content
-    const recentReviews = [
-        { name: "김**", rating: 5, text: "항상 안좋은쪽으로는 정확하셔서 슬퍼요 ㅠㅠ" },
-        { name: "최**", rating: 5, text: "오랜만이었어요! 중요한 순간을..." },
-    ];
+    const [recentReviews, setRecentReviews] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const res = await fetch(`/api/experts/${expert.id}/reviews`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setRecentReviews(data);
+                }
+            } catch (err) {
+                console.error("Failed to load reviews:", err);
+            }
+        };
+        fetchReviews();
+    }, [expert.id]);
 
     return (
         <div className="fixed inset-0 z-[9999] bg-white flex flex-col animate-in slide-in-from-right-full duration-300">
@@ -110,32 +121,35 @@ export default function ExpertProfileModal({ expert, onClose }: Props) {
                         <div className="flex items-center justify-between mb-1">
                             <div className="flex items-center gap-1.5">
                                 <Star className="w-5 h-5 text-red-500 fill-red-500" />
-                                <span className="text-[20px] font-black text-gray-900">{expert.rating}</span>
-                                <span className="text-[15px] font-bold text-gray-600">({expert.reviews.toLocaleString()}건)</span>
+                                <span className="text-[20px] font-black text-gray-900">{expert.rating?.toFixed(1) || '5.0'}</span>
+                                <span className="text-[15px] font-bold text-gray-600">({expert.reviews_count?.toLocaleString() || 0}건)</span>
                             </div>
                             <button className="flex items-center text-[13px] font-medium text-gray-400">
                                 전체보기 &gt;
                             </button>
                         </div>
                         <p className="text-[13px] text-gray-400 font-medium mb-4">
-                            {expert.reviews}명중 94.4%가 만족했어요.
+                            {expert.reviews_count || 0}명중 94.4%가 만족했어요.
                         </p>
 
                         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
-                            {recentReviews.map((rev, idx) => (
-                                <div key={idx} className="min-w-[200px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm snap-start">
+                            {recentReviews.map((rev) => (
+                                <div key={rev.id} className="min-w-[200px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm snap-start">
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[14px] font-bold text-gray-900">{rev.name}</span>
+                                        <span className="text-[14px] font-bold text-gray-900">{rev.author_name}</span>
                                         <div className="flex items-center gap-0.5">
                                             <Star className="w-3.5 h-3.5 text-red-500 fill-red-500" />
                                             <span className="text-[13px] font-bold text-gray-900">{rev.rating}</span>
                                         </div>
                                     </div>
                                     <p className="text-[13px] text-gray-500 leading-snug line-clamp-2">
-                                        {rev.text}
+                                        {rev.content}
                                     </p>
                                 </div>
                             ))}
+                            {recentReviews.length === 0 && (
+                                <div className="text-[13px] text-gray-400 p-4">등록된 후기가 없습니다.</div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -143,7 +157,7 @@ export default function ExpertProfileModal({ expert, onClose }: Props) {
                 {/* Sticky Tabs */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
                     <div className="flex">
-                        {["소개", `후기${expert.reviews}`, "고민상담"].map(tab => (
+                        {["소개", `후기${expert.reviews_count || 0}`, "고민상담"].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -167,9 +181,9 @@ export default function ExpertProfileModal({ expert, onClose }: Props) {
                         <section>
                             <h3 className="text-[17px] font-black text-gray-900 mb-4">전문 상담 분야</h3>
                             <div className="flex flex-wrap gap-2">
-                                {expert.tags.map(tag => (
+                                {(expert.tags || '').split(',').map(tag => (
                                     <span key={tag} className="border border-gray-200 text-gray-600 text-[14px] font-medium px-4 py-2 rounded-full">
-                                        {tag.replace('#', '')}
+                                        {tag.trim().replace('#', '')}
                                     </span>
                                 ))}
                             </div>

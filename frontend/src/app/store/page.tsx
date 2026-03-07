@@ -41,6 +41,7 @@ export const storeProducts: Product[] = [
         description: "오프라인 재물 부적의 파동을 그대로 담은 디지털 굿즈.",
         price: 15000,
         category: "wish",
+        elementTheme: "wealth",
         imageUrl: "/talismans/wealth.png"
     },
     {
@@ -49,6 +50,7 @@ export const storeProducts: Product[] = [
         description: "매력을 극대화하고 새로운 인연을 끌어당기는 사랑의 템플릿.",
         price: 15000,
         category: "wish",
+        elementTheme: "love",
         imageUrl: "/talismans/love.png"
     },
     {
@@ -57,6 +59,7 @@ export const storeProducts: Product[] = [
         description: "강력한 리더십을 상징하는 청룡 아바타 디자인.",
         price: 25000,
         category: "persona",
+        elementTheme: "wood",
         imageUrl: "/talismans/health.png"
     },
     {
@@ -65,6 +68,7 @@ export const storeProducts: Product[] = [
         description: "블록체인에 각인되어 영구 보존 가능한 나만의 유일무이한 NFT 럭키참.",
         price: 50000,
         category: "wish",
+        elementTheme: "wealth",
         imageUrl: "/talismans/wealth.png"
     },
     {
@@ -73,6 +77,7 @@ export const storeProducts: Product[] = [
         description: "나의 태어난 일주(日柱)를 형상화한 하이엔드 3D 캐릭터 스마트폰 배경화면.",
         price: 5500,
         category: "persona",
+        elementTheme: "wood",
         imageUrl: "/talismans/love.png"
     }
 ];

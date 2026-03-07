@@ -6,158 +6,31 @@ import { cn } from '../../components/DestinyMatrixCard';
 import ExpertProfileModal, { Expert } from '../../components/ExpertProfileModal';
 import Link from 'next/link';
 
-const mockExperts: Expert[] = [
-    // --- 운세 (Saju/Fortune) 10명 ---
-    {
-        expert_id: 1, category: '운세', display_name: '예화', code: '002',
-        tags: ['#종합운세', '#궁합', '#택일', '#학업', '#취업', '#사주'],
-        rating: 4.8, reviews: 3610, avg_minutes: 14, total_consults: 9999,
-        image_url: 'https://i.pravatar.cc/150?img=5',
-        is_online: true, banner_text: '선착순 4명 남음', is_free_available: true
-    },
-    {
-        expert_id: 2, category: '운세', display_name: '백산도사', code: '105',
-        tags: ['#종합운세', '#부동산', '#금전운', '#사업'],
-        rating: 4.9, reviews: 2150, avg_minutes: 16, total_consults: 8400,
-        image_url: 'https://i.pravatar.cc/150?img=11',
-        is_online: true, is_free_available: false
-    },
-    {
-        expert_id: 3, category: '운세', display_name: '나무하트명리', code: '199',
-        tags: ['#단기운세', '#궁합', '#학업', '#취업', '#건강'],
-        rating: 4.7, reviews: 120, avg_minutes: 12, total_consults: 850,
-        image_url: 'https://i.pravatar.cc/150?img=15',
-        is_online: false, banner_text: '부재중', is_free_available: false
-    },
-    {
-        expert_id: 4, category: '운세', display_name: '청운당', code: '307',
-        tags: ['#신년운세', '#성격', '#대인관계'],
-        rating: 5.0, reviews: 540, avg_minutes: 10, total_consults: 1200,
-        image_url: 'https://i.pravatar.cc/150?img=33',
-        is_online: true, is_free_available: true
-    },
-    {
-        expert_id: 5, category: '운세', display_name: '해의기운', code: '401',
-        tags: ['#사주풀이', '#직장', '#승진', '#이직'],
-        rating: 4.6, reviews: 890, avg_minutes: 15, total_consults: 3200,
-        image_url: 'https://i.pravatar.cc/150?img=47',
-        is_online: true, banner_text: '대기열 적음', is_free_available: false
-    },
-    {
-        expert_id: 6, category: '운세', display_name: '별길', code: '505',
-        tags: ['#명리학', '#사주명리', '#성공운'],
-        rating: 4.8, reviews: 1100, avg_minutes: 13, total_consults: 4100,
-        image_url: 'https://i.pravatar.cc/150?img=52',
-        is_online: false, is_free_available: true
-    },
-    {
-        expert_id: 7, category: '운세', display_name: '송암', code: '612',
-        tags: ['#정통사주', '#작명', '#개명'],
-        rating: 4.9, reviews: 3200, avg_minutes: 18, total_consults: 11000,
-        image_url: 'https://i.pravatar.cc/150?img=59',
-        is_online: true, is_free_available: false
-    },
-    {
-        expert_id: 8, category: '운세', display_name: '예지당', code: '710',
-        tags: ['#연애운', '#재물운', '#사주'],
-        rating: 4.7, reviews: 950, avg_minutes: 11, total_consults: 2800,
-        image_url: 'https://i.pravatar.cc/150?img=65',
-        is_online: true, banner_text: '빠른 상담', is_free_available: true
-    },
-    {
-        expert_id: 9, category: '운세', display_name: '연화', code: '840',
-        tags: ['#사주', '#가정', '#부부', '#육아'],
-        rating: 4.8, reviews: 1450, avg_minutes: 14, total_consults: 5000,
-        image_url: 'https://i.pravatar.cc/150?img=68',
-        is_online: true, is_free_available: false
-    },
-    {
-        expert_id: 10, category: '운세', display_name: '청명', code: '903',
-        tags: ['#사주명리', '#궁합', '#사업운', '#재물'],
-        rating: 4.9, reviews: 4100, avg_minutes: 20, total_consults: 14000,
-        image_url: 'https://i.pravatar.cc/150?img=12',
-        is_online: true, banner_text: '인기 상담사', is_free_available: true
-    },
-
-    // --- 타로 (Tarot) 10명 ---
-    {
-        expert_id: 11, category: '타로', display_name: '로제타로', code: '031',
-        tags: ['#연애타로', '#속마음', '#재회'],
-        rating: 4.9, reviews: 4500, avg_minutes: 12, total_consults: 15000,
-        image_url: 'https://i.pravatar.cc/150?img=1',
-        is_online: true, banner_text: '선착순 2명 남음', is_free_available: true
-    },
-    {
-        expert_id: 12, category: '타로', display_name: '수비', code: '112',
-        tags: ['#타로', '#심리상담', '#대인관계', '#고민'],
-        rating: 4.8, reviews: 1800, avg_minutes: 15, total_consults: 6000,
-        image_url: 'https://i.pravatar.cc/150?img=9',
-        is_online: true, is_free_available: false
-    },
-    {
-        expert_id: 13, category: '타로', display_name: '안젤라', code: '243',
-        tags: ['#타로', '#연애', '#재회', '#썸'],
-        rating: 4.7, reviews: 900, avg_minutes: 10, total_consults: 3100,
-        image_url: 'https://i.pravatar.cc/150?img=16',
-        is_online: false, is_free_available: true
-    },
-    {
-        expert_id: 14, category: '타로', display_name: '셀레나', code: '351',
-        tags: ['#직장인타로', '#이직', '#진로', '#적성'],
-        rating: 5.0, reviews: 750, avg_minutes: 14, total_consults: 2300,
-        image_url: 'https://i.pravatar.cc/150?img=20',
-        is_online: true, banner_text: '예리한 통찰력', is_free_available: false
-    },
-    {
-        expert_id: 15, category: '타로', display_name: '비너스', code: '419',
-        tags: ['#타로카드', '#금전운', '#사업운'],
-        rating: 4.6, reviews: 520, avg_minutes: 11, total_consults: 1400,
-        image_url: 'https://i.pravatar.cc/150?img=24',
-        is_online: true, is_free_available: true
-    },
-    {
-        expert_id: 16, category: '타로', display_name: '릴리타로', code: '577',
-        tags: ['#펫타로', '#반려동물', '#타로상담'],
-        rating: 4.9, reviews: 1200, avg_minutes: 16, total_consults: 3800,
-        image_url: 'https://i.pravatar.cc/150?img=26',
-        is_online: true, banner_text: '반려동물 마음읽기', is_free_available: false
-    },
-    {
-        expert_id: 17, category: '타로', display_name: '스윗베리', code: '608',
-        tags: ['#타로점', '#오늘의운세', '#연애타로'],
-        rating: 4.8, reviews: 3100, avg_minutes: 9, total_consults: 11500,
-        image_url: 'https://i.pravatar.cc/150?img=34',
-        is_online: false, is_free_available: true
-    },
-    {
-        expert_id: 18, category: '타로', display_name: '문라이트', code: '722',
-        tags: ['#달의기운', '#심리', '#힐링타로'],
-        rating: 4.7, reviews: 850, avg_minutes: 18, total_consults: 2600,
-        image_url: 'https://i.pravatar.cc/150?img=45',
-        is_online: true, is_free_available: false
-    },
-    {
-        expert_id: 19, category: '타로', display_name: '레아', code: '891',
-        tags: ['#속마음', '#짝사랑', '#연애상담'],
-        rating: 4.9, reviews: 5200, avg_minutes: 12, total_consults: 18000,
-        image_url: 'https://i.pravatar.cc/150?img=10',
-        is_online: true, banner_text: '압도적 후기', is_free_available: true
-    },
-    {
-        expert_id: 20, category: '타로', display_name: '엘라', code: '999',
-        tags: ['#종합타로', '#미래예측', '#운흐름'],
-        rating: 4.8, reviews: 2900, avg_minutes: 14, total_consults: 8900,
-        image_url: 'https://i.pravatar.cc/150?img=49',
-        is_online: true, is_free_available: false
-    }
-];
-
 export default function ExpertsPage() {
     const [selectedTab, setSelectedTab] = useState("전체");
     const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [experts, setExperts] = useState<Expert[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const tabs = ["전체", "운세", "타로"];
+
+    useEffect(() => {
+        const fetchExperts = async () => {
+            try {
+                const res = await fetch('/api/experts');
+                if (res.ok) {
+                    const data = await res.json();
+                    setExperts(data);
+                }
+            } catch (err) {
+                console.error("Failed to load experts:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchExperts();
+    }, []);
 
     return (
         <main className="min-h-screen bg-[#F5F6F8] pb-32">
@@ -280,36 +153,23 @@ export default function ExpertsPage() {
                     <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
                 </div>
 
-                <div className="px-4 py-3 flex gap-2 overflow-x-auto hide-scrollbar">
-                    <button className="flex items-center gap-1 bg-gray-900 text-white px-3 py-1.5 rounded-full text-[13px] font-bold flex-shrink-0">
-                        추천순 <ChevronDown className="w-4 h-4" />
-                    </button>
-                    <button className="flex items-center gap-1 bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full text-[13px] font-medium flex-shrink-0">
-                        상담분야 <ChevronDown className="w-4 h-4" />
-                    </button>
-                    <button className="flex items-center gap-1 bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full text-[13px] font-medium flex-shrink-0">
-                        바로 상담
-                    </button>
-                    <button className="flex items-center gap-1 bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full text-[13px] font-medium flex-shrink-0">
-                        할인 쿠폰
-                    </button>
-                </div>
+
             </div>
 
             {/* List */}
             <div className="flex flex-col">
-                {mockExperts.filter(expert => {
+                {experts.filter(expert => {
                     const matchesTab = selectedTab === '전체' || expert.category === selectedTab;
-                    const matchesSearch = expert.display_name.includes(searchTerm) || expert.tags.some(tag => tag.includes(searchTerm));
+                    const matchesSearch = expert.display_name.includes(searchTerm) || (expert.tags && expert.tags.includes(searchTerm));
                     return matchesTab && matchesSearch;
                 }).map(expert => (
                     <div
-                        key={expert.expert_id}
+                        key={expert.id}
                         onClick={() => setSelectedExpert(expert)}
                         className="bg-white p-5 cursor-pointer border-b border-gray-100"
                     >
                         {/* Tags */}
-                        {expert.expert_id === 3 && (
+                        {expert.id === 3 && (
                             <div className="inline-block bg-gray-100 text-gray-600 text-[11px] font-bold px-1.5 py-0.5 rounded-sm mb-2">
                                 15% 할인
                             </div>
@@ -327,18 +187,18 @@ export default function ExpertsPage() {
                                 </div>
 
                                 <p className="text-[13px] text-gray-400 font-medium mb-3 leading-snug line-clamp-1 w-[90%]">
-                                    {expert.tags.join(' ')}
+                                    {(expert.tags || "").split(',').map(t => t.trim()).join(' ')}
                                 </p>
 
                                 <div className="flex items-center gap-2 text-[12px]">
                                     <div className="flex items-center gap-1">
                                         <Star className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-                                        <span className="font-bold text-gray-900">{expert.rating} <span className="text-gray-500 font-medium">({expert.reviews.toLocaleString()})</span></span>
+                                        <span className="font-bold text-gray-900">{expert.rating?.toFixed(1) || "5.0"} <span className="text-gray-500 font-medium">({expert.reviews_count?.toLocaleString() || 0})</span></span>
                                     </div>
                                     <div className="w-[1px] h-2.5 bg-gray-300"></div>
                                     <span className="text-gray-500">평균 <span className="font-bold text-gray-700">{expert.avg_minutes}분</span></span>
                                     <div className="w-[1px] h-2.5 bg-gray-300"></div>
-                                    <span className="text-gray-500">누적 <span className="font-bold text-gray-700">{expert.total_consults.toLocaleString()}{expert.total_consults > 5000 ? '+' : ''}회</span></span>
+                                    <span className="text-gray-500">누적 <span className="font-bold text-gray-700">{expert.total_consults?.toLocaleString() || 0}{(expert.total_consults || 0) > 5000 ? '+' : ''}회</span></span>
                                 </div>
                             </div>
 

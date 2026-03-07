@@ -6,8 +6,9 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, PieChart, Pie, Cell, Legend
 } from 'recharts';
+import ExpertsManager from './experts/ExpertsManager';
 
-type TabId = 'analytics' | 'goods' | 'market' | 'system';
+type TabId = 'analytics' | 'goods' | 'market' | 'system' | 'experts';
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<TabId>('analytics');
@@ -763,6 +764,12 @@ export default function AdminDashboard() {
                     >
                         <ShieldAlert className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">보안 및 설정</span>
                     </button>
+                    <button
+                        onClick={() => setActiveTab('experts')}
+                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'experts' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
+                    >
+                        <Sparkles className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">상담사 관리</span>
+                    </button>
                 </nav>
 
                 {/* Admin Profile Foot */}
@@ -807,6 +814,7 @@ export default function AdminDashboard() {
                 {activeTab === 'goods' && renderGoods()}
                 {activeTab === 'market' && renderMarket()}
                 {activeTab === 'system' && renderSystem()}
+                {activeTab === 'experts' && <ExpertsManager />}
             </main>
 
             {/* Edit Modal */}
