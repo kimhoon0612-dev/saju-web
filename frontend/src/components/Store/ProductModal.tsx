@@ -98,32 +98,28 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-red-800/20 blur-[50px] rounded-full pointer-events-none" />
 
                                 <div className="text-center mt-8 mb-12 relative z-10">
-                                    <div className="text-[32px] font-serif text-[#FFD700] mb-2 tracking-widest">2026</div>
-                                    <div className="text-[14px] text-gray-300 tracking-widest mb-4">한정판 금부적</div>
-                                    <div className="text-[10px] text-gray-400 tracking-[0.2em] mb-4">2026 LIMITED EDITION</div>
-                                    <div className="text-[28px] font-serif text-[#FFD700] border-t border-b border-[#FFD700]/30 py-3 px-6">
-                                        적마유하만리부
+                                    <div className="text-[32px] font-serif text-[#FFD700] mb-2 tracking-widest">명리학 부적</div>
+                                    <div className="text-[14px] text-gray-300 tracking-widest mb-4">맞춤형 기운 보강</div>
+                                    <div className="text-[10px] text-gray-400 tracking-[0.2em] mb-4">PREMIUM EDITION</div>
+                                    <div className="text-[28px] font-serif text-[#FFD700] border-t border-b border-[#FFD700]/30 py-3 px-6 break-keep">
+                                        {product.name}
                                     </div>
                                 </div>
 
-                                <img src={product.imageUrl} alt="detail mock" className="w-[80%] max-w-[280px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] relative z-10 mb-16" />
+                                <img src={product.imageUrl} alt={product.name} className="w-[80%] max-w-[280px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] relative z-10 mb-16" />
 
                                 <div className="text-left w-full space-y-12 relative z-10 px-2 lg:px-8">
                                     <div>
-                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">긍정적인 에너지가 넘치는 해</h3>
+                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">해당 부적의 효능 및 기운</h3>
                                         <p className="text-[15px] text-gray-300 leading-relaxed font-light break-keep">
-                                            2026년은 붉은 말의 해인 병오년(丙午年)입니다.<br />
-                                            병오년의 '병'은 열정과 활력을 담고 있습니다.<br />
-                                            방향은 남쪽, 색으로는 붉은색입니다.<br />
-                                            추진력과 성취라는 의미를 강하게 품고 있습니다.
+                                            {product.description}
                                         </p>
                                     </div>
                                     <div>
-                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">붉은 말은 긍정과 정열의 상징</h3>
+                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">신비로운 기운의 상징</h3>
                                         <p className="text-[15px] text-gray-300 leading-relaxed font-light break-keep">
-                                            말은 예로부터 활기차고 진취적인 동물로 여겼습니다.<br />
-                                            붉은 말은 말이 가진 추진력에 열정과 생기를 더합니다.<br />
-                                            불꽃이 타오르는 힘으로 두려움을 넘어 성공을 이루는 길조가 바로 붉은 말입니다.
+                                            이 부적은 예로부터 전해 내려오는 비전(秘傳)의 방식들을 응용하여, 사용자에게 필요한 기운이 스며들 수 있도록 돕는 상징적인 매개체입니다.<br />
+                                            모든 일에 긍정과 열정을 가지고 임할 때, 본 부적이 든든한 조력자 역할을 해줄 것입니다.
                                         </p>
                                     </div>
                                 </div>
