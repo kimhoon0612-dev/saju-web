@@ -121,7 +121,8 @@ export default function Home() {
     setIsLoading(true);
     console.log("Starting calculation with data:", data);
     try {
-      const calcRes = await fetch("/api/calculate", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+      const calcRes = await fetch(`${API_BASE}/api/calculate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

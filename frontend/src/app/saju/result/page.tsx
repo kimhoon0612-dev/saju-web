@@ -35,6 +35,9 @@ function SajuContent() {
     const [insight, setInsight] = useState<string | null>(null);
     const [lifeStages, setLifeStages] = useState<LifeStage[] | null>(null);
     const [specificReading, setSpecificReading] = useState<string | null>(null);
+    // Vercel 프록시 타임아웃(15초)을 우회하기 위해 Render 직접 호출.
+    // 환경변수 없으면 Render 기본 주소 사용.
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
     const [timeInfo, setTimeInfo] = useState<{
         true_solar_time: string;
         original_time: string;
@@ -55,7 +58,6 @@ function SajuContent() {
         : "daewun";
 
     const [activeTab, setActiveTab] = useState<"daewun" | "life_stages" | "yearly" | "daily" | "elemental">(initialTab);
-    const API_BASE = "/api";
 
     const handleTabClick = async (tab: "daewun" | "life_stages" | "yearly" | "daily" | "elemental") => {
         setActiveTab(tab);
@@ -117,42 +119,38 @@ function SajuContent() {
                 setIsLoading(true);
                 try {
                     const paramsType = searchParams.get('type');
-                    const fetches = [
-                        fetch(`${API_BASE}/insight`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(parsedMatrix)
-                        }),
-                        fetch(`${API_BASE}/life-stages`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(parsedMatrix)
-                        })
-                    ];
 
-                    if (paramsType) {
-                        fetches.push(
-                            fetch(`${API_BASE}/specific-reading`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ saju_matrix: parsedMatrix, reading_type: paramsType })
-                            })
-                        );
-                    }
-
-                    const responses = await Promise.all(fetches);
-
-                    if (responses[0].ok) {
-                        const insightData = await responses[0].json();
+                    // Render 무료 서버 부하 및 Vercel 타임아웃 방지를 위해 순차적(Sequential)으로 호출
+                    const insightRes = await fetch(`${API_BASE}/api/insight`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(parsedMatrix)
+                    });
+                    if (insightRes.ok) {
+                        const insightData = await insightRes.json();
                         setInsight(insightData.insight);
                     }
-                    if (responses[1].ok) {
-                        const lifeData = await responses[1].json();
+
+                    const lifeRes = await fetch(`${API_BASE}/api/life-stages`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(parsedMatrix)
+                    });
+                    if (lifeRes.ok) {
+                        const lifeData = await lifeRes.json();
                         setLifeStages(lifeData.stages || []);
                     }
-                    if (paramsType && responses[2] && responses[2].ok) {
-                        const readingData = await responses[2].json();
-                        setSpecificReading(readingData.reading);
+
+                    if (paramsType) {
+                        const specificRes = await fetch(`${API_BASE}/api/specific-reading`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ saju_matrix: parsedMatrix, reading_type: paramsType })
+                        });
+                        if (specificRes.ok) {
+                            const readingData = await specificRes.json();
+                            setSpecificReading(readingData.reading);
+                        }
                     }
 
                 } catch (error) {
