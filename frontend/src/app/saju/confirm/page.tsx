@@ -77,7 +77,7 @@ function ConfirmContent() {
     const type = searchParams?.get("type") || "운세";
 
     const isSpecificDate = type === "지정일 운세";
-    const isCompatibility = type === "짝궁합" || type === "정통궁합";
+    const isCompatibility = type === "궁합" || type === "짝궁합" || type === "정통궁합";
 
     const [matrix, setMatrix] = useState<any>(null);
     const [userInfo, setUserInfo] = useState<SajuUserInfo | null>(null);
