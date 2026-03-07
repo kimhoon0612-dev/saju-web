@@ -189,52 +189,88 @@ function SajuContent() {
 
                 // 1. Fire Specific Reading Immediately to Render (Non-Blocking)
                 if (paramsType) {
-                    const storedPartnerMatrix = sessionStorage.getItem("saju_partner_matrix");
-                    const specificPayload: any = { saju_matrix: parsedMatrix, reading_type: paramsType };
-                    if (storedPartnerMatrix) {
-                        specificPayload.partner_matrix = JSON.parse(storedPartnerMatrix);
-                    }
-
-                    const renderBaseUrl = "https://saju-web.onrender.com";
-
-                    // Fire and forget (let it update state asynchronously)
-                    fetch(`${renderBaseUrl}/api/specific-reading`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(specificPayload)
-                    }).then(async (specificRes) => {
-                        if (specificRes.ok) {
-                            try {
-                                const reader = specificRes.body?.getReader();
-                                if (reader) {
-                                    const decoder = new TextDecoder();
-                                    let fullText = "";
-                                    setSpecificReading(""); // Initialize to empty string before stream starts
-
-                                    while (true) {
-                                        const { done, value } = await reader.read();
-                                        if (done) break;
-
-                                        const chunk = decoder.decode(value, { stream: true });
-                                        fullText += chunk;
-                                        setSpecificReading(fullText);
-                                    }
-                                } else {
-                                    const text = await specificRes.text();
-                                    setSpecificReading(text);
-                                }
-                            } catch (streamError) {
-                                console.error("Stream reading interrupted:", streamError);
-                                setSpecificReading(prev => `${prev}\n\n[네트워크 지연으로 인해 응답이 중단되었습니다. 새로고침 후 다시 시도해주세요.]`);
-                            }
-                        } else {
-                            console.error("Specific Reading Error Status:", specificRes.status, await specificRes.text());
-                            setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status}). 새로고침을 권장합니다.`);
+                    const cachedSpecific = sessionStorage.getItem("saju_specific_" + paramsType);
+                    if (cachedSpecific) {
+                        setSpecificReading(cachedSpecific);
+                    } else {
+                        const storedPartnerMatrix = sessionStorage.getItem("saju_partner_matrix");
+                        const specificPayload: any = { saju_matrix: parsedMatrix, reading_type: paramsType };
+                        if (storedPartnerMatrix) {
+                            specificPayload.partner_matrix = JSON.parse(storedPartnerMatrix);
                         }
-                    }).catch(error => {
-                        console.error("Specific reading load failed:", error);
-                        setSpecificReading(`[오류] 네트워크 또는 서버 연결에 실패했습니다. (인터넷 상태 확인)`);
-                    });
+
+                        const renderBaseUrl = "https://saju-web.onrender.com";
+
+                        // Fire and forget (let it update state asynchronously)
+                        fetch(`${renderBaseUrl}/api/specific-reading`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(specificPayload)
+                        }).then(async (specificRes) => {
+                            if (specificRes.ok) {
+                                try {
+                                    const reader = specificRes.body?.getReader();
+                                    if (reader) {
+                                        const decoder = new TextDecoder();
+                                        let fullText = "";
+                                        setSpecificReading(""); // Initialize to empty string before stream starts
+
+                                        while (true) {
+                                            const { done, value } = await reader.read();
+                                            if (done) {
+                                                // If the LLM hallucinated a JSON wrapper {"reading": "..."}, strip it
+                                                let finalCleanText = fullText.trim();
+                                                if (finalCleanText.startsWith('{"reading":')) {
+                                                    try {
+                                                        const parsed = JSON.parse(finalCleanText);
+                                                        if (parsed.reading) finalCleanText = parsed.reading;
+                                                    } catch (e) { }
+                                                }
+                                                setSpecificReading(finalCleanText);
+                                                sessionStorage.setItem("saju_specific_" + paramsType, finalCleanText);
+                                                break;
+                                            }
+
+                                            const chunk = decoder.decode(value, { stream: true });
+                                            fullText += chunk;
+
+                                            // Real-time cleanup for UI strictly for JSON wrapper (so users don't see {"reading":" being typed)
+                                            let displayChunk = fullText;
+                                            if (displayChunk.startsWith('{"reading":"')) {
+                                                displayChunk = displayChunk.replace('{"reading":"', '');
+                                                if (displayChunk.endsWith('"}')) {
+                                                    displayChunk = displayChunk.slice(0, -2);
+                                                }
+                                                // Handle escaped newlines
+                                                displayChunk = displayChunk.replace(/\\n/g, '\n');
+                                            }
+                                            setSpecificReading(displayChunk);
+                                        }
+                                    } else {
+                                        const text = await specificRes.text();
+                                        let finalCleanText = text.trim();
+                                        if (finalCleanText.startsWith('{"reading":')) {
+                                            try {
+                                                const parsed = JSON.parse(finalCleanText);
+                                                if (parsed.reading) finalCleanText = parsed.reading;
+                                            } catch (e) { }
+                                        }
+                                        setSpecificReading(finalCleanText);
+                                        sessionStorage.setItem("saju_specific_" + paramsType, finalCleanText);
+                                    }
+                                } catch (streamError) {
+                                    console.error("Stream reading interrupted:", streamError);
+                                    setSpecificReading(prev => `${prev}\n\n[네트워크 지연으로 인해 응답이 중단되었습니다. 새로고침 후 다시 시도해주세요.]`);
+                                }
+                            } else {
+                                console.error("Specific Reading Error Status:", specificRes.status, await specificRes.text());
+                                setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status}). 새로고침을 권장합니다.`);
+                            }
+                        }).catch(error => {
+                            console.error("Specific reading load failed:", error);
+                            setSpecificReading(`[오류] 네트워크 또는 서버 연결에 실패했습니다. (인터넷 상태 확인)`);
+                        });
+                    }
                 }
 
                 // 2. Fire Vercel Proxied APIs (Background tasks) with session caching to prevent Rate Limit (15 RPM)

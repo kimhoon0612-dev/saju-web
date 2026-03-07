@@ -183,6 +183,16 @@ export default function Home() {
       sessionStorage.removeItem("saju_lifestages");
       sessionStorage.removeItem("saju_partner_matrix");
 
+      // Clear any specific reading caches
+      const keysToRemoveH = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith("saju_specific_")) {
+          keysToRemoveH.push(key);
+        }
+      }
+      keysToRemoveH.forEach(k => sessionStorage.removeItem(k));
+
       console.log("Data saved to sessionStorage. Showing dashboard...");
       setMatrixData(completeMatrix);
       setUserGender(data.gender);
@@ -201,6 +211,16 @@ export default function Home() {
     sessionStorage.removeItem("saju_insight");
     sessionStorage.removeItem("saju_lifestages");
     sessionStorage.removeItem("saju_partner_matrix");
+
+    // Clear any specific reading caches
+    const keysToRemove = [];
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith("saju_specific_")) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(k => sessionStorage.removeItem(k));
   };
   // Render a full-screen loading skeleton instead of 'null' to prevent FOUC
   if (isInitializing) {
