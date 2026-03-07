@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Info, Share2, Plus, Calendar as CalendarIcon, X, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { getAstrologyData } from "@/utils/astrology";
+import AstrologyHeroCard from "@/components/AstrologyHeroCard";
 
 interface SajuUserInfo {
     name: string;
@@ -78,6 +80,7 @@ function ConfirmContent() {
 
     const isSpecificDate = type === "지정일 운세";
     const isCompatibility = type === "궁합" || type === "짝궁합" || type === "정통궁합";
+    const isAstrology = ["별자리 운세", "탄생석", "생년월일 운세", "전생운", "태어난 계절운", "띠 운세"].includes(type);
 
     const [matrix, setMatrix] = useState<any>(null);
     const [userInfo, setUserInfo] = useState<SajuUserInfo | null>(null);
@@ -142,6 +145,9 @@ function ConfirmContent() {
     const dayBranchHanja = getHanja(matrix.day_pillar?.earthly?.label);
     const dayBranchHangul = getHangul(matrix.day_pillar?.earthly?.label);
     const dominantTenGod = matrix.month_pillar?.earthly?.ten_god || "상관";
+
+    // Astrology Info
+    const astData = isAstrology ? getAstrologyData(type, birthDateObj) : null;
 
     // Calendar Helpers
     const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
@@ -245,82 +251,91 @@ function ConfirmContent() {
                 </section>
 
                 {/* 2. Three Info Summary Badges */}
-                <section className="flex gap-3 justify-between">
-                    <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
-                        <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center text-[22px] font-bold shadow-sm mb-3 ${ELEMENT_COLORS[dayElement]}`}>
-                            {ELEMENT_KOR[dayElement]}
+                {!isAstrology && (
+                    <section className="flex gap-3 justify-between">
+                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
+                            <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center text-[22px] font-bold shadow-sm mb-3 ${ELEMENT_COLORS[dayElement]}`}>
+                                {ELEMENT_KOR[dayElement]}
+                            </div>
+                            <span className="text-[15px] font-extrabold text-gray-900">{ELEMENT_KOR[dayElement] || "미상"}</span>
+                            <span className="text-[12px] text-gray-400 mt-0.5">오행</span>
                         </div>
-                        <span className="text-[15px] font-extrabold text-gray-900">{ELEMENT_KOR[dayElement] || "미상"}</span>
-                        <span className="text-[12px] text-gray-400 mt-0.5">오행</span>
-                    </div>
 
-                    <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px] relative">
-                        <div className="absolute top-3 right-3 w-5 h-5 bg-gray-800 text-white rounded-full text-[10px] flex items-center justify-center font-bold">?</div>
-                        <div className="w-[52px] h-[52px] rounded-full bg-gray-50 flex items-center justify-center text-[30px] shadow-sm mb-3 border border-gray-100">
-                            {ANIMAL_EMOJI[dayBranchHangul] || "🐾"}
+                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px] relative">
+                            <div className="absolute top-3 right-3 w-5 h-5 bg-gray-800 text-white rounded-full text-[10px] flex items-center justify-center font-bold">?</div>
+                            <div className="w-[52px] h-[52px] rounded-full bg-gray-50 flex items-center justify-center text-[30px] shadow-sm mb-3 border border-gray-100">
+                                {ANIMAL_EMOJI[dayBranchHangul] || "🐾"}
+                            </div>
+                            <span className="text-[15px] font-extrabold text-gray-900">{dayBranchHanja} 동물</span>
+                            <span className="text-[12px] text-gray-400 mt-0.5">일주 동물</span>
                         </div>
-                        <span className="text-[15px] font-extrabold text-gray-900">{dayBranchHanja} 동물</span>
-                        <span className="text-[12px] text-gray-400 mt-0.5">일주 동물</span>
-                    </div>
 
-                    <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
-                        <div className="w-[52px] h-[52px] rounded-full bg-gray-600 text-white flex items-center justify-center text-[15px] font-bold shadow-sm mb-3 shadow-[0_2px_10px_rgba(0,0,0,0.15)] leading-tight tracking-tighter">
-                            {TRAIT_MAP[dominantTenGod]?.short || dominantTenGod.substring(0, 2)}
+                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
+                            <div className="w-[52px] h-[52px] rounded-full bg-gray-600 text-white flex items-center justify-center text-[15px] font-bold shadow-sm mb-3 shadow-[0_2px_10px_rgba(0,0,0,0.15)] leading-tight tracking-tighter">
+                                {TRAIT_MAP[dominantTenGod]?.short || dominantTenGod.substring(0, 2)}
+                            </div>
+                            <span className="text-[13px] font-extrabold text-gray-900 text-center leading-tight whitespace-pre-line">
+                                {TRAIT_MAP[dominantTenGod]?.desc || dominantTenGod}
+                            </span>
+                            <span className="text-[11px] text-gray-400 mt-1">타고난 성향</span>
                         </div>
-                        <span className="text-[13px] font-extrabold text-gray-900 text-center leading-tight whitespace-pre-line">
-                            {TRAIT_MAP[dominantTenGod]?.desc || dominantTenGod}
-                        </span>
-                        <span className="text-[11px] text-gray-400 mt-1">타고난 성향</span>
-                    </div>
-                </section>
+                    </section>
+                )}
 
                 {/* 3. Bazi Grid (8 Pillars) */}
-                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50">
-                    <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
-                        {pillars.map((pillar, idx) => (
-                            <div key={idx} className={`flex flex-col items-center w-[23%] relative ${isCompatibility && pillar.label === '일주' ? 'bg-blue-50/50 rounded-xl relative' : ''}`}>
+                {!isAstrology && (
+                    <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50">
+                        <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
+                            {pillars.map((pillar, idx) => (
+                                <div key={idx} className={`flex flex-col items-center w-[23%] relative ${isCompatibility && pillar.label === '일주' ? 'bg-blue-50/50 rounded-xl relative' : ''}`}>
 
-                                {isCompatibility && pillar.label === '일주' && (
-                                    <div className="absolute inset-0 border border-blue-400/40 rounded-xl border-dashed pointer-events-none scale-y-110 scale-x-105"></div>
-                                )}
+                                    {isCompatibility && pillar.label === '일주' && (
+                                        <div className="absolute inset-0 border border-blue-400/40 rounded-xl border-dashed pointer-events-none scale-y-110 scale-x-105"></div>
+                                    )}
 
-                                <span className={`text-[12px] mb-4 font-medium tracking-tight ${pillar.label === '일주' ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
-                                    {pillar.label}
-                                </span>
+                                    <span className={`text-[12px] mb-4 font-medium tracking-tight ${pillar.label === '일주' ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                                        {pillar.label}
+                                    </span>
 
-                                <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
-                                    {pillar.data?.heavenly?.ten_god || "-"}
-                                </div>
-
-                                <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold mb-2 shadow-sm relative overflow-hidden`}>
-                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.heavenly?.label)}</div>
-                                    <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
-                                        <span>{getHangul(pillar.data?.heavenly?.label)}</span>
-                                        <span className="text-[7px]">,</span>
-                                        <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
+                                    <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
+                                        {pillar.data?.heavenly?.ten_god || "-"}
                                     </div>
-                                </div>
 
-                                <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold shadow-sm relative overflow-hidden mb-3`}>
-                                    <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.earthly?.label)}</div>
-                                    <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
-                                        <span>{getHangul(pillar.data?.earthly?.label)}</span>
-                                        <span className="text-[7px]">,</span>
-                                        <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
+                                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold mb-2 shadow-sm relative overflow-hidden`}>
+                                        <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.heavenly?.label)}</div>
+                                        <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                                            <span>{getHangul(pillar.data?.heavenly?.label)}</span>
+                                            <span className="text-[7px]">,</span>
+                                            <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px] whitespace-nowrap">
-                                    {pillar.data?.earthly?.ten_god || "-"}
-                                </div>
-                                <div className="text-[12px] font-bold text-gray-500 whitespace-nowrap">
-                                    {pillar.data?.twelve_state || "-"}
-                                </div>
+                                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold shadow-sm relative overflow-hidden mb-3`}>
+                                        <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.earthly?.label)}</div>
+                                        <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                                            <span>{getHangul(pillar.data?.earthly?.label)}</span>
+                                            <span className="text-[7px]">,</span>
+                                            <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
+                                        </div>
+                                    </div>
 
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                                    <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px] whitespace-nowrap">
+                                        {pillar.data?.earthly?.ten_god || "-"}
+                                    </div>
+                                    <div className="text-[12px] font-bold text-gray-500 whitespace-nowrap">
+                                        {pillar.data?.twelve_state || "-"}
+                                    </div>
+
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Astrology Visuals */}
+                {isAstrology && astData && (
+                    <AstrologyHeroCard data={astData} />
+                )}
 
                 {/* Compatibility Target Add Section */}
                 {isCompatibility && (

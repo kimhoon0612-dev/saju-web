@@ -11,6 +11,8 @@ import ElementalRadarChart from "@/components/ElementalRadarChart";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import AstrologyHeroCard from "@/components/AstrologyHeroCard";
+import { getAstrologyData } from "@/utils/astrology";
 
 interface LifeStage {
     name: string;
@@ -108,6 +110,7 @@ function SajuContent() {
         eot_min: number;
         total_correction_min: number;
     } | null>(null);
+    const [userInfo, setUserInfo] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -163,6 +166,7 @@ function SajuContent() {
 
         const storedMatrix = sessionStorage.getItem("saju_matrix");
         const storedTimeInfo = sessionStorage.getItem("saju_time_info");
+        const storedUser = sessionStorage.getItem("saju_user_info");
 
         if (!storedMatrix) {
             router.replace("/");
@@ -175,6 +179,10 @@ function SajuContent() {
 
             if (storedTimeInfo) {
                 setTimeInfo(JSON.parse(storedTimeInfo));
+            }
+
+            if (storedUser) {
+                setUserInfo(JSON.parse(storedUser));
             }
 
             // Fetch insight and life stages if we just loaded the matrix
@@ -285,6 +293,11 @@ function SajuContent() {
                         {/* Specific Reading Display */}
                         {readingType ? (
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#d4af37]/30 mb-2 mt-2">
+                                {/* Hero Card for Astrological Readings */}
+                                {["별자리 운세", "탄생석", "생년월일 운세", "전생운", "태어난 계절운", "띠 운세"].includes(readingType) && userInfo && (() => {
+                                    const astData = getAstrologyData(readingType, new Date(userInfo.birth_time_iso));
+                                    return astData ? <AstrologyHeroCard data={astData} /> : null;
+                                })()}
                                 <h2 className="text-xl font-black text-gray-900 mb-4">{readingType} 상세 풀이</h2>
                                 {specificReading ? (
                                     <div className="max-w-none text-gray-800 leading-relaxed font-medium text-[15px] space-y-3">
