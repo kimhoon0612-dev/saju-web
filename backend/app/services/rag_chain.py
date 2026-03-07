@@ -217,7 +217,7 @@ class SajuRAGChain:
             
         if gemini_api_key and ChatGoogleGenerativeAI is not None:
             # flash is fast but pro might be better for detailed texts, we stick to flash for speed/cost balance
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7, google_api_key=gemini_api_key)
         else:
             llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
             
