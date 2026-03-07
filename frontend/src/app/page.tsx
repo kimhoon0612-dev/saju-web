@@ -685,13 +685,13 @@ export default function Home() {
               {/* Gender Specific Outfit Suggestion */}
               <div className="bg-gradient-to-br from-white to-[#fafafa] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
                 <div className="text-[40px] mb-3 inline-block drop-shadow-md">
-                  {userGender === "male" ? "👔" : "👗"}
+                  {userGender === "male" || userGender === "M" ? "👔" : "👗"}
                 </div>
                 <h4 className="text-[16px] font-bold text-gray-900 mb-2">
-                  {userGender === "male" ? "깔끔한 네이비 셋업 수트" : "화사한 민트/네이비 원피스"}
+                  {userGender === "male" || userGender === "M" ? "깔끔한 네이비 셋업 수트" : "화사한 민트/네이비 원피스"}
                 </h4>
                 <p className="text-[14px] text-gray-600 font-medium break-keep leading-relaxed px-2">
-                  {userGender === "male"
+                  {userGender === "male" || userGender === "M"
                     ? "단정한 네이비 톤의 자켓 혹은 니트와 슬랙스 조합은 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
                     : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 하고 행운을 부릅니다."
                   }
