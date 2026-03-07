@@ -211,19 +211,28 @@ function SajuContent() {
                             specificPayload.partner_matrix = JSON.parse(storedPartnerMatrix);
                         }
 
-                        const specificRes = await fetch(`${API_BASE}/api/specific-reading`, {
+                        // Force hitting Render directly for specific-reading to avoid Vercel 15s timeout
+                        const renderBaseUrl = "https://saju-web.onrender.com";
+
+                        const specificRes = await fetch(`${renderBaseUrl}/api/specific-reading`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(specificPayload)
                         });
+
                         if (specificRes.ok) {
                             const readingData = await specificRes.json();
+                            console.log("Specific Reading Data:", readingData);
                             setSpecificReading(readingData.reading);
+                        } else {
+                            console.error("Specific Reading Error Status:", specificRes.status, await specificRes.text());
+                            setSpecificReading(`[오류] 서버 응답 지연 또는 문제 발생 (코드: ${specificRes.status})`);
                         }
                     }
 
                 } catch (error) {
                     console.error("추가 데이터 로드 실패:", error);
+                    setSpecificReading(`[오류] 네트워크 또는 서버 연결에 실패했습니다.`);
                 } finally {
                     setIsLoading(false);
                 }
