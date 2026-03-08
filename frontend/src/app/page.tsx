@@ -335,41 +335,40 @@ export default function Home() {
       </AnimatePresence>
 
       {!matrixData ? (
-        !showSplashMode && (
-          // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
+        // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
+        // Rendered unconditionally underneath the Splash Screen to avoid unmount flickers
+        <motion.div
+          className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
+        >
+          {/* Subtle minimal background decoration */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
+            <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
+          </div>
+
           <motion.div
-            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
           >
-            {/* Subtle minimal background decoration */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
-              <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
+                <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
+              </div>
+              <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
+                나를 발견하는<br />가장 조용한 시간
+              </h1>
+              <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
+                생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
+              </p>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-              className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
-            >
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
-                  <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
-                </div>
-                <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
-                  나를 발견하는<br />가장 조용한 시간
-                </h1>
-                <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
-                  생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
-                </p>
-              </div>
-
-              <div className="w-full pb-8 mt-4 relative z-20">
-                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
-              </div>
-            </motion.div>
+            <div className="w-full pb-8 mt-4 relative z-20">
+              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+            </div>
           </motion.div>
-        )
+        </motion.div>
       ) : (
         // --- MAIN HOME DASHBOARD AFTER LOGIN ---
         <motion.div
