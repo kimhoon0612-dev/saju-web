@@ -26,6 +26,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
+  const [showSplashMode, setShowSplashMode] = useState(true);
 
   // New Modal States
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
@@ -126,6 +127,7 @@ export default function Home() {
 
     if (stored) {
       setMatrixData(JSON.parse(stored));
+      setShowSplashMode(false); // Skip splash if data exists
     }
     if (storedUserInfo) {
       try {
@@ -234,37 +236,95 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col">
       {!matrixData ? (
-        // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
-        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden">
-          {/* Subtle minimal background decoration */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
-            <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
+        showSplashMode ? (
+          // --- NEW ANIMATED MYSTIC SPLASH SCREEN ---
+          <div
+            className="w-full h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-gradient-to-br from-[#1A202C] via-[#2D3748] to-[#1A202C] relative overflow-hidden cursor-pointer"
+            onClick={() => setShowSplashMode(false)}
           >
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
-                <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
-              </div>
-              <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
-                나를 발견하는<br />가장 조용한 시간
-              </h1>
-              <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
-                생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
-              </p>
+            {/* Stars background */}
+            <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #E2E8F0 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+
+            {/* Mystic Orb / Sphere animation */}
+            <motion.div
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 90, 180, 270, 360],
+                boxShadow: [
+                  "0 0 40px 10px rgba(162, 210, 255, 0.2)",
+                  "0 0 80px 20px rgba(255, 177, 153, 0.4)",
+                  "0 0 40px 10px rgba(162, 210, 255, 0.2)"
+                ]
+              }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="w-40 h-40 rounded-full relative z-10 flex items-center justify-center mb-12"
+              style={{
+                background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.2)"
+              }}
+            >
+              {/* Inner glowing core */}
+              <motion.div
+                animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#FFC3A0] to-[#A2D2FF] blur-md mix-blend-screen"
+              />
+              <span className="absolute text-5xl drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">🔮</span>
+            </motion.div>
+
+            {/* Typography */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="text-center z-10 px-6 flex flex-col items-center"
+            >
+              <h2 className="text-2xl font-black text-white tracking-widest leading-relaxed mb-4 drop-shadow-md font-serif">
+                당신의 미래가<br />궁금한가요?
+              </h2>
+              <motion.p
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-[13px] text-gray-300 font-medium tracking-widest mt-8 bg-black/20 px-4 py-2 rounded-full border border-white/10"
+              >
+                화면을 터치해서 시작하기
+              </motion.p>
+            </motion.div>
+          </div>
+        ) : (
+          // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
+          <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden">
+            {/* Subtle minimal background decoration */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
+              <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
             </div>
 
-            <div className="w-full pb-8 mt-4">
-              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 분석보고서 생성" />
-            </div>
-          </motion.div>
-        </div>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
+            >
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
+                  <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
+                </div>
+                <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
+                  나를 발견하는<br />가장 조용한 시간
+                </h1>
+                <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
+                  생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
+                </p>
+              </div>
+
+              <div className="w-full pb-8 mt-4">
+                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 분석보고서 생성" />
+              </div>
+            </motion.div>
+          </div>
+        )
       ) : (
         // --- MAIN HOME DASHBOARD AFTER LOGIN ---
         <motion.div
