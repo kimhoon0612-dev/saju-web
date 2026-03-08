@@ -338,9 +338,6 @@ export default function Home() {
         !showSplashMode && (
           // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
             className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
           >
             {/* Subtle minimal background decoration */}
@@ -352,7 +349,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
             >
               <div className="text-center">
