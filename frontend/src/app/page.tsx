@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { RefreshCw, ChevronRight, User, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AgenticChatbot from "@/components/AgenticChatbot";
 import BirthDataForm from "@/components/BirthDataForm";
 
@@ -234,67 +234,84 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      {!matrixData ? (
-        showSplashMode ? (
-          // --- NEW ANIMATED MYSTIC SPLASH SCREEN ---
-          <div
-            className="w-full h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-gradient-to-br from-[#1A202C] via-[#2D3748] to-[#1A202C] relative overflow-hidden cursor-pointer"
+    <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
+      <AnimatePresence>
+        {!matrixData && showSplashMode && (
+          <motion.div
+            key="splash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer"
             onClick={() => setShowSplashMode(false)}
           >
-            {/* Stars background */}
-            <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #E2E8F0 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+            {/* Very subtle noise texture overlay */}
+            <div className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E')" }}></div>
 
-            {/* Mystic Orb / Sphere animation */}
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                rotate: [0, 90, 180, 270, 360],
-                boxShadow: [
-                  "0 0 40px 10px rgba(162, 210, 255, 0.2)",
-                  "0 0 80px 20px rgba(255, 177, 153, 0.4)",
-                  "0 0 40px 10px rgba(162, 210, 255, 0.2)"
-                ]
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="w-40 h-40 rounded-full relative z-10 flex items-center justify-center mb-12"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.2)"
-              }}
-            >
-              {/* Inner glowing core */}
+            {/* MZ Style Fluid Aura Background */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-60">
               <motion.div
-                animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#FFC3A0] to-[#A2D2FF] blur-md mix-blend-screen"
+                animate={{
+                  rotate: [0, 180, 360],
+                  scale: [1, 1.2, 0.9, 1.1, 1]
+                }}
+                transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+                className="absolute w-[140vw] h-[140vw] max-w-[800px] max-h-[800px] bg-gradient-to-tr from-[#A8D5BA]/40 via-[#A2D2FF]/40 to-[#FFC3A0]/40 rounded-full blur-[80px]"
               />
-              <span className="absolute text-5xl drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">🔮</span>
+            </div>
+
+            {/* Floating Glass Orb */}
+            <motion.div
+              animate={{ y: [-10, 10, -10], rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-10 flex flex-col items-center justify-center mb-16"
+            >
+              <div className="w-32 h-32 md:w-40 md:h-40 relative flex items-center justify-center group">
+                {/* Outer Glow */}
+                <div className="absolute inset-[-20px] rounded-full bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                {/* Glass Layer */}
+                <div className="absolute inset-0 rounded-full bg-white/30 backdrop-blur-xl border-2 border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] overflow-hidden">
+                  <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-br from-white/90 to-transparent rotate-45 transform"></div>
+                </div>
+                {/* Core Sparkle component replaces Emoji */}
+                <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-[#4A5568]/80 drop-shadow-sm relative z-10" strokeWidth={1.5} />
+              </div>
             </motion.div>
 
             {/* Typography */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="text-center z-10 px-6 flex flex-col items-center"
+              transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+              className="relative z-10 text-center flex flex-col items-center px-6"
             >
-              <h2 className="text-2xl font-black text-white tracking-widest leading-relaxed mb-4 drop-shadow-md font-serif">
-                당신의 미래가<br />궁금한가요?
+              <h2 className="text-[26px] md:text-[32px] font-extrabold text-[#2D3748] tracking-tight leading-[1.35] mb-4 font-pretendard">
+                혹시 당신의 고유한 <span className="block mt-1">흐름이 궁금한가요?</span>
               </h2>
-              <motion.p
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-[13px] text-gray-300 font-medium tracking-widest mt-8 bg-black/20 px-4 py-2 rounded-full border border-white/10"
+
+              <motion.div
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-8 flex items-center gap-2 text-[14px] font-bold text-[#4A5568] bg-white/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/60 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
               >
-                화면을 터치해서 시작하기
-              </motion.p>
+                <span>화면을 탭하여 시작하기</span>
+                <ChevronRight className="w-4 h-4" />
+              </motion.div>
             </motion.div>
-          </div>
-        ) : (
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!matrixData ? (
+        !showSplashMode && (
           // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
-          <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
+          >
             {/* Subtle minimal background decoration */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
@@ -319,11 +336,11 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="w-full pb-8 mt-4">
-                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 분석보고서 생성" />
+              <div className="w-full pb-8 mt-4 relative z-20">
+                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )
       ) : (
         // --- MAIN HOME DASHBOARD AFTER LOGIN ---
