@@ -242,60 +242,78 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer"
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B0D17] overflow-hidden cursor-pointer"
             onClick={() => setShowSplashMode(false)}
           >
-            {/* Very subtle noise texture overlay */}
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E')" }}></div>
+            {/* Very subtle noise texture overlay for Tarot feel */}
+            <div className="absolute inset-0 opacity-[0.06] mix-blend-screen pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.75\" numOctaves=\"4\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E')" }}></div>
 
-            {/* MZ Style Fluid Aura Background */}
-            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-60">
+            {/* Tarot Style Dark Nebula Background */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-80">
               <motion.div
                 animate={{
                   rotate: [0, 180, 360],
-                  scale: [1, 1.2, 0.9, 1.1, 1]
+                  scale: [1, 1.15, 0.95, 1.05, 1]
                 }}
-                transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[140vw] h-[140vw] max-w-[800px] max-h-[800px] bg-gradient-to-tr from-[#A8D5BA]/40 via-[#A2D2FF]/40 to-[#FFC3A0]/40 rounded-full blur-[80px]"
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                className="absolute w-[150vw] h-[150vw] max-w-[900px] max-h-[900px] bg-gradient-to-tr from-[#2D1B4E]/50 via-[#1A1025]/80 to-[#4A2B70]/40 rounded-full blur-[100px]"
+              />
+              <motion.div
+                animate={{ rotate: [360, 180, 0] }}
+                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+                className="absolute w-[120vw] h-[120vw] max-w-[700px] max-h-[700px] bg-gradient-to-bl from-[#704214]/20 via-[#3B2818]/60 to-transparent rounded-full blur-[80px] mix-blend-overlay"
               />
             </div>
 
-            {/* Floating Glass Orb */}
+            {/* Glowing Tarot Crystal/Orb Concept */}
             <motion.div
-              animate={{ y: [-10, 10, -10], rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ y: [-15, 15, -15] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               className="relative z-10 flex flex-col items-center justify-center mb-16"
             >
-              <div className="w-32 h-32 md:w-40 md:h-40 relative flex items-center justify-center group">
-                {/* Outer Glow */}
-                <div className="absolute inset-[-20px] rounded-full bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                {/* Glass Layer */}
-                <div className="absolute inset-0 rounded-full bg-white/30 backdrop-blur-xl border-2 border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] overflow-hidden">
-                  <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-br from-white/90 to-transparent rotate-45 transform"></div>
-                </div>
-                {/* Core Sparkle component replaces Emoji */}
-                <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-[#4A5568]/80 drop-shadow-sm relative z-10" strokeWidth={1.5} />
+              <div className="w-40 h-40 md:w-48 md:h-48 relative flex items-center justify-center group perspective-1000">
+                {/* Ethereal Glow */}
+                <div className="absolute inset-[-30px] rounded-full bg-[#8A4FFF]/20 blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
+
+                {/* Cosmic Inner Orb */}
+                <motion.div
+                  animate={{ rotateY: [0, 360], rotateZ: [0, 45, 0] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 rounded-full border border-[#D4AF37]/30 shadow-[0_0_40px_rgba(138,79,255,0.4)] overflow-hidden"
+                  style={{ background: 'radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.2), rgba(10, 5, 20, 0.9))' }}
+                >
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-screen"></div>
+                </motion.div>
+
+                {/* Center Core element: A glowing star/diamond instead of basic Sparkles */}
+                <motion.div
+                  animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative z-10 text-[#FCEEB5] drop-shadow-[0_0_15px_rgba(252,238,181,0.8)]"
+                >
+                  <Sparkles className="w-16 h-16 md:w-20 md:h-20" strokeWidth={1} />
+                </motion.div>
               </div>
             </motion.div>
 
-            {/* Typography */}
+            {/* Typography - Occult / Tarot Feel */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+              transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
               className="relative z-10 text-center flex flex-col items-center px-6"
             >
-              <h2 className="text-[26px] md:text-[32px] font-extrabold text-[#2D3748] tracking-tight leading-[1.35] mb-4 font-pretendard">
-                혹시 당신의 고유한 <span className="block mt-1">흐름이 궁금한가요?</span>
+              <h2 className="text-[28px] md:text-[34px] font-bold text-[#EADAA2] tracking-[0.05em] leading-[1.4] mb-6 font-serif" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.8)" }}>
+                당신의 <span className="text-[#FFFFFF]">운명</span>이 <span className="block mt-2">궁금한가요?</span>
               </h2>
 
               <motion.div
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                className="mt-8 flex items-center gap-2 text-[14px] font-bold text-[#4A5568] bg-white/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/60 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+                animate={{ opacity: [0.4, 0.9, 0.4] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-8 flex items-center gap-2 text-[13px] font-medium tracking-widest text-[#B4A0CD]"
               >
-                <span>화면을 탭하여 시작하기</span>
+                <span>화면을 탭하여 운명의 책을 열기</span>
                 <ChevronRight className="w-4 h-4" />
               </motion.div>
             </motion.div>
