@@ -45,53 +45,48 @@ export default function TarotPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-white text-[#111111] pb-24 font-pretendard">
+        <div className="min-h-screen bg-[#FDFBFA] text-[#2D3748] pb-24 font-pretendard">
             {/* Header / Title Area */}
             <div className="px-5 pt-4 pb-2">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">타로</h1>
-                    <button className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                        <Sparkles size={16} /> 카드설정
+                    <h1 className="text-2xl font-black text-[#4A5568]">마인드 타로</h1>
+                    <button className="text-sm font-bold text-gray-500 flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
+                        <Sparkles size={14} className="text-[#81C784]" /> 성향 설정
                     </button>
                 </div>
 
                 <div className="mb-2">
-                    <p className="text-sm font-medium text-[#A855F7] mb-1 flex items-center gap-1">
-                        매일 찾게 되는 타로카드 <Heart size={14} className="fill-[#A855F7] text-[#A855F7]" />
+                    <p className="text-sm font-bold text-[#81C784] mb-1 flex items-center gap-1">
+                        무의식을 비추는 거울 <Heart size={14} className="fill-[#81C784] text-[#81C784]" />
                     </p>
-                    <h2 className="text-xl font-bold">평범한 일상 속 타로점</h2>
+                    <h2 className="text-xl font-black">내면의 소리에 귀 기울이는 시간</h2>
                 </div>
             </div>
 
             {/* Top 2 Big Cards */}
             <div className="px-5 flex gap-3 mb-10">
-                <Link href="/tarot/play?type=daily" className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
+                <Link href="/tarot/play?type=daily" className="flex-1 rounded-3xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="relative mb-3 h-12 w-12 flex justify-center items-center">
-                        {/* Back Card (Moon) */}
-                        <div className="absolute w-[30px] h-[40px] border-[1.5px] border-[#111] bg-[#111] rounded-[3px] flex items-center justify-center rotate-12 translate-x-2 shadow-sm">
-                            <Moon size={14} className="text-white fill-white" />
+                        <div className="absolute w-[30px] h-[40px] border border-gray-100 bg-gray-50 rounded-lg flex items-center justify-center rotate-12 translate-x-2 shadow-sm">
+                            <Moon size={14} className="text-gray-400" />
                         </div>
-                        {/* Front Card (Star) */}
-                        <div className="absolute w-[30px] h-[40px] border-[1.5px] border-[#111] bg-white rounded-[3px] flex items-center justify-center -rotate-12 -translate-x-1.5 z-10 shadow-sm">
-                            <Star size={14} className="text-[#111]" />
+                        <div className="absolute w-[30px] h-[40px] border border-gray-100 bg-white rounded-lg flex items-center justify-center -rotate-12 -translate-x-1.5 z-10 shadow-sm">
+                            <Star size={14} className="text-[#FFB199]" />
                         </div>
                     </div>
-                    <h3 className="text-[15px] font-bold mb-1">오늘의 타로</h3>
-                    <p className="text-xs text-gray-400">오늘 하루는 어떨까?</p>
+                    <h3 className="text-[15px] font-black text-gray-800 mb-1">투데이 인사이트</h3>
+                    <p className="text-[12px] font-medium text-gray-400">오늘의 흐름 읽기</p>
                 </Link>
-                <Link href="/tarot/play?type=monthly" className="flex-1 rounded-2xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
-                    <div className="text-4xl mb-3">🔮</div>
-                    <h3 className="text-[15px] font-bold mb-1">이달의 타로</h3>
-                    <p className="text-xs text-gray-400">이번달 나의 총운은?</p>
+                <Link href="/tarot/play?type=monthly" className="flex-1 rounded-3xl border border-gray-100 bg-white p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
+                    <div className="text-4xl mb-3 mt-1 opacity-90 drop-shadow-sm">🕊️</div>
+                    <h3 className="text-[15px] font-black text-gray-800 mb-1">이달의 테마</h3>
+                    <p className="text-[12px] font-medium text-gray-400">월간 감정선 진단</p>
                 </Link>
             </div>
 
             {/* Secondary Header */}
             <div className="px-5 mb-4">
-                <p className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
-                    타로점으로 고민해결! 🔮
-                </p>
-                <h2 className="text-xl font-bold">궁금한 타로를 선택해봐요!</h2>
+                <h2 className="text-lg font-black text-gray-800">지금 가장 큰 고민은 무엇인가요?</h2>
             </div>
 
             {/* Scrollable Categories Tab */}
@@ -101,9 +96,9 @@ export default function TarotPage() {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${activeTab === tab
-                                ? "bg-[#111111] text-white border-[#111111]"
-                                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                            className={`px-4 py-2 rounded-full text-[14px] font-bold transition-colors border shadow-sm ${activeTab === tab
+                                ? "bg-[#4A5568] text-white border-[#4A5568]"
+                                : "bg-white text-gray-500 border-gray-100 hover:bg-gray-50"
                                 }`}
                         >
                             {tab}
@@ -133,6 +128,6 @@ export default function TarotPage() {
                     ))}
             </div>
 
-        </div>
+        </div >
     );
 }

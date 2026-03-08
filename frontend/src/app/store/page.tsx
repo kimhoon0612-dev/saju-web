@@ -20,7 +20,7 @@ export const storeProducts: Product[] = [
     {
         id: "elm_wood_01",
         name: "생명력의 나무 (목 기운)",
-        description: "사주에 부족한 목(木) 기운을 채워주는 성장과 생명력의 부적.",
+        description: "사주에 부족한 목(木) 기운을 채워주는 성장과 생명력의 오브제.",
         price: 9900,
         category: "elemental",
         elementTheme: "wood",
@@ -29,7 +29,7 @@ export const storeProducts: Product[] = [
     {
         id: "elm_fire_01",
         name: "불타는 열정 (화 기운)",
-        description: "강력한 화(火)의 에너지로 추진력을 극대화하는 맞춤형 부적.",
+        description: "강력한 화(火)의 에너지로 추진력을 극대화하는 맞춤형 오브제.",
         price: 9900,
         category: "elemental",
         elementTheme: "fire",
@@ -37,8 +37,8 @@ export const storeProducts: Product[] = [
     },
     {
         id: "wish_wealth_01",
-        name: "금전운 시크릿 부적",
-        description: "오프라인 재물 부적의 파동을 그대로 담은 디지털 굿즈.",
+        name: "금전운 시크릿 오브제",
+        description: "오프라인 재물운의 파동을 그대로 담은 디지털 굿즈.",
         price: 15000,
         category: "wish",
         elementTheme: "wealth",
@@ -64,8 +64,8 @@ export const storeProducts: Product[] = [
     },
     {
         id: "nft_lucky_01",
-        name: "한정판 NFT 행운부적",
-        description: "블록체인에 각인되어 영구 보존 가능한 나만의 유일무이한 NFT 럭키참.",
+        name: "한정판 디지털 럭키참",
+        description: "영구 보존 가능한 나만의 유일무이한 프리미엄 럭키참.",
         price: 50000,
         category: "wish",
         elementTheme: "wealth",
@@ -173,7 +173,7 @@ export default function DirectStorePage() {
         <div className="font-pretendard bg-[#F8F9FA] min-h-screen pb-24">
             {/* Store Header Navigation */}
             <div className="bg-white sticky top-0 z-30 px-4 py-3 flex items-center justify-between border-b border-gray-100">
-                <h1 className="text-xl font-black text-gray-900 tracking-tight">부적상점</h1>
+                <h1 className="text-xl font-black text-gray-900 tracking-tight">오브제 스토어</h1>
                 <div className="flex items-center gap-3">
                     <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
@@ -245,7 +245,7 @@ export default function DirectStorePage() {
                 {activeCategory && (
                     <div className="mt-8 px-4 pb-20">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-[18px] font-black tracking-tight text-gray-900">[{activeCategory}] 관련 부적</h3>
+                            <h3 className="text-[18px] font-black tracking-tight text-gray-900">[{activeCategory}] 관련 굿즈/오브제</h3>
                             <span className="text-[13px] font-bold text-gray-400">{filteredProducts.length}개 상품</span>
                         </div>
                         <div className="flex flex-col gap-4">

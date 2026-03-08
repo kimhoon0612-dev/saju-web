@@ -9,11 +9,11 @@ import AgenticChatbot from "@/components/AgenticChatbot";
 import BirthDataForm from "@/components/BirthDataForm";
 
 const ELEMENT_COLORS_BG: Record<string, string> = {
-  "wood": "bg-[#4CAF50]",
-  "fire": "bg-[#F44336]",
-  "earth": "bg-[#FFC107]",
-  "metal": "bg-[#9E9E9E]",
-  "water": "bg-[#212121]",
+  "wood": "bg-[#A8D5BA] text-gray-800", // Pastel Green
+  "fire": "bg-[#FFC3A0] text-gray-800", // Pastel Salmon
+  "earth": "bg-[#F7D08A] text-gray-800", // Pastel Yellow
+  "metal": "bg-[#E2E8F0] text-gray-800", // Light Gray
+  "water": "bg-[#A2D2FF] text-gray-800", // Pastel Blue
 };
 
 const ELEMENT_KOR: Record<string, string> = {
@@ -234,48 +234,34 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col">
       {!matrixData ? (
-        // --- FULL SCREEN ONBOARDING HERO ---
-        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#110e1b] overflow-hidden">
-          {/* Background Decoration */}
-          <div className="absolute inset-0 pointer-events-none">
-            {/* Stars background */}
-            {Array.from({ length: 15 }).map((_, i) => (
-              <div
-                key={i}
-                className="absolute bg-white rounded-full opacity-30 animate-pulse"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${Math.random() * 3 + 1}px`,
-                  height: `${Math.random() * 3 + 1}px`,
-                  animationDuration: `${Math.random() * 3 + 2}s`
-                }}
-              />
-            ))}
-            <div className="absolute -top-[10%] -right-[10%] w-[60%] h-[60%] bg-purple-900/30 rounded-full blur-[80px] opacity-70"></div>
-            <div className="absolute top-[50%] -left-[20%] w-[50%] h-[50%] bg-[#d4af37]/10 rounded-full blur-[60px] opacity-60"></div>
+        // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
+        <div className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden">
+          {/* Subtle minimal background decoration */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
+            <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-4"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
           >
             <div className="text-center">
-              <div className="inline-flex items-center justify-center p-3.5 bg-[#1a142d] border border-[#d4af37]/30 rounded-2xl shadow-[0_0_15px_rgba(212,175,55,0.15)] mb-5">
-                <span className="text-3xl leading-none">🔮</span>
+              <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
+                <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
               </div>
-              <h1 className="text-[28px] font-black text-[#fdfbf7] tracking-tight mb-3 leading-[1.3] drop-shadow-md font-pretendard">
-                하늘이 정해둔<br />당신만의 운명 안내서
+              <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
+                나를 발견하는<br />가장 조용한 시간
               </h1>
-              <p className="text-[#d4af37]/80 font-medium text-[15px] break-keep px-4">
-                생년월일을 입력하고 밤하늘에 새겨진<br />나의 사주와 타로의 흐름을 확인하세요.
+              <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
+                생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
               </p>
             </div>
 
-            <div className="w-full pb-8">
-              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="운명의 흐름 확인하기" />
+            <div className="w-full pb-8 mt-4">
+              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 분석보고서 생성" />
             </div>
           </motion.div>
         </div>
@@ -311,32 +297,32 @@ export default function Home() {
                       {pillar.label}
                     </span>
 
-                    <div className="text-[12px] font-bold text-gray-800 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
+                    <div className="text-[12px] font-bold text-gray-500 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
                       {pillar.data?.heavenly?.ten_god || "-"}
                     </div>
 
-                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold mb-2 shadow-sm relative overflow-hidden`}>
-                      <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.heavenly?.label)}</div>
-                      <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold mb-2 shadow-sm relative overflow-hidden ring-1 ring-inset ring-black/5`}>
+                      <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.heavenly?.label)}</div>
+                      <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
                         <span>{getHangul(pillar.data?.heavenly?.label)}</span>
-                        <span className="text-[7px]">,</span>
+                        <span>·</span>
                         <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
                       </div>
                     </div>
 
-                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[14px] flex flex-col items-center justify-center text-white font-bold shadow-sm relative overflow-hidden mb-3`}>
-                      <div className="text-[28px] leading-none mb-1 shadow-sm">{getHanja(pillar.data?.earthly?.label)}</div>
-                      <div className="text-[9px] opacity-80 flex gap-0.5 items-center">
+                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold shadow-sm relative overflow-hidden mb-3 ring-1 ring-inset ring-black/5`}>
+                      <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.earthly?.label)}</div>
+                      <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
                         <span>{getHangul(pillar.data?.earthly?.label)}</span>
-                        <span className="text-[7px]">,</span>
+                        <span>·</span>
                         <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
                       </div>
                     </div>
 
-                    <div className="text-[12px] font-bold text-gray-800 mb-1 min-h-[18px] whitespace-nowrap">
+                    <div className="text-[12px] font-bold text-gray-500 mb-1 min-h-[18px] whitespace-nowrap">
                       {pillar.data?.earthly?.ten_god || "-"}
                     </div>
-                    <div className="text-[12px] font-bold text-gray-500 whitespace-nowrap">
+                    <div className="text-[11px] font-medium text-gray-400 whitespace-nowrap">
                       {pillar.data?.twelve_state || "-"}
                     </div>
                   </div>
@@ -350,15 +336,15 @@ export default function Home() {
             <div className="flex items-center justify-center gap-3 px-3">
               <button
                 onClick={() => setIsAttendanceModalOpen(true)}
-                className="flex-1 bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full py-3 text-[15px] font-bold text-gray-800 flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+                className="flex-1 bg-white border border-gray-100 shadow-sm rounded-2xl py-3.5 text-[15px] font-bold text-[#4A5568] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
               >
-                <span className="text-blue-500 text-[18px] leading-[1]">👣</span> 출석체크
+                <span className="text-[18px] leading-[1]">🐾</span> 나의 출석
               </button>
               <button
                 onClick={() => setIsOutfitModalOpen(true)}
-                className="flex-1 bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full py-3 text-[15px] font-bold text-gray-800 flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+                className="flex-1 bg-white border border-gray-100 shadow-sm rounded-2xl py-3.5 text-[15px] font-bold text-[#4A5568] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
               >
-                <span className="text-[#d4af37] text-[18px] leading-[1]">👔</span> 행운코디
+                <span className="text-[18px] leading-[1]">👗</span> 럭키 컬러
               </button>
             </div>
           </div>
@@ -613,67 +599,59 @@ export default function Home() {
             <div className="p-5 w-full shrink-0 sticky bottom-0 bg-white border-t border-gray-50">
               <button
                 onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}
-                className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
+                className="w-full bg-[#4A5568] text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm"
               >
-                나의 기운 확인 완료
+                확인 완료
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. Attendance Calendar Modal */}
+      {/* 2. Attendance Calendar Modal (Minimalist) */}
       {isAttendanceModalOpen && (
         <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsAttendanceModalOpen(false)}>
-          <div className="bg-[#f0f9ff] border border-blue-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="p-5 flex justify-between items-center bg-white/50 border-b border-blue-100/50 shrink-0 sticky top-0 z-10">
+          <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
               <div>
-                <h3 className="font-extrabold text-[19px] text-gray-900 flex items-center gap-1.5"><span className="text-2xl text-blue-500">🗓️</span> 나의 명리 출석부</h3>
-                <p className="text-[12px] font-bold text-gray-500 mt-0.5">꾸준함이 운명을 바꿉니다</p>
+                <h3 className="font-extrabold text-[19px] text-gray-900 flex items-center gap-1.5"><span className="text-2xl">🌿</span> 나의 명리 출석</h3>
+                <p className="text-[12px] font-bold text-gray-500 mt-0.5">매일 조금씩 쌓이는 운의 흐름</p>
               </div>
-              <button onClick={() => setIsAttendanceModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-500 hover:bg-white transition-colors shadow-sm">
+              <button onClick={() => setIsAttendanceModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 overflow-y-auto">
-              {/* Calendar Grid Mockup */}
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-blue-50/50">
-                {/* Days of Week */}
+              <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
                 <div className="grid grid-cols-7 gap-1 mb-3">
                   {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
-                    <div key={day} className={`text-center text-[12px] font-bold ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>
+                    <div key={day} className={`text-center text-[12px] font-bold ${i === 0 ? 'text-[#FFB199]' : i === 6 ? 'text-[#A2D2FF]' : 'text-gray-400'}`}>
                       {day}
                     </div>
                   ))}
                 </div>
-                {/* Days Grid */}
                 <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                   {Array.from({ length: 30 }).map((_, i) => {
                     const day = i + 1;
                     const isToday = day === new Date().getDate();
                     const isPast = day < new Date().getDate();
-
-                    // Mock attendance check (random past days checked)
                     const isChecked = isPast && Math.random() > 0.3;
-
-                    // Fixed set of animals for the mockup
-                    const animals = ['🐴', '🐯', '🐰', '🐉', '🐍', '🐮'];
-                    const dayAnimal = animals[day % animals.length];
+                    const markers = ['🌱', '🌿', '🍀', '🍃', '🪴'];
+                    const dayMarker = markers[day % markers.length];
 
                     return (
-                      <div key={day} className={`aspect-[4/5] sm:aspect-square rounded-xl flex flex-col items-center justify-between p-1.5 relative ${isToday ? 'bg-blue-500 text-white shadow-md ring-2 ring-blue-300 ring-offset-1' : 'bg-gray-50 text-gray-600 border border-transparent hover:border-blue-200 transition-colors'}`}>
+                      <div key={day} className={`aspect-[4/5] sm:aspect-square rounded-xl flex flex-col items-center justify-between p-1.5 relative ${isToday ? 'bg-[#81C784] text-white shadow-sm ring-1 ring-[#81C784] ring-offset-1' : 'bg-[#FDFBFA] text-gray-600 border border-transparent hover:border-gray-200 transition-colors'}`}>
                         <div className="w-full flex justify-start leading-none">
                           <span className={`text-[11px] sm:text-[13px] font-bold ${isToday ? 'text-white' : 'text-gray-400'}`}>{day}</span>
                         </div>
-
                         <div className="flex-1 flex items-center justify-center w-full mt-0.5">
                           {isChecked ? (
-                            <span className="text-[22px] sm:text-[28px] drop-shadow-sm leading-none">{dayAnimal}</span>
+                            <span className="text-[22px] sm:text-[28px] drop-shadow-sm leading-none">{dayMarker}</span>
                           ) : isToday ? (
                             <span className="text-[18px] sm:text-[22px] animate-pulse">✨</span>
                           ) : (
-                            <span className="text-[14px] sm:text-[18px] opacity-20 grayscale">{dayAnimal}</span>
+                            <span className="text-[14px] sm:text-[18px] opacity-20 grayscale">{dayMarker}</span>
                           )}
                         </div>
                       </div>
@@ -683,63 +661,62 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="p-5 bg-white shrink-0 sticky bottom-0 z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(0,0,0,0.03)] text-center">
+            <div className="p-5 bg-white shrink-0 sticky bottom-0 z-10 rounded-t-[24px] border-t border-gray-100 text-center">
               <button
                 onClick={() => {
-                  alert("오늘의 운석(도장)이 찍혔습니다!");
+                  alert("출석이 확인되었습니다!");
                   setIsAttendanceModalOpen(false);
                 }}
-                className="w-full bg-[#1E90FF] text-white font-extrabold text-[17px] h-[54px] rounded-[20px] hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 mb-2 flex flex-col items-center justify-center leading-none gap-1"
+                className="w-full bg-[#4A5568] text-white font-extrabold text-[17px] h-[54px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm mb-2 flex items-center justify-center leading-none"
               >
-                <span>오늘 출석 체크하기</span>
+                <span>오늘 출석 체크</span>
               </button>
-              <span className="text-[12px] font-medium text-gray-400">매일 접속하여 나만의 일진 동물을 모아보세요</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* 3. Lucky Outfit Modal */}
+      {/* 3. Lucky Outfit Modal (Minimalist) */}
       {isOutfitModalOpen && (
         <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsOutfitModalOpen(false)}>
-          <div className="bg-[#fff9f0] border border-[#ffe0b2] rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#ffd54f]/20 rounded-bl-full filter blur-xl z-0"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#ffcc80]/20 rounded-tr-full filter blur-2xl z-0"></div>
+          <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFB199]/10 rounded-bl-full filter blur-xl z-0"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#81C784]/10 rounded-tr-full filter blur-2xl z-0"></div>
 
-            <div className="p-5 flex justify-between items-center bg-white/40 border-b border-[#ffe0b2]/50 shrink-0 sticky top-0 z-10">
+            <div className="p-5 flex justify-between items-center bg-white/50 border-b border-gray-100 shrink-0 sticky top-0 z-10">
               <div className="relative z-10">
-                <h3 className="font-extrabold text-[19px] text-[#8d6e63] flex items-center gap-1.5"><span className="text-2xl">✨</span> 맞춤 행운 코디</h3>
-                <p className="text-[12px] font-bold text-[#bcaaa4] mt-0.5">내 기운을 올려주는 마법의 컬러</p>
+                <h3 className="font-extrabold text-[19px] text-[#4A5568] flex items-center gap-1.5"><span className="text-2xl">✨</span> 퍼스널 럭키 컬러</h3>
+                <p className="text-[12px] font-bold text-gray-500 mt-0.5">나의 부족한 기운을 채워보세요</p>
               </div>
-              <button onClick={() => setIsOutfitModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-500 hover:bg-white transition-colors shadow-sm relative z-10">
+              <button onClick={() => setIsOutfitModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm relative z-10">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 overflow-y-auto relative z-10 flex flex-col items-center">
               {/* Daily Element Card */}
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#ffe0b2]/40 w-full mb-5 flex flex-col text-center relative overflow-hidden group">
-                <div className="w-16 h-16 bg-[#27ae60]/10 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(39,174,96,0.15)]">
-                  <span className="text-[32px] drop-shadow-md transform group-hover:scale-110 transition-transform">🌿</span>
+              <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 w-full mb-5 flex flex-col text-center relative overflow-hidden group">
+                <div className="w-16 h-16 bg-[#F7F5F2] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                  <span className="text-[32px] drop-shadow-sm transform group-hover:scale-110 transition-transform">🌿</span>
                 </div>
-                <h4 className="text-[18px] font-black text-gray-900 mb-1">오늘의 기운: 푸른 목(木) 기운</h4>
+                <h4 className="text-[18px] font-black text-gray-900 mb-1">오늘의 보완 기운: 부드러운 목(木)</h4>
                 <p className="text-[14px] text-gray-600 font-medium leading-relaxed break-keep">
                   상생의 흐름을 만들어 일의 추진력을 얻기 위해 차분한 파란색 계열이나 싱그러운 그린 계열의 착장이 유리합니다.
                 </p>
               </div>
 
               {/* Gender Specific Outfit Suggestion */}
-              <div className="bg-gradient-to-br from-white to-[#fafafa] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
-                <div className="text-[40px] mb-3 inline-block drop-shadow-md">
-                  {userGender === "male" || userGender === "M" ? "👔" : "👗"}
+              <div className="bg-gradient-to-br from-white to-[#F9FAFB] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
+                <div className="text-[40px] mb-3 inline-block drop-shadow-sm opacity-80">
+                  {userGender === "male" || userGender === "M" ? "👕" : "👗"}
                 </div>
                 <h4 className="text-[16px] font-bold text-gray-900 mb-2">
-                  {userGender === "male" || userGender === "M" ? "깔끔한 네이비 셋업 수트" : "화사한 민트/네이비 원피스"}
+                  {userGender === "male" || userGender === "M" ? "차분한 네이비 셋업" : "소프트 민트 블라우스/원피스"}
                 </h4>
-                <p className="text-[14px] text-gray-600 font-medium break-keep leading-relaxed px-2">
+                <p className="text-[14px] text-gray-500 font-medium break-keep leading-relaxed px-2">
                   {userGender === "male" || userGender === "M"
-                    ? "단정한 네이비 톤의 자켓 혹은 니트와 슬랙스 조합은 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
-                    : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 하고 행운을 부릅니다."
+                    ? "깔끔한 네이비 톤의 자켓 혹은 니트는 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
+                    : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 합니다."
                   }
                 </p>
               </div>

@@ -37,7 +37,7 @@ export default function ExpertsPage() {
         <main className="min-h-screen bg-[#F5F6F8] pb-32">
 
             <div className="bg-white px-4 pt-1 pb-3 flex items-center justify-between">
-                <h1 className="text-2xl font-black text-gray-900 tracking-tight">상담</h1>
+                <h1 className="text-2xl font-black text-[#4A5568] tracking-tight">멘토링</h1>
                 <div className="p-1.5 border border-gray-200 rounded-lg">
                     <TicketPercent className="w-5 h-5 text-gray-700" />
                 </div>
@@ -87,9 +87,9 @@ export default function ExpertsPage() {
                 <div className="grid grid-cols-4 gap-y-6">
                     {/* Simplified category icons */}
                     {[
-                        { icon: '📜', label: '운세상담', tab: '운세' },
-                        { icon: '🃏', label: '타로상담', tab: '타로' },
-                        { icon: '🤖', label: 'AI상담', href: '/experts/ai-chat' },
+                        { icon: '📜', label: '명리 코칭', tab: '운세' },
+                        { icon: '🃏', label: '타로 리딩', tab: '타로' },
+                        { icon: '🤖', label: 'AI 챗', href: '/experts/ai-chat' },
                         { icon: '📖', label: '이용가이드' },
                     ].map((item, i) => {
                         const content = (
@@ -128,7 +128,7 @@ export default function ExpertsPage() {
                         <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
                         <input
                             type="text"
-                            placeholder="상담사를 검색해보세요"
+                            placeholder="키워드로 멘토를 찾아보세요"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="bg-transparent border-none outline-none text-[13px] text-gray-800 w-full placeholder:text-gray-400"

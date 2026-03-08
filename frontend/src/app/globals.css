@@ -24,19 +24,21 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.4); /* Brighter glass for light mode */
+  --color-glass-border: rgba(0, 0, 0, 0.05);
 
-  --color-brand-red: #FA5252;
-  --color-brand-gold: #FFB300;
-  --color-brand-blue: #1C7ED6;
-  --color-gray-bg: #F8F9FA;
-  --color-border: #E9ECEF;
+  /* Theme B: Clean Minimalist */
+  --color-brand-mint: #81C784;
+  --color-brand-peach: #FFB199;
+  --color-brand-primary: #4A5568; 
+  --color-gray-bg: #F7F5F2; /* Subtle cream/gray */
+  --color-border: #E2E8F0;
+  --color-card-bg: #FFFFFF;
 }
 
 :root {
-  --background: #FFFFFF;
-  --foreground: #1A1A1A;
+  --background: #FDFBFA; /* Warm off-white */
+  --foreground: #2D3748; /* Charcoal Grey */
 }
 
 body {

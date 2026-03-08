@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, ShoppingBag, Layers, ClipboardList, MessageSquare, Sparkles, MessageCircle } from "lucide-react";
 
 export default function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "홈", path: "/", icon: ClipboardList },
-        { name: "나의 운세", path: "/saju", icon: Compass },
-        { name: "타로", path: "/tarot", icon: Sparkles },
-        { name: "상담", path: "/experts", icon: MessageCircle },
-        { name: "상점", path: "/store", icon: ShoppingBag },
+        { name: "투데이", path: "/", emoji: "🏠" },
+        { name: "나의 흐름", path: "/saju", emoji: "🐹" },
+        { name: "마인드", path: "/tarot", emoji: "🎴" },
+        { name: "멘토", path: "/experts", emoji: "🦉" },
+        { name: "오브제", path: "/store", emoji: "🛍️" },
     ];
 
     return (
@@ -20,7 +19,6 @@ export default function BottomNav() {
             <nav className="max-w-md mx-auto px-2 flex justify-between items-center h-16 sm:h-20">
                 {navItems.map((item) => {
                     const isActive = pathname === item.path || (item.path !== "/" && pathname?.startsWith(item.path));
-                    const Icon = item.icon;
 
                     return (
                         <Link
@@ -29,16 +27,13 @@ export default function BottomNav() {
                             className="flex-1 flex flex-col items-center justify-center gap-1 min-w-[64px]"
                         >
                             <div
-                                className={`transition-all duration-200 ${isActive ? "text-[var(--color-brand-red)] scale-110" : "text-gray-400 hover:text-gray-600"
+                                className={`transition-all duration-200 text-[24px] ${isActive ? "scale-110 drop-shadow-sm grayscale-0" : "grayscale opacity-60 hover:opacity-100 hover:grayscale-0"
                                     }`}
                             >
-                                <Icon
-                                    size={24}
-                                    strokeWidth={isActive ? 2.5 : 2}
-                                />
+                                {item.emoji}
                             </div>
                             <span
-                                className={`text-[10px] font-pretendard transition-colors ${isActive ? "text-[var(--color-brand-red)] font-extrabold" : "text-gray-400 font-medium"
+                                className={`text-[10px] font-pretendard transition-colors ${isActive ? "text-[#4A5568] font-extrabold tracking-tight" : "text-gray-400 font-medium tracking-tight"
                                     }`}
                             >
                                 {item.name}
