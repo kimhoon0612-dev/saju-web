@@ -380,44 +380,69 @@ export default function Home() {
           <motion.div
             animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-64 h-64 bg-white/10 rounded-full blur-3xl"
+            className="absolute rounded-full"
+            style={{
+              width: "250px", height: "250px",
+              background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)"
+            }}
           />
 
           {/* Rotating Container for 5 Elements */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="relative w-[120vw] h-[120vw] max-w-[600px] max-h-[600px]"
+            className="absolute flex items-center justify-center"
+            style={{ width: "800px", height: "800px" }}
           >
             {/* 목 (Wood) - Green */}
             <motion.div
-              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.4, 0.8, 0.4] }}
+              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 }}
-              className="absolute top-[5%] right-[20%] w-32 h-32 md:w-40 md:h-40 bg-[#4ADE80] rounded-full blur-3xl"
+              className="absolute rounded-full"
+              style={{
+                top: "15%", right: "25%", width: "220px", height: "220px",
+                background: "radial-gradient(circle, rgba(74,222,128,0.7) 0%, rgba(74,222,128,0) 70%)"
+              }}
             />
             {/* 화 (Fire) - Red */}
             <motion.div
-              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.3, 0.7, 0.3] }}
+              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.4, 0.9, 0.4] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute right-[5%] top-[40%] w-36 h-36 md:w-48 md:h-48 bg-[#F87171] rounded-full blur-3xl"
+              className="absolute rounded-full"
+              style={{
+                top: "40%", right: "15%", width: "250px", height: "250px",
+                background: "radial-gradient(circle, rgba(248,113,113,0.6) 0%, rgba(248,113,113,0) 70%)"
+              }}
             />
             {/* 토 (Earth) - Yellow */}
             <motion.div
-              animate={{ scale: [0.9, 1.3, 0.9], opacity: [0.4, 0.9, 0.4] }}
+              animate={{ scale: [0.9, 1.3, 0.9], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute bottom-[5%] right-[25%] w-32 h-32 md:w-40 md:h-40 bg-[#FACC15] rounded-full blur-3xl"
+              className="absolute rounded-full"
+              style={{
+                bottom: "15%", right: "30%", width: "200px", height: "200px",
+                background: "radial-gradient(circle, rgba(250,204,21,0.6) 0%, rgba(250,204,21,0) 70%)"
+              }}
             />
             {/* 금 (Metal) - White */}
             <motion.div
-              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.4, 0.8, 0.4] }}
+              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.5, 0.9, 0.5] }}
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute bottom-[15%] left-[10%] w-32 h-32 md:w-40 md:h-40 bg-[#F8FAFC] rounded-full blur-3xl"
+              className="absolute rounded-full"
+              style={{
+                bottom: "25%", left: "15%", width: "220px", height: "220px",
+                background: "radial-gradient(circle, rgba(248,250,252,0.6) 0%, rgba(248,250,252,0) 70%)"
+              }}
             />
             {/* 수 (Water) - Blue */}
             <motion.div
-              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.4, 0.8, 0.4] }}
+              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-              className="absolute top-[20%] left-[5%] w-36 h-36 md:w-44 md:h-44 bg-[#60A5FA] rounded-full blur-3xl"
+              className="absolute rounded-full"
+              style={{
+                top: "25%", left: "15%", width: "240px", height: "240px",
+                background: "radial-gradient(circle, rgba(96,165,250,0.6) 0%, rgba(96,165,250,0) 70%)"
+              }}
             />
           </motion.div>
         </div>
