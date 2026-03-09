@@ -370,65 +370,55 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
+        initial={{ backgroundColor: "#0B1120" }}
+        animate={{ backgroundColor: ["#0B1120", "#31263E", "#FFB199", "#FDFBFA"] }}
+        transition={{ duration: 5, ease: "easeInOut", times: [0, 0.4, 0.8, 1] }}
         onClick={handleSplashClick}
       >
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#FDFBFA]">
-          {/* Base Ambient Glow */}
+        {/* Cinematic Sunrise Orb */}
+        <motion.div
+          initial={{ y: "150%", scale: 0.5, opacity: 0.5 }}
+          animate={{ y: "-20%", scale: [0.5, 1.5, 3, 5], opacity: [0.8, 1, 0.3, 0] }}
+          transition={{ duration: 6, ease: "easeInOut", times: [0, 0.4, 0.7, 1] }}
+          className="absolute w-[60vh] h-[60vh] rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, rgba(255,223,137,1) 0%, rgba(255,177,153,0.8) 50%, rgba(255,255,255,0) 80%)"
+          }}
+        />
+
+        {/* Floating Morning Dew / Stardust */}
+        {[...Array(15)].map((_, i) => (
           <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute rounded-full"
-            style={{
-              width: "80vh", height: "80vh",
-              background: "radial-gradient(circle, rgba(255,177,153,0.08) 0%, rgba(253,251,250,0) 70%)"
+            key={i}
+            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 20) }}
+            animate={{ opacity: [0, 0.8, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 30) }}
+            transition={{
+              duration: 4 + (i % 3),
+              ease: "easeOut",
+              delay: 1 + (i % 2)
             }}
+            className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-white/60 pointer-events-none blur-[1px]"
           />
+        ))}
 
-          {/* Soft Peach Orb */}
-          <motion.div
-            animate={{
-              scale: [0.9, 1.2, 0.9],
-              opacity: [0.4, 0.7, 0.4],
-              x: [-20, 20, -20],
-              y: [-10, 15, -10]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[10%] right-[10%] w-[50vh] h-[50vh] rounded-full blur-[80px]"
-            style={{ background: "rgba(255,177,153,0.15)" }}
-          />
-
-          {/* Soft Sage Orb */}
-          <motion.div
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.6, 0.3],
-              x: [10, -20, 10],
-              y: [20, -10, 20]
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-[15%] left-[5%] w-[60vh] h-[60vh] rounded-full blur-[80px]"
-            style={{ background: "rgba(129,199,132,0.12)" }}
-          />
-
-          {/* Soft Sand/Gold Center */}
-          <motion.div
-            animate={{ scale: [0.8, 1.1, 0.8], opacity: [0.2, 0.5, 0.2] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-[30%] left-[30%] w-[40vh] h-[40vh] rounded-full blur-[60px]"
-            style={{ background: "rgba(250,204,33,0.08)" }}
-          />
-        </div>
-
-        {/* Breathing Typography */}
+        {/* Ambient Overlay to blend sun out softly into the #FDFBFA app background */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3, duration: 2 }}
+          className="absolute inset-0 bg-[#FDFBFA] pointer-events-none z-0"
+        />
+
+        {/* Cinematic Typography Reveal */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2, delay: 3.5, ease: "easeOut" }}
           className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-sm">
+          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6">
             당신의 운세가<br />궁금하십니까
           </h2>
         </motion.div>
@@ -437,7 +427,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 1, ease: "easeOut" }}
+          transition={{ delay: 4.5, duration: 1, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
           <div className="bg-[#2D3748] text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_24px_rgba(45,55,72,0.15)] group relative overflow-hidden flex items-center gap-2">
