@@ -130,7 +130,7 @@ export default function DirectStorePage() {
         });
     }, [products, activeCategory]);
 
-    // MZ 추천 잇템 - 테마별로 1개씩 선정
+    // 맞춤 추천 잇템 - 테마별로 1개씩 선정
     const mzPicks = useMemo(() => {
         const picks: Product[] = [];
         const themes = ["wealth", "love", "health", "wood"];
@@ -325,10 +325,10 @@ export default function DirectStorePage() {
                         {/* Divider if Active Category */}
                         {activeCategory && <div className="w-full h-2 bg-gray-100 mt-4 mb-2"></div>}
 
-                        {/* MZ Recommended Horizon Scroll */}
+                        {/* Recommended Horizon Scroll */}
                         <div className="mt-8 px-4">
                             <div className="flex items-end justify-between mb-4">
-                                <h3 className="text-[18px] font-black tracking-tight text-gray-900">요즘 MZ픽! 잇템</h3>
+                                <h3 className="text-[18px] font-black tracking-tight text-gray-900">당신을 위한 맞춤 추천</h3>
                                 <button onClick={() => setActiveCategory("전체보기")} className="text-[13px] font-bold text-gray-500 hover:text-gray-800 transition-colors">더보기 &gt;</button>
                             </div>
 
