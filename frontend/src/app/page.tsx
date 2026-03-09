@@ -316,7 +316,7 @@ export default function Home() {
               className="relative z-10 text-center flex flex-col items-center px-6"
             >
               <h2 className="text-[26px] md:text-[32px] font-extrabold text-[#F5F5F7] tracking-tight leading-[1.35] mb-6 font-pretendard drop-shadow-md">
-                당신의 <span className="text-[#D4AF37] font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">운명</span>이 <span className="block mt-1">궁금한가요?</span>
+                당신의 <span className="text-[#D4AF37] font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">운세</span>가 <span className="block mt-1">궁금한가요?</span>
               </h2>
 
               <motion.div
