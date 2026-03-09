@@ -351,25 +351,15 @@ export default function FortuneHubPage() {
                     </div>
                 </div>
 
-                {/* Section 1: 사주 풀이 (Grid) */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">명리학 기반 인사이트</span>
-                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">정통 명리 베이직</h2>
+                {/* ==== 영역 1: 매일매일 가볍게! 재미 운세 ==== */}
+                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-6">
+                    <div className="mb-2">
+                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">매일매일 가볍게!</span>
+                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">데일리 운세 & 즐길거리</h2>
                     </div>
-                    <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        <Link href="/saju/confirm?type=신년 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐍" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">신년 흐름</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐉" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">토정비결</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐯" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">정통 명리</span>
-                        </Link>
+
+                    {/* 데일리 기운 (Grid) */}
+                    <div className="grid grid-cols-4 gap-y-7 gap-x-2">
                         <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon emoji="🐣" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">오늘의 기운</span>
@@ -382,22 +372,14 @@ export default function FortuneHubPage() {
                             <SpotIcon emoji="🦄" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">지정일 기운</span>
                         </Link>
-                        {/* Hidden rows from screenshot 2 but added for fullness */}
                         <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon emoji="🐰" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">타인과의 궁합</span>
+                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">궁합</span>
                         </Link>
                     </div>
-                </section>
 
-                {/* Section 2: 액운 방지 (List) -> "간편한 행운 팁" */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">상황별 맞춤 분석</span>
-                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">운의 흐름 팁</h2>
-                    </div>
-                    <div className="flex flex-col gap-6">
-                        {/* 1. 행운의 번호 */}
+                    {/* 행운 팁 (List) */}
+                    <div className="flex flex-col gap-6 pt-4 border-t border-gray-50">
                         <div onClick={handleLotto} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🐷" />
                             <div className="flex flex-col">
@@ -405,112 +387,118 @@ export default function FortuneHubPage() {
                                 <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 시그니처 넘버 6개</p>
                             </div>
                         </div>
-                        {/* 2. 천생복덕운 (타고난 잠재력) - AI 읽기로 라우팅 */}
-                        <Link href="/saju/confirm?type=천생복덕운" className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <CircleIcon emoji="🐨" />
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">타고난 잠재력</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">명리가 알려주는 나의 감춰진 강점</p>
-                            </div>
-                        </Link>
-                        {/* 3. 행운의 부적 */}
                         <div onClick={handleTalisman} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🐢" />
                             <div className="flex flex-col">
                                 <h3 className="text-[16px] font-black text-[#4A5568]">에너지 부스터</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">지금 내게 필요한 맞춤형 긍정 에너지</p>
+                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">지금 내게 필요한 맞춤형 부적 추천</p>
                             </div>
                         </div>
-                        {/* 4. 이사택일 */}
                         <div onClick={() => setShowMoving(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🐌" />
                             <div className="flex flex-col">
                                 <h3 className="text-[16px] font-black text-[#4A5568]">캘린더 매니징</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">이사/중요 일정 길일 찾기</p>
+                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">이사/중요 일정 등 길일 찾기</p>
                             </div>
                         </div>
-                        {/* 5. 관상 */}
                         <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🦊" />
                             <div className="flex flex-col">
                                 <h3 className="text-[16px] font-black text-[#4A5568]">나의 관상</h3>
                                 <p className="text-[13px] text-gray-400 mt-0.5 font-medium">AI가 분석하는 첫인상과 이미지</p>
                             </div>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                ref={fileInputRef}
-                                className="hidden"
-                                onChange={handlePhotoUpload}
-                            />
+                            <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handlePhotoUpload} />
                         </div>
                     </div>
                 </section>
 
-                {/* Section 3: 직업 및 진로 (Grid) */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">취업과 진로</span>
-                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">포텐셜 & 커리어</h2>
+                {/* ==== 영역 2: 내 삶의 나침반! 심층 분석 ==== */}
+                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-8">
+                    <div className="mb-2">
+                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">내 삶의 나침반</span>
+                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">정통 사주 심층 분석</h2>
                     </div>
-                    <div className="grid grid-cols-3 gap-x-2">
-                        <Link href="/saju/confirm?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
-                                <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full bottom-1 right-1 opacity-80"></div>
-                                <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">💼</span>
-                            </div>
-                            <span className="text-[13px] font-bold text-gray-700">커리어 운</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
-                                <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full top-2 right-1 opacity-80"></div>
-                                <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">📈</span>
-                            </div>
-                            <span className="text-[13px] font-bold text-gray-700">역량 평가</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
-                                <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full bottom-2 left-1 opacity-80"></div>
-                                <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">🦋</span>
-                            </div>
-                            <span className="text-[13px] font-bold text-gray-700">자아 탐구</span>
-                        </Link>
+
+                    {/* 정통 사주 리딩 파트 */}
+                    <div>
+                        <h3 className="text-[14px] font-extrabold text-[#4A5568] mb-4 flex items-center gap-1.5"><span className="w-1 h-3.5 bg-[#FFB199] rounded-full block"></span>종합 운세</h3>
+                        <div className="grid grid-cols-4 gap-y-7 gap-x-2">
+                            <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🐯" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">정통 명리</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=신년 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🐍" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">신년 흐름</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🐉" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">토정비결</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=천생복덕운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🐨" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">타고난 잠재력</span>
+                            </Link>
+                        </div>
                     </div>
-                </section>
 
-
-
-                {/* Section 5: 타고난 운명 (Grid) */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <div className="mb-5">
-                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">나만의 고유 속성</span>
-                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">나의 선천적 디자인</h2>
+                    {/* 커리어 파트 */}
+                    <div className="pt-8 border-t border-gray-50">
+                        <h3 className="text-[14px] font-extrabold text-[#4A5568] mb-4 flex items-center gap-1.5"><span className="w-1 h-3.5 bg-blue-300 rounded-full block"></span>포텐셜 및 커리어</h3>
+                        <div className="grid grid-cols-3 gap-x-2">
+                            <Link href="/saju/confirm?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
+                                    <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full bottom-1 right-1 opacity-80"></div>
+                                    <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">💼</span>
+                                </div>
+                                <span className="text-[13px] font-bold text-gray-700">커리어 운</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
+                                    <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full top-2 right-1 opacity-80"></div>
+                                    <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">📈</span>
+                                </div>
+                                <span className="text-[13px] font-bold text-gray-700">역량 평가</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <div className="w-[60px] h-[60px] bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center justify-center relative mb-1">
+                                    <div className="absolute w-[22px] h-[22px] bg-[#E2E8F0] rounded-full bottom-2 left-1 opacity-80"></div>
+                                    <span className="relative z-10 text-[28px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">🦋</span>
+                                </div>
+                                <span className="text-[13px] font-bold text-gray-700">자아 탐구</span>
+                            </Link>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        <Link href="/saju/confirm?type=띠 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐵" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">띠 해석</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=별자리 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="✨" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">별자리 지표</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=태어난 계절운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🌸" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">계절 에너지</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=생년월일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🎂" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">나침반 흐름</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=전생운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🔮" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">과거의 나</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=탄생석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="💎" hasBadge />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">퍼스널 젬잼</span>
-                        </Link>
+
+                    {/* 선천 파트 */}
+                    <div className="pt-8 border-t border-gray-50">
+                        <h3 className="text-[14px] font-extrabold text-[#4A5568] mb-4 flex items-center gap-1.5"><span className="w-1 h-3.5 bg-[#A8D5BA] rounded-full block"></span>나의 선천적 디자인</h3>
+                        <div className="grid grid-cols-4 gap-y-7 gap-x-2">
+                            <Link href="/saju/confirm?type=띠 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🐵" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">띠 해석</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=별자리 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="✨" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">별자리표</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=태어난 계절운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🌸" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">계절 에너지</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=생년월일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🎂" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">나침반 흐름</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=전생운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="🔮" />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">과거의 나</span>
+                            </Link>
+                            <Link href="/saju/confirm?type=탄생석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                <SpotIcon emoji="💎" hasBadge />
+                                <span className="text-[13px] font-bold text-gray-700 tracking-tight">퍼스널 젬잼</span>
+                            </Link>
+                        </div>
                     </div>
                 </section>
 
