@@ -2,12 +2,9 @@
 
 import { useState, useEffect, Suspense } from "react";
 import DestinyMatrixCard from "@/components/DestinyMatrixCard";
-import ActionableInsightWidget from "@/components/ActionableInsightWidget";
 import DaewunTimeline, { DaewunPillar } from "@/components/DaewunTimeline";
 import FortuneCycleDashboard from "@/components/FortuneCycleDashboard";
-import DailyGuideCard, { DailyFortuneData } from "@/components/DailyGuideCard";
 import MonthlyReportTemplate from "@/components/MonthlyReportTemplate";
-import ElementalRadarChart from "@/components/ElementalRadarChart";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,7 +24,6 @@ interface MatrixData {
     year_pillar: any;
     daewun_number: number;
     daewun_pillars: DaewunPillar[];
-    daily_fortune: DailyFortuneData;
     fortune_cycle?: any;
 }
 
@@ -93,7 +89,6 @@ const AnimatedAnimalLoader = ({ dayStem, readingType }: { dayStem: string | null
 
 function SajuContent() {
     const [matrix, setMatrix] = useState<MatrixData | null>(null);
-    const [insight, setInsight] = useState<string | null>(null);
     const [lifeStages, setLifeStages] = useState<LifeStage[] | null>(null);
     const [specificReading, setSpecificReading] = useState<string | null>(null);
     // Vercel 프록시 타임아웃(15초)을 우회하기 위해 Render 직접 호출.
@@ -115,13 +110,13 @@ function SajuContent() {
     const readingType = searchParams.get('type');
     const displayTitle = readingType ? `${readingType} 결과` : '정밀 사주 분석';
 
-    const initialTab = ['daewun', 'life_stages', 'yearly', 'daily', 'elemental'].includes(initialTabParam)
+    const initialTab = ['daewun', 'life_stages', 'yearly'].includes(initialTabParam)
         ? initialTabParam
         : "daewun";
 
-    const [activeTab, setActiveTab] = useState<"daewun" | "life_stages" | "yearly" | "daily" | "elemental">(initialTab);
+    const [activeTab, setActiveTab] = useState<"daewun" | "life_stages" | "yearly">(initialTab);
 
-    const handleTabClick = async (tab: "daewun" | "life_stages" | "yearly" | "daily" | "elemental") => {
+    const handleTabClick = async (tab: "daewun" | "life_stages" | "yearly") => {
         setActiveTab(tab);
         if (tab === "life_stages" && !lifeStages && matrix) {
             try {
@@ -152,7 +147,7 @@ function SajuContent() {
     // Effect for handling URL tab parameter changes
     useEffect(() => {
         const tab = searchParams.get('tab');
-        if (tab === 'daewun' || tab === 'life_stages' || tab === 'yearly' || tab === 'daily' || tab === 'elemental') {
+        if (tab === 'daewun' || tab === 'life_stages' || tab === 'yearly') {
             setActiveTab(tab as any);
         }
     }, [searchParams]);
@@ -275,22 +270,6 @@ function SajuContent() {
 
                 // 2. Fire Vercel Proxied APIs (Background tasks) with session caching to prevent Rate Limit (15 RPM)
                 try {
-                    const cachedInsight = sessionStorage.getItem("saju_insight");
-                    if (cachedInsight) {
-                        setInsight(cachedInsight);
-                    } else {
-                        const insightRes = await fetch(`${API_BASE}/api/insight`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(parsedMatrix)
-                        });
-                        if (insightRes.ok) {
-                            const insightData = await insightRes.json();
-                            setInsight(insightData.insight);
-                            sessionStorage.setItem("saju_insight", insightData.insight);
-                        }
-                    }
-
                     const cachedLifeStages = sessionStorage.getItem("saju_lifestages");
                     if (cachedLifeStages) {
                         setLifeStages(JSON.parse(cachedLifeStages));
@@ -421,18 +400,6 @@ function SajuContent() {
                                     >
                                         올해 운세
                                     </button>
-                                    <button
-                                        onClick={() => handleTabClick("daily")}
-                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daily' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                                    >
-                                        오늘 일진
-                                    </button>
-                                    <button
-                                        onClick={() => handleTabClick("elemental")}
-                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'elemental' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
-                                    >
-                                        오행 분석
-                                    </button>
                                 </div>
 
                                 {/* Tab Contents */}
@@ -486,27 +453,6 @@ function SajuContent() {
                                                     <FortuneCycleDashboard cycle={matrix.fortune_cycle} />
                                                 </div>
                                             )}
-                                        </div>
-                                    )}
-
-                                    {/* Tab 3: Daily Fortune & Insight */}
-                                    {activeTab === "daily" && (
-                                        <div className="flex flex-col gap-4">
-                                            {matrix.daily_fortune && (
-                                                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-1">
-                                                    <DailyGuideCard fortune={matrix.daily_fortune} />
-                                                </div>
-                                            )}
-                                            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
-                                                <ActionableInsightWidget insightText={insight} />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Tab 4: Elemental Analysis */}
-                                    {activeTab === "elemental" && (
-                                        <div className="h-[350px] bg-white rounded-3xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
-                                            <ElementalRadarChart matrix={matrix} />
                                         </div>
                                     )}
 
