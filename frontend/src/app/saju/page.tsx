@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-    RefreshCw,
+    RefreshCw, ChevronRight,
     Calendar, // 신년운세
     BookOpen, // 토정비결
     FileText, // 정통사주
@@ -35,6 +35,18 @@ import {
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 
+const ELEMENT_COLORS_BG: Record<string, string> = {
+    "wood": "bg-[#A8D5BA] text-gray-800", // Pastel Green
+    "fire": "bg-[#FFC3A0] text-gray-800", // Pastel Salmon
+    "earth": "bg-[#F7D08A] text-gray-800", // Pastel Yellow
+    "metal": "bg-[#E2E8F0] text-gray-800", // Light Gray
+    "water": "bg-[#A2D2FF] text-gray-800", // Pastel Blue
+};
+
+const ELEMENT_KOR: Record<string, string> = {
+    "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수"
+};
+
 // Helper for the minimalist icon style
 const SpotIcon = ({ emoji, hasBadge = false }: { emoji?: string, icon?: any, hasBadge?: boolean }) => (
     <div className="relative w-[46px] h-[46px] flex items-center justify-center">
@@ -49,16 +61,13 @@ const SpotIcon = ({ emoji, hasBadge = false }: { emoji?: string, icon?: any, has
     </div>
 );
 
-// Helper for pure circle line icon (Emoji version)
-const CircleIcon = ({ emoji, bgColor = "bg-[#FDFBFA]" }: { emoji: string, bgColor?: string }) => (
-    <div className={`w-[48px] h-[48px] rounded-full flex items-center justify-center border border-gray-100 ${bgColor} shadow-sm shrink-0`}>
-        <span className="text-[24px]">{emoji}</span>
-    </div>
-);
-
 export default function FortuneHubPage() {
     const router = useRouter();
     const [userName, setUserName] = useState("");
+
+    // Insight Modal State
+    const [elementDetailModal, setElementDetailModal] = useState<{ isOpen: boolean, title: string, content: string }>({ isOpen: false, title: "", content: "" });
+
     const [userSaju, setUserSaju] = useState<any>(null);
 
     // Modal States
@@ -80,6 +89,79 @@ export default function FortuneHubPage() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [faceResult, setFaceResult] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Calculate Element Counts and Saju Strength
+    let elementCounts: Record<string, number> = { "목": 0, "화": 0, "토": 0, "금": 0, "수": 0 };
+    let sajuStrength = "알 수 없음";
+
+    if (userSaju) {
+        const elementMap: Record<string, string> = { "wood": "목", "fire": "화", "earth": "토", "metal": "금", "water": "수" };
+        const pillars = [userSaju.time_pillar, userSaju.day_pillar, userSaju.month_pillar, userSaju.year_pillar];
+
+        pillars.forEach(p => {
+            if (p?.heavenly?.element) elementCounts[elementMap[p.heavenly.element]] += 1;
+            if (p?.earthly?.element) elementCounts[elementMap[p.earthly.element]] += 1;
+        });
+
+        // Simple strength calculation based on supportive elements
+        const dmElement = userSaju.day_pillar?.heavenly?.element;
+        if (dmElement) {
+            let supportCount = 0;
+            const supportMap: Record<string, string[]> = {
+                "wood": ["wood", "water"],
+                "fire": ["fire", "wood"],
+                "earth": ["earth", "fire"],
+                "metal": ["metal", "earth"],
+                "water": ["water", "metal"]
+            };
+            const supportive = supportMap[dmElement] || [];
+            pillars.forEach(p => {
+                if (p?.heavenly?.element && supportive.includes(p.heavenly.element)) supportCount += 1;
+                if (p?.earthly?.element && supportive.includes(p.earthly.element)) supportCount += (p === userSaju?.month_pillar ? 2 : 1); // Weight month branch
+            });
+
+            sajuStrength = supportCount >= 4 ? "신강(身強)" : "신약(身弱)";
+        }
+    }
+
+    // Helpers for Bazi Grid
+    const getHanja = (label?: string) => label ? label.split('(')[0] : "?";
+    const getHangul = (label?: string) => label && label.includes('(') ? label.split('(')[1].replace(')', '') : "?";
+
+    const pillars = userSaju ? [
+        { label: "시주", data: userSaju?.time_pillar },
+        { label: "일주", data: userSaju?.day_pillar },
+        { label: "월주", data: userSaju?.month_pillar },
+        { label: "년주", data: userSaju?.year_pillar }
+    ] : [];
+
+    // Calculate dynamic radar chart points based on five elements counts
+    const getRadarPoints = () => {
+        if (!userSaju) return "50,20 80,45 60,82 20,78 15,35"; // Fallback points
+
+        // Calculate ratio per element (0 to 4 max commonly)
+        const getVal = (k1: string) => Math.min(4, elementCounts[k1] || 0) / 4;
+
+        const r = 40; // Max radius
+        const cx = 50;
+        const cy = 50;
+
+        // Order: 목(Top: -90), 화(Right: -18), 토(BottomRight: 54), 금(BottomLeft: 126), 수(Left: 198)
+        const elements = [
+            { v: getVal("목"), ang: -Math.PI / 2 },
+            { v: getVal("화"), ang: -Math.PI / 2 + (Math.PI * 2 / 5) },
+            { v: getVal("토"), ang: -Math.PI / 2 + (Math.PI * 4 / 5) },
+            { v: getVal("금"), ang: -Math.PI / 2 + (Math.PI * 6 / 5) },
+            { v: getVal("수"), ang: -Math.PI / 2 + (Math.PI * 8 / 5) }
+        ];
+
+        return elements.map(el => {
+            const ratio = 0.2 + (el.v * 0.8); // 20% minimum baseline to avoid collapse
+            const x = cx + Math.cos(el.ang) * r * ratio;
+            const y = cy + Math.sin(el.ang) * r * ratio;
+            return `${x},${y}`;
+        }).join(" ");
+    };
 
     useEffect(() => {
         const storedInfo = sessionStorage.getItem("saju_user_info");
@@ -113,9 +195,9 @@ export default function FortuneHubPage() {
         let desc = "평범함 속에 비범함이 감춰진 사주입니다. 작은 행운이 자주 찾아옵니다.";
         let reason = "당신의 사주는 오행이 고루 분포되어 있어 특별한 치우침 없이 무난한 평온함을 누리는 에너지입니다.";
 
-        if (userSaju && userSaju.day_pillar) {
-            const dayElem = userSaju.day_pillar.heavenly.element;
-            const dayLabel = userSaju.day_pillar.heavenly.label;
+        if (userSaju && userSaju?.day_pillar) {
+            const dayElem = userSaju?.day_pillar.heavenly.element;
+            const dayLabel = userSaju?.day_pillar.heavenly.label;
 
             if (dayElem === "목") {
                 title = "태을귀인";
@@ -153,8 +235,8 @@ export default function FortuneHubPage() {
             desc: "뜻밖의 금전운이 따르고 지출이 줄어드는 강력한 재물 부적입니다."
         });
 
-        if (userSaju && userSaju.month_pillar) {
-            const mg = userSaju.month_pillar.earthly.ten_god || "";
+        if (userSaju && userSaju?.month_pillar) {
+            const mg = userSaju?.month_pillar.earthly.ten_god || "";
             if (mg.includes("관성")) {
                 results.push({
                     type: "career",
@@ -351,66 +433,140 @@ export default function FortuneHubPage() {
                     </div>
                 </div>
 
-                {/* ==== 영역 1: 매일매일 가볍게! 재미 운세 ==== */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-6">
-                    <div className="mb-2">
-                        <span className="text-[12px] text-gray-400 font-bold tracking-tight">매일매일 가볍게!</span>
-                        <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">데일리 운세 & 즐길거리</h2>
-                    </div>
+                {/* Bazi Grid Injected */}
+                {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
+                <div>
+                    <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
+                        <div className="flex justify-between items-center w-full mb-6 px-1">
+                            <h2 className="text-[20px] font-extrabold text-[#111]">나의 명식 (사주팔자)</h2>
+                            <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3 py-1 rounded-full">{sajuStrength}</span>
+                        </div>
 
-                    {/* 데일리 기운 (Grid) */}
-                    <div className="grid grid-cols-4 gap-y-7 gap-x-2">
-                        <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐣" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">오늘의 기운</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=내일의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🦉" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">내일의 기운</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=지정일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🦄" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">지정일 기운</span>
-                        </Link>
-                        <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐰" />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">궁합</span>
-                        </Link>
-                    </div>
+                        <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
+                            {pillars.map((pillar, idx) => (
+                                <div key={idx} className="flex flex-col items-center w-[23%] relative">
+                                    <span className={`text-[12px] mb-4 font-medium tracking-tight ${pillar.label === '일주' ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                                        {pillar.label}
+                                    </span>
 
-                    {/* 행운 팁 (List) */}
-                    <div className="flex flex-col gap-6 pt-4 border-t border-gray-50">
-                        <div onClick={handleLotto} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <CircleIcon emoji="🐷" />
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">퍼스널 행운 번호</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 시그니처 넘버 6개</p>
-                            </div>
-                        </div>
-                        <div onClick={handleTalisman} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <CircleIcon emoji="🐢" />
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">에너지 부스터</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">지금 내게 필요한 맞춤형 부적 추천</p>
-                            </div>
-                        </div>
-                        <div onClick={() => setShowMoving(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <CircleIcon emoji="🐌" />
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">캘린더 매니징</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">이사/중요 일정 등 길일 찾기</p>
-                            </div>
-                        </div>
-                        <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <CircleIcon emoji="🦊" />
-                            <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">나의 관상</h3>
-                                <p className="text-[13px] text-gray-400 mt-0.5 font-medium">AI가 분석하는 첫인상과 이미지</p>
-                            </div>
-                            <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handlePhotoUpload} />
+                                    <div className="text-[12px] font-bold text-gray-500 mb-3 h-[18px] flex items-center justify-center whitespace-nowrap">
+                                        {pillar.data?.heavenly?.ten_god || "-"}
+                                    </div>
+
+                                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold mb-2 shadow-sm relative overflow-hidden ring-1 ring-inset ring-black/5`}>
+                                        <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.heavenly?.label)}</div>
+                                        <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
+                                            <span>{getHangul(pillar.data?.heavenly?.label)}</span>
+                                            <span>·</span>
+                                            <span>{ELEMENT_KOR[pillar.data?.heavenly?.element || "earth"]}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold shadow-sm relative overflow-hidden mb-3 ring-1 ring-inset ring-black/5`}>
+                                        <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.earthly?.label)}</div>
+                                        <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
+                                            <span>{getHangul(pillar.data?.earthly?.label)}</span>
+                                            <span>·</span>
+                                            <span>{ELEMENT_KOR[pillar.data?.earthly?.element || "earth"]}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-[12px] font-bold text-gray-500 mb-1 min-h-[18px] whitespace-nowrap">
+                                        {pillar.data?.earthly?.ten_god || "-"}
+                                    </div>
+                                    <div className="text-[11px] font-medium text-gray-400 whitespace-nowrap">
+                                        {pillar.data?.twelve_state || "-"}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </section>
+                </div>
+
+                {/* Radar Chart Injected */}
+                {/* Radar Chart Card (오늘의 운세 흐름 읽기) */}
+                <div className="px-4">
+                    <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50">
+                        <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">나의 분석 모델</div>
+                        <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-6">{userSaju?.user_name || "당신"}의 선천적 밸런스</h2>
+
+                        <div className="relative w-full aspect-square max-w-[280px] mx-auto mb-10 mt-6">
+                            {/* Static radar presentation for visually exact match */}
+                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm overflow-visible">
+                                {/* Outer webs */}
+                                <polygon points="50,10 90,38 75,85 25,85 10,38" fill="none" stroke="#F1F3F5" strokeWidth="0.5" />
+                                <polygon points="50,25 75,44 65,70 35,70 25,44" fill="none" stroke="#F1F3F5" strokeWidth="0.5" />
+                                <polygon points="50,40 60,50 55,60 45,60 40,50" fill="none" stroke="#F1F3F5" strokeWidth="0.5" />
+                                {/* Spoke lines */}
+                                <line x1="50" y1="50" x2="50" y2="10" stroke="#F1F3F5" strokeWidth="1" strokeDasharray="1,1" />
+                                <line x1="50" y1="50" x2="90" y2="38" stroke="#F1F3F5" strokeWidth="1" strokeDasharray="1,1" />
+                                <line x1="50" y1="50" x2="75" y2="85" stroke="#F1F3F5" strokeWidth="1" strokeDasharray="1,1" />
+                                <line x1="50" y1="50" x2="25" y2="85" stroke="#F1F3F5" strokeWidth="1" strokeDasharray="1,1" />
+                                <line x1="50" y1="50" x2="10" y2="38" stroke="#F1F3F5" strokeWidth="1" strokeDasharray="1,1" />
+
+                                {/* Label dots */}
+                                <circle cx="50" cy="10" r="1.5" fill="none" stroke="#DEE2E6" strokeWidth="0.8" />
+                                <circle cx="90" cy="38" r="1.5" fill="none" stroke="#DEE2E6" strokeWidth="0.8" />
+                                <circle cx="75" cy="85" r="1.5" fill="none" stroke="#DEE2E6" strokeWidth="0.8" />
+                                <circle cx="25" cy="85" r="1.5" fill="none" stroke="#DEE2E6" strokeWidth="0.8" />
+                                <circle cx="10" cy="38" r="1.5" fill="none" stroke="#DEE2E6" strokeWidth="0.8" />
+
+                                {/* Filled Shape dynamically generated */}
+                                <polygon points={getRadarPoints()} fill="rgba(42, 193, 188, 0.25)" stroke="#2AC1BC" strokeWidth="1.5" strokeLinejoin="round" />
+                            </svg>
+
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-5 text-[13px] text-gray-500 font-bold whitespace-nowrap">목(木)</div>
+                            <div className="absolute top-[35%] right-0 translate-x-3 -translate-y-1/2 text-[13px] text-gray-500 font-bold whitespace-nowrap">화(火)</div>
+                            <div className="absolute bottom-[10%] right-0 translate-x-0 translate-y-4 text-[13px] text-gray-500 font-bold whitespace-nowrap">토(土)</div>
+                            <div className="absolute bottom-[10%] left-0 translate-x-0 translate-y-4 text-[13px] text-gray-500 font-bold whitespace-nowrap">금(金)</div>
+                            <div className="absolute top-[35%] left-0 -translate-x-3 -translate-y-1/2 text-[13px] text-gray-500 font-bold whitespace-nowrap">수(水)</div>
+                        </div>
+
+                        <div className="flex flex-col gap-5 mt-2">
+                            <div
+                                onClick={() => setElementDetailModal({
+                                    isOpen: true,
+                                    title: "나의 핵심 기운: 일간(日干)",
+                                    content: `사주명리학에서 일간(日干)은 '나 자신'을 상징하는 가장 본질적인 기운이자, 평생토록 변하지 않는 내면의 코어를 의미합니다. 당신이 태어난 날의 하늘의 기운을 뜻하는 이 글자는, 당신의 잠재력, 고유한 성향, 그리고 대인관계를 맺는 방식을 결정짓습니다.\n\n당신은 [${userSaju?.day_pillar?.heavenly?.element === "wood" ? "木(목) - 뻗어나가는 나무" : userSaju?.day_pillar?.heavenly?.element === "fire" ? "火(화) - 타오르는 불꽃" : userSaju?.day_pillar?.heavenly?.element === "earth" ? "土(토) - 품어주는 대지" : userSaju?.day_pillar?.heavenly?.element === "metal" ? "金(금) - 단단한 바위나 보석" : "水(수) - 흐르는 강물이나 바다"}]의 에너지를 품고 태어났습니다. ${userSaju?.day_pillar?.heavenly?.element === "wood" ? "이는 곧게 위로 성장하려는 진취력, 어떤 역경에도 꺾이지 않고 봄을 향해 나아가는 생명력을 상징합니다. 남을 보살피는 어진 마음(仁)이 기본 바탕에 깔려 있으며, 창도적이고 미래 지향적인 리더십을 발휘할 때 가장 큰 빛을 발합니다." : userSaju?.day_pillar?.heavenly?.element === "fire" ? "이는 세상에 빛과 열기를 전하는 뜨거운 열정, 예의(禮)를 중시하며 언제나 솔직 담백하게 자신을 드러내는 성향을 상징합니다. 예술적 감각이 뛰어나고, 주변 사람들에게 영감을 주며, 무언가를 폭발적으로 시작해내는 에너지가 가장 매력적인 장점입니다." : userSaju?.day_pillar?.heavenly?.element === "earth" ? "이는 만물을 길러내고 포용하는 넓은 대지와 같습니다. 묵묵히 중심을 지키고 다른 기운들이 조화를 이루도록 돕는 중재자 역할을 하며, 신의(信)와 균형 감각이 뛰어납니다. 쉽게 흔들리지 않는 든든함으로 주변 사람들의 절대적인 신뢰를 끄는 힘이 있습니다." : userSaju?.day_pillar?.heavenly?.element === "metal" ? "이는 세월 속에 다듬어진 단단한 쇠나 제련된 보석을 의미합니다. 옳고 그름을 명확히 하는 결단력과 정의(義), 그리고 본사물의 핵심을 파악하는 분석력이 탁월합니다. 겉으로는 차가워 보일 수 있으나 한번 맺은 인연에 대해서는 무서운 의리를 보여주는 외유내강의 전형입니다." : "이는 쉼 없이 아래로 흐르며 생명을 이어나가는 지혜(智)와 유연함을 뜻합니다. 어떠한 형태의 그릇에 담겨도 스스로 모양을 바꾸듯 타인에 대한 공감 능력과 환경 적응력이 타의 추종을 불허합니다. 깊은 사유와 자유로운 사고방식이 성공의 가장 큰 열쇠가 됩니다."}\n\n이 작은 글자 하나가 당신이 세상과 소통하는 창문이 됩니다. 내 안의 기운을 스스로 사랑하고 긍정할 때, 운명의 주도권을 쥘 수 있습니다.`
+                                })}
+                                className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                            >
+                                <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">나의 일간: {userSaju?.day_pillar?.heavenly?.label || "알 수 없음"} <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
+                                <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
+                                    사주의 중심이 되는 기운입니다. {userSaju?.day_pillar?.heavenly?.element === "wood" ? "나무처럼 곧고 성장하려는 본질적인 성향을" : userSaju?.day_pillar?.heavenly?.element === "fire" ? "불처럼 열정적이고 밝은 본질적인 성향을" : userSaju?.day_pillar?.heavenly?.element === "earth" ? "흙처럼 포용력 있고 길러내는 본질적인 성향을" : userSaju?.day_pillar?.heavenly?.element === "metal" ? "쇠처럼 단단하고 결단력 있는 본질적인 성향을" : "물처럼 유연하고 지혜로운 본질적인 성향을"} 가지고 있습니다.
+                                </p>
+                            </div>
+                            <div
+                                onClick={() => setElementDetailModal({
+                                    isOpen: true,
+                                    title: "에너지의 중심: 신강/신약",
+                                    content: `명리학에서 말하는 '신강(身強)'과 '신약(身弱)'은 체력적인 강함이 절대 아닙니다. 이는 내가 타고난 본질의 기운(일간)을 돕는 주변 환경이나 에너지가 내 사주 내에 얼마나 많이 포진되어 있는가를 나타내는 저울과 같습니다.\n\n당신의 사주는 **[${sajuStrength}]**의 형태를 띠고 있습니다.\n\n${sajuStrength === "신강(身強)"
+                                        ? "신강한 사주는 자아와 줏대가 매우 뚜렷하여 어떠한 풍파가 닥쳐도 자신만의 길을 뚫고 나가는 강인한 멘탈과 불도저 같은 추진력을 상징합니다. 독립심이 강해 타인에게 기대기보다는 스스로 성취를 이루는 것을 선호합니다. 때로는 아집으로 비춰질 수 있으므로, 넘치는 에너지를 타인을 포용하고 돕는 데(식상, 재성, 관성의 기운) 사용하거나 밖으로 발산하는 취미를 가졌을 때 인생의 밸런스가 황금비율을 이루며 크게 발복합니다."
+                                        : "신약한 사주는 딱딱한 참나무라기보다는 바람에 유연하게 휘어지는 대나무와 같습니다. 날카로운 감수성과 탁월한 처세술, 주변 사람들과 환경에 물 흐르듯 적응하는 친화력이 최대 강점입니다. 거친 세상 속에서도 타인의 힘을 빌리고 협력하여 거대한 결과를 이끌어내는 팀 플레이어이자 전략가입니다. 스스로 결정의 무게를 온전히 짊어지기보다는, 지식과 자격증(인성)을 갖추거나 믿을 수 있는 동료(비겁)와 결속할 때 폭발적인 시너지가 창출됩니다."}\n\n신강과 신약은 결코 좋고 나쁨의 우열이 아닙니다. 자동차에 비유하자면 사륜구동 SUV(신강)냐, 속도와 코너링에 특화된 스포츠카(신약)냐의 차이일 뿐입니다. 내 몸통의 특성을 명확히 이해하고, 나에게 맞는 도로(직업, 환경)를 선택하는 것이 개운(開運)의 첫걸음입니다.`
+                                })}
+                                className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                            >
+                                <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">신강/신약 판별 <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
+                                <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
+                                    {sajuStrength} 체질입니다. 일간을 도와주는 세력이 내 기운을 어떻게 지탱하는지 분석했습니다.
+                                </p>
+                            </div>
+                            <div
+                                onClick={() => setElementDetailModal({
+                                    isOpen: true,
+                                    title: "오행의 교향곡: 선천적 기운 분포",
+                                    content: `우주 만물은 목(木), 화(火), 토(土), 금(金), 수(水) 다섯 가지 에너지의 상호작용으로 이루어집니다. 당신의 태어난 생년월일시 여덟 글자(팔자)는 이 5대 기운의 특별한 바코드이자, 평생 변하지 않는 나의 선천적 재능 스탯표입니다.\n\n▶ 당신의 오행 성적부:\n🌿 목(木): ${elementCounts["목"]}개 - 기획력, 창조성, 인자함\n🔥 화(火): ${elementCounts["화"]}개 - 열정, 표현력, 화려함\n🪨 토(土): ${elementCounts["토"]}개 - 포용력, 신용, 중재 능력\n🪓 금(金): ${elementCounts["금"]}개 - 결단력, 분석, 강직함\n💧 수(水): ${elementCounts["수"]}개 - 유연성, 지혜, 수용력\n\n특정 오행이 3개 이상이라면 그 기운이 내 삶을 강하게 주도하는 무기가 되지만, 너무 지나치면 오히려 해당 기운의 부정적 단점(예: 나무가 너무 빽빽해 자라지 못함)이 발현될 가능성도 담고 있습니다.\n\n사주의 핵심은 **중용(中庸)**입니다. 그래프에서 유난히 뾰족하게 튀어나온(과도한) 에너지는 사회적 활동이나 승화(운동, 기부 등)를 통해 기운을 설기(빼내기)해 주어야 합니다. 반대로 전혀 없거나 1개 이하로 부족하여 움푹 패인 오행 부위는, 행운 코디 추천 색상의 의류를 입어 보완하거나 그 오행이 상징하는 행동 기질(예: 수가 부족하다면 유연하고 양보하는 태도 등)을 의식적으로 습관화하여 보완할 때 내 삶의 흐름이 막힘없이 둥글고 원만하게 돌아가게 됩니다.`
+                                })}
+                                className="cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-xl transition-colors"
+                            >
+                                <h3 className="text-[17px] font-black text-gray-900 mb-1.5 flex items-center gap-0.5">선천적 기운 분포 <ChevronRight className="w-[18px] h-[18px] text-gray-400 translate-y-[0.5px]" /></h3>
+                                <p className="text-[15px] text-gray-600 font-bold leading-[1.6] break-keep line-clamp-2">
+                                    {userSaju ? `목(${elementCounts["목"]}), 화(${elementCounts["화"]}), 토(${elementCounts["토"]}), 금(${elementCounts["금"]}), 수(${elementCounts["수"]})` : "음양오행"}로 이루어져 있습니다. 위 그래프를 통해 본인의 오행 밸런스를 확인해 보세요.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* ==== 영역 2: 내 삶의 나침반! 심층 분석 ==== */}
                 <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-8">
@@ -507,156 +663,19 @@ export default function FortuneHubPage() {
 
             <BottomNav />
 
-            {/* ==== MODALS ==== */}
-
-            {/* 1. Lotto Modal */}
-            {showLotto && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center">
-                        <button onClick={() => setShowLotto(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
-                        <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                            <Dices size={24} className="text-yellow-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">행운의 번호</h3>
-                        <p className="text-sm text-gray-500 mb-6">이번 주 행운을 가져다 줄 6개의 숫자입니다.</p>
-                        <div className="flex flex-wrap justify-center gap-2 mb-4">
-                            {lottoNumbers.map((num, i) => {
-                                let bgClass = "bg-gray-200 text-gray-800";
-                                if (num <= 10) bgClass = "bg-yellow-400 text-yellow-900";
-                                else if (num <= 20) bgClass = "bg-blue-400 text-white";
-                                else if (num <= 30) bgClass = "bg-red-400 text-white";
-                                else if (num <= 40) bgClass = "bg-gray-400 text-white";
-                                else bgClass = "bg-green-500 text-white";
-
-                                return (
-                                    <div key={i} className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-sm ${bgClass}`}>
-                                        {num}
-                                    </div>
-                                );
-                            })}
+            {/* Element Detail Modal */}
+            {elementDetailModal.isOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}>
+                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
+                        <h3 className="text-xl font-bold text-gray-900 mb-4 whitespace-pre-wrap leading-tight">{elementDetailModal.title}</h3>
+                        <div className="bg-gray-50 p-4 rounded-2xl w-full border border-gray-100 max-h-[60vh] overflow-y-auto text-left relative hidden-scrollbar">
+                            <p className="text-[14px] text-gray-800 leading-[1.8] font-medium whitespace-pre-wrap break-keep">{elementDetailModal.content}</p>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* 2. Trait Modal */}
-            {showTrait && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center">
-                        <button onClick={() => setShowTrait(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                            <Gift size={24} className="text-purple-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{traitResult.title}</h3>
-                        <p className="text-sm text-gray-500 mb-4">{traitResult.reason}</p>
-                        <div className="bg-gray-50 p-4 rounded-2xl w-full text-center">
-                            <p className="text-[14px] text-gray-800 leading-relaxed font-medium break-keep">{traitResult.desc}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* 2-B. Talisman Modal */}
-            {showTalisman && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center">
-                        <button onClick={() => setShowTalisman(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
-                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4">
-                            <FileBadge size={24} className="text-red-600" />
-                        </div>
-                        <span className="text-xs font-bold text-red-500 bg-red-100 px-2.5 py-1 rounded-full mb-3">맞춤 추천 부적</span>
-
-                        <div className="flex overflow-x-auto gap-4 w-full pb-4 hidden-scrollbar snap-x snap-mandatory">
-                            {talismanResults.map((t, idx) => (
-                                <div key={idx} className="flex flex-col items-center min-w-[160px] snap-center shrink-0">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-1">{t.title}</h3>
-                                    <p className="text-xs text-gray-500 mb-3 max-w-[140px] mx-auto leading-relaxed">{t.desc}</p>
-
-                                    <div className="w-[110px] h-[160px] bg-gradient-to-b from-yellow-50 to-orange-100 rounded-xl border-2 border-orange-200 flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
-                                        <div className="absolute inset-x-0 top-2 bottom-2 border-2 border-dashed border-orange-300 opacity-40 mx-2"></div>
-                                        <span className="text-[32px] opacity-70">
-                                            {t.type === "wealth" ? "🪙" : t.type === "career" ? "💼" : t.type === "health" ? "🌿" : "💖"}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <p className="text-[11px] text-gray-400 mt-2">좌우로 스와이프하여 더 많은 부적을 확인하세요.</p>
-                        <button onClick={() => router.push('/store')} className="mt-4 w-full py-3 bg-gray-900 text-white rounded-xl text-[14px] font-bold">부적 상점 가기</button>
-                    </div>
-                </div>
-            )}
-
-            {/* 3. Moving Date Modal */}
-            {showMoving && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center">
-                        <button onClick={() => setShowMoving(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                            <CalendarCheck size={24} className="text-blue-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">길일 (손 없는 날)</h3>
-                        <p className="text-sm text-gray-500 mb-4">이사하기 좋은 날을 월별로 확인해 보세요.</p>
-
-                        <div className="flex items-center gap-2 mb-4 w-full justify-center">
-                            <select
-                                className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold outline-none"
-                                value={movingYear}
-                                onChange={(e) => setMovingYear(Number(e.target.value))}
-                            >
-                                <option value={new Date().getFullYear()}>{new Date().getFullYear()}년</option>
-                                <option value={new Date().getFullYear() + 1}>{new Date().getFullYear() + 1}년</option>
-                            </select>
-                            <select
-                                className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-bold outline-none"
-                                value={movingMonth}
-                                onChange={(e) => setMovingMonth(Number(e.target.value))}
-                            >
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                                    <option key={m} value={m}>{m}월</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="flex flex-col gap-2 w-full max-h-[160px] overflow-y-auto hidden-scrollbar">
-                            {getMovingDates().map((date, i) => (
-                                <div key={i} className="bg-blue-50 text-blue-800 text-[14px] font-bold py-3 rounded-xl">
-                                    {date}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* 4. Physiognomy Modal */}
-            {showFace && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 w-[85%] max-w-[340px] shadow-2xl relative text-center flex flex-col items-center max-h-[80vh] overflow-y-auto hidden-scrollbar">
-                        {!isAnalyzing && <button onClick={() => setShowFace(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={20} /></button>}
-
-                        <div className="w-14 h-14 bg-gradient-to-tr from-[#fbff3a] to-yellow-400 rounded-full flex items-center justify-center mb-4 shadow-sm">
-                            <Camera size={26} className="text-yellow-900" />
-                        </div>
-
-                        <h3 className="text-xl font-bold text-gray-900 mb-4">AI 관상 분석</h3>
-
-                        {isAnalyzing ? (
-                            <div className="flex flex-col items-center justify-center py-6">
-                                <Loader2 className="animate-spin text-yellow-500 mb-3" size={32} />
-                                <p className="text-sm font-medium text-gray-600">얼굴의 굴곡과 기운을 읽는 중입니다...</p>
-                            </div>
-                        ) : (
-                            <div className="text-left bg-gray-50 p-4 rounded-2xl w-full border border-gray-100">
-                                <p className="text-[14px] text-gray-800 leading-relaxed font-medium break-keep whitespace-pre-wrap">
-                                    {faceResult}
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
 
         </div>
     );
