@@ -405,14 +405,14 @@ export default function FortuneHubPage() {
                                 <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 시그니처 넘버 6개</p>
                             </div>
                         </div>
-                        {/* 2. 천생복덕운 */}
-                        <div onClick={handleTrait} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                        {/* 2. 천생복덕운 (타고난 잠재력) - AI 읽기로 라우팅 */}
+                        <Link href="/saju/confirm?type=천생복덕운" className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🐨" />
                             <div className="flex flex-col">
                                 <h3 className="text-[16px] font-black text-[#4A5568]">타고난 잠재력</h3>
                                 <p className="text-[13px] text-gray-400 mt-0.5 font-medium">명리가 알려주는 나의 감춰진 강점</p>
                             </div>
-                        </div>
+                        </Link>
                         {/* 3. 행운의 부적 */}
                         <div onClick={handleTalisman} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🐢" />
