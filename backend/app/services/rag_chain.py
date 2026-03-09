@@ -325,7 +325,7 @@ class SajuRAGChain:
 
 토정비결 상세 풀이:"""
 
-            elif reading_type == "신년운세":
+            elif reading_type in ["신년운세", "신년 흐름"]:
                 prompt_text = """당신은 트렌디하고 예리한 신년운세 분석가입니다.
 사용자의 사주 원국과 다가오는 2026년(병오년, 丙午)의 기운을 대조 분석하는 신년운세(Annual Update) 풀이를 작성해 주세요.
 
@@ -693,7 +693,7 @@ class SajuRAGChain:
 
 토정비결 상세 풀이:"""
 
-            elif reading_type == "신년운세":
+            elif reading_type in ["신년운세", "신년 흐름"]:
                 prompt_text = """당신은 트렌디하고 예리한 신년운세 분석가입니다.
 사용자의 사주 원국과 다가오는 2026년(병오년, 丙午)의 기운을 대조 분석하는 신년운세(Annual Update) 풀이를 작성해 주세요.
 
