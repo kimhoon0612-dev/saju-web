@@ -370,148 +370,119 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B1120] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
         onClick={handleSplashClick}
       >
-        {/* Mystic Astrolabe / Bazi Compass Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#0A0F1A]">
-          {/* Central Ambient Deep Space Glow */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#FDFBFA]">
+          {/* Base Ambient Glow */}
           <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="absolute rounded-full"
             style={{
-              width: "60vh", height: "60vh",
-              background: "radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(0,0,0,0) 70%)"
+              width: "80vh", height: "80vh",
+              background: "radial-gradient(circle, rgba(255,177,153,0.08) 0%, rgba(253,251,250,0) 70%)"
             }}
           />
 
-          {/* Core Orb */}
+          {/* Soft Peach Orb */}
           <motion.div
-            animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.8, 1, 0.8] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute rounded-full flex items-center justify-center"
-            style={{
-              width: "60px", height: "60px",
-              background: "radial-gradient(circle, rgba(250,204,21,0.9) 0%, rgba(250,204,21,0) 80%)",
-              boxShadow: "0 0 40px rgba(250,204,21,0.4)"
+            animate={{
+              scale: [0.9, 1.2, 0.9],
+              opacity: [0.4, 0.7, 0.4],
+              x: [-20, 20, -20],
+              y: [-10, 15, -10]
             }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[10%] right-[10%] w-[50vh] h-[50vh] rounded-full blur-[80px]"
+            style={{ background: "rgba(255,177,153,0.15)" }}
           />
 
-          {/* Astrolabe Ring 1: Inner Fast Sync */}
+          {/* Soft Sage Orb */}
           <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="absolute rounded-full border border-[#D4AF37]/30 border-dashed"
-            style={{ width: "160px", height: "160px", borderWidth: "1px" }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.6, 0.3],
+              x: [10, -20, 10],
+              y: [20, -10, 20]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-[15%] left-[5%] w-[60vh] h-[60vh] rounded-full blur-[80px]"
+            style={{ background: "rgba(129,199,132,0.12)" }}
           />
 
-          {/* Astrolabe Ring 2: Medium Zodiac Wheel */}
+          {/* Soft Sand/Gold Center */}
           <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-            className="absolute rounded-full border border-indigo-400/20"
-            style={{ width: "260px", height: "260px", borderWidth: "1px", borderStyle: "dotted" }}
-          >
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="absolute w-2 h-2 bg-indigo-300/40 rounded-full"
-                style={{
-                  top: '50%', left: '50%',
-                  transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-130px)`
-                }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Astrolabe Ring 3: Outer Bazi Matrix */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute rounded-full border border-white/10"
-            style={{ width: "380px", height: "380px", borderWidth: "1px", borderStyle: "dashed" }}
-          >
-            {/* 4 Cardinal points / Pillars */}
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="absolute w-4 h-1 bg-yellow-500/30"
-                style={{
-                  top: '50%', left: '50%',
-                  transform: `translate(-50%, -50%) rotate(${i * 90}deg) translateX(190px)`
-                }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Giant Ambient Ring */}
-          <motion.div
-            animate={{ rotate: -360, scale: [1, 1.05, 1] }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute rounded-full border border-purple-500/5"
-            style={{ width: "600px", height: "600px", borderWidth: "2px", borderStyle: "solid" }}
+            animate={{ scale: [0.8, 1.1, 0.8], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-[30%] left-[30%] w-[40vh] h-[40vh] rounded-full blur-[60px]"
+            style={{ background: "rgba(250,204,33,0.08)" }}
           />
         </div>
 
         {/* Breathing Typography */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-sm">
             당신의 운세가<br />궁금하십니까
           </h2>
         </motion.div>
 
-        {/* Minimal Glassmorphism Enter Button */}
+        {/* Minimal Enter Button */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 1, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] group relative overflow-hidden flex items-center gap-2">
-            <span className="relative z-10 tracking-wide text-white/90 group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
-            <ChevronRight className="w-4 h-4 relative z-10 text-white/70 group-hover:text-white transition-all group-hover:translate-x-1" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          <div className="bg-[#2D3748] text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_24px_rgba(45,55,72,0.15)] group relative overflow-hidden flex items-center gap-2">
+            <span className="relative z-10 tracking-wide text-white/95 group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
+            <ChevronRight className="w-4 h-4 relative z-10 text-white/80 group-hover:text-white transition-all group-hover:translate-x-1" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
           </div>
         </motion.div>
       </motion.div>
 
-      {!matrixData && (
-        <motion.div
-          className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
-        >
-          {/* Subtle minimal background decoration */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
-            <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
-          </div>
-
+      {
+        !matrixData && (
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
+            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
           >
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
-                <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
-              </div>
-              <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
-                나를 발견하는<br />가장 조용한 시간
-              </h1>
-              <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
-                생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
-              </p>
+            {/* Subtle minimal background decoration */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
+              <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
             </div>
 
-            <div className="w-full pb-8 mt-4 relative z-20">
-              <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
+            >
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
+                  <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
+                </div>
+                <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
+                  나를 발견하는<br />가장 조용한 시간
+                </h1>
+                <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
+                  생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
+                </p>
+              </div>
+
+              <div className="w-full pb-8 mt-4 relative z-20">
+                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )
+        )
       }
 
       {
