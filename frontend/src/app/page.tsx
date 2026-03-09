@@ -232,23 +232,35 @@ export default function Home() {
     keysToRemove.forEach(k => sessionStorage.removeItem(k));
   };
 
+  // Trigger stamp animation automatically on splash screen load
+  useEffect(() => {
+    if (!showSplashMode || matrixData || showStamp) return;
+
+    const timer1 = setTimeout(() => {
+      setShowStamp(true); // Drop stamp
+    }, 800); // Wait 800ms for initial text fade-in
+
+    const timer2 = setTimeout(() => {
+      setIsStamping(true); // Trigger screen shake
+    }, 1100);
+
+    const timer3 = setTimeout(() => {
+      setIsStamping(false); // Stop screen shake
+    }, 1900);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [showSplashMode, matrixData, showStamp]);
+
   const handleSplashClick = () => {
-    if (showStamp || !showSplashMode) return;
+    if (!showSplashMode) return;
+    // Don't allow closing while it's actively shaking to ensure impact is felt
+    if (!showStamp || isStamping) return;
 
-    setShowStamp(true); // Drop stamp
-
-    // Stamp hits the screen at ~300ms
-    setTimeout(() => {
-      setIsStamping(true); // Trigger earthquake shake
-
-      // Let it shake and reveal the magic
-      setTimeout(() => {
-        setIsStamping(false);
-        // Start the fade out of the entire splash screen
-        setShowSplashMode(false);
-      }, 800);
-
-    }, 300);
+    setShowSplashMode(false);
   };
   // Render a full-screen loading skeleton instead of 'null' to prevent FOUC
   if (isInitializing) {
