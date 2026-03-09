@@ -291,11 +291,28 @@ export default function Home() {
             >
               <div className="relative">
                 <div
-                  className="w-36 h-36 md:w-48 md:h-48 border-[8px] border-[#D32F2F] text-[#D32F2F] rounded-full flex items-center justify-center font-black text-5xl md:text-7xl opacity-95 shadow-[0_0_50px_rgba(211,47,47,0.7)] bg-[#0B0D17]/60 backdrop-blur-sm"
-                  style={{ fontFamily: '"Nanum Myeongjo", "Batang", serif', letterSpacing: '2px' }}
+                  className="w-36 h-36 md:w-48 md:h-48 rounded-full flex items-center justify-center font-black text-5xl md:text-7xl opacity-90 shadow-[0_0_30px_rgba(180,20,20,0.5)] bg-[#0B0D17]/40 backdrop-blur-sm relative overflow-hidden text-[#C41E3A]"
+                  style={{
+                    fontFamily: '"Gowun Dodum", "Nanum Myeongjo", "Batang", serif',
+                    letterSpacing: '2px',
+                    // Realistic irregular ink stamp border using SVG data URI
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C24 2 2 24 2 50C2 76 24 98 50 98C76 98 98 76 98 50C98 24 76 2 50 2ZM50 8C73 8 92 27 92 50C92 73 73 92 50 92C27 92 8 73 8 50C8 27 27 8 50 8Z' fill='%23C41E3A' /%3E%3Cpath d='M10 40Q15 30 25 20T40 10T60 10T75 20T85 30T90 40T90 60T85 70T75 80T60 90T40 90T25 80T15 70T10 60Z' fill='none' stroke='%23C41E3A' stroke-width='3' stroke-linecap='round' stroke-dasharray='10 15 5 20 15 5' opacity='0.7'/%3E%3Cpath d='M12 50C12 29 29 12 50 12C71 12 88 29 88 50C88 71 71 88 50 88C29 88 12 71 12 50Z' fill='none' stroke='%23A01830' stroke-width='1.5' stroke-dasharray='4 8 2 12' opacity='0.5'/%3E%3C/svg%3E")`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
                 >
-                  <span className="-ml-1">운명</span>
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')] opacity-20 mix-blend-multiply rounded-full pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-[#C41E3A] opacity-[0.08] mix-blend-color-burn rounded-full pointer-events-none"></div>
+                  <span className="-ml-1 relative z-10" style={{ textShadow: '0px 0px 2px rgba(180,20,20,0.8), -1px 1px 0px rgba(100,10,10,0.4)', filter: 'url(#roughpaper)' }}>운명</span>
                 </div>
+
+                {/* SVG Filter definition for ink bleed effect inside the stamp container */}
+                <svg className="absolute w-0 h-0">
+                  <filter id="roughpaper">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+                  </filter>
+                </svg>
                 {/* Impact dust rings */}
                 <motion.div
                   initial={{ scale: 1, opacity: 1 }}
