@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AgenticChatbot from "@/components/AgenticChatbot";
 import BirthDataForm from "@/components/BirthDataForm";
-import ActionableInsightWidget from "@/components/ActionableInsightWidget";
 
 const ELEMENT_COLORS_BG: Record<string, string> = {
   "wood": "bg-[#A8D5BA] text-gray-800", // Pastel Green
@@ -35,9 +34,6 @@ export default function Home() {
 
   // Insight Modal State
   const [elementDetailModal, setElementDetailModal] = useState<{ isOpen: boolean, title: string, content: string }>({ isOpen: false, title: "", content: "" });
-
-  // Daily Insight Widget State
-  const [insight, setInsight] = useState<string | null>(null);
 
   // User Profile
   const [userGender, setUserGender] = useState<string>("female");
@@ -142,31 +138,6 @@ export default function Home() {
 
     setIsInitializing(false);
   }, []);
-
-  // Fetch Insight when matrixData is available
-  useEffect(() => {
-    if (matrixData) {
-      const cachedInsight = sessionStorage.getItem("saju_insight");
-      if (cachedInsight) {
-        setInsight(cachedInsight);
-      } else {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
-        fetch(`${API_BASE}/api/insight`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(matrixData)
-        })
-          .then(res => res.ok ? res.json() : Promise.reject(res))
-          .then(data => {
-            if (data.insight) {
-              setInsight(data.insight);
-              sessionStorage.setItem("saju_insight", data.insight);
-            }
-          })
-          .catch(err => console.error("Insight fetch err:", err));
-      }
-    }
-  }, [matrixData]);
 
   const handleCalculate = async (data: { name: string; birth_time_iso: string; longitude: number; is_lunar: boolean; is_leap_month: boolean; gender: string }) => {
     setIsLoading(true);
@@ -633,27 +604,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Actionable Insight Card */}
-            {insight && (
-              <div className="px-4 mt-6">
-                <div className="bg-white rounded-[32px] p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 overflow-hidden relative">
-                  <ActionableInsightWidget insightText={insight} />
-                </div>
-              </div>
-            )}
-
-            {/* Go to Deep Saju Analysis */}
-            <div className="px-4 mt-8 pb-12">
-              <button
-                onClick={() => router.push("/saju/result")}
-                className="w-full bg-[#111827] text-white flex items-center justify-center gap-3 py-4 rounded-[20px] font-bold text-[16px] shadow-[0_8px_20px_rgba(17,24,39,0.15)] group relative overflow-hidden"
-              >
-                <span className="relative z-10">나의 정통 사주(명식/대운) 보러가기</span>
-                <ChevronRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              </button>
             </div>
 
           </motion.div>
