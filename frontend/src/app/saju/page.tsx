@@ -358,7 +358,7 @@ export default function FortuneHubPage() {
                         <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">정통 명리 베이직</h2>
                     </div>
                     <div className="grid grid-cols-3 gap-y-7 gap-x-2">
-                        <Link href="/saju/confirm?type=신년운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=신년 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon emoji="🐍" hasBadge />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">신년 흐름</span>
                         </Link>
@@ -383,7 +383,7 @@ export default function FortuneHubPage() {
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">지정일 기운</span>
                         </Link>
                         {/* Hidden rows from screenshot 2 but added for fullness */}
-                        <Link href="/saju/confirm?type=궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon emoji="🐰" hasBadge />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">타인과의 궁합</span>
                         </Link>
