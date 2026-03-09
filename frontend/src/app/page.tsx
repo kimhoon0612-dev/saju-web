@@ -600,7 +600,7 @@ export default function Home() {
               {/* Daily/Fun Hub injected from saju/page.tsx */}
               <div className="px-4 mb-4">
                 {/* ==== 영역 1: 매일매일 가볍게! 재미 운세 ==== */}
-                <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-6">
+                <section className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-6">
                   <div className="mb-2">
                     <span className="text-[12px] text-gray-400 font-bold tracking-tight">매일매일 가볍게!</span>
                     <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">데일리 운세 & 즐길거리</h2>
