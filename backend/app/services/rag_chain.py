@@ -26,7 +26,7 @@ class SajuRAGChain:
             # 실제 서비스시에는 os.environ.get 사용
             api_key = os.environ.get("OPENAI_API_KEY", "dummy_key_for_local_testing")
             try:
-                self.llm = ChatOpenAI(model=self.llm_model_name, temperature=0.7, openai_api_key=api_key)
+                self.llm = ChatOpenAI(model=self.llm_model_name, temperature=0.0, openai_api_key=api_key)
             except Exception as e:
                 print(f"LLM Init Error: {e}")
                 self.llm = None
@@ -136,9 +136,9 @@ class SajuRAGChain:
             ChatGoogleGenerativeAI = None
             
         if gemini_api_key and ChatGoogleGenerativeAI is not None:
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.0, google_api_key=gemini_api_key)
         else:
-            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0, api_key=openai_api_key)
             
         prompt = ChatPromptTemplate.from_template(
             """당신은 MZ세대를 대상으로 하는 세련된 AI 명리학 컨설턴트입니다.
@@ -218,9 +218,9 @@ class SajuRAGChain:
             
         if gemini_api_key and ChatGoogleGenerativeAI is not None:
             # flash is fast but pro might be better for detailed texts, we stick to flash for speed/cost balance
-            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.0, google_api_key=gemini_api_key)
         else:
-            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0, api_key=openai_api_key)
             
         query = self.analyze_saju_structure(saju_matrix)
         try:
@@ -586,9 +586,9 @@ class SajuRAGChain:
             ChatGoogleGenerativeAI = None
             
         if gemini_api_key and ChatGoogleGenerativeAI is not None:
-            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7, google_api_key=gemini_api_key)
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.0, google_api_key=gemini_api_key)
         else:
-            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=openai_api_key)
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0, api_key=openai_api_key)
             
         query = self.analyze_saju_structure(saju_matrix)
         try:
