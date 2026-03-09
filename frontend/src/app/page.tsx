@@ -199,6 +199,11 @@ export default function Home() {
       setMatrixData(completeMatrix);
       setUserGender(data.gender);
 
+      // Scroll to top of the matrix dashboard
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 50);
+
     } catch (error: any) {
       console.error("데이터 동기화 실패:", error);
       alert(`우주 파동 분석 중 오류가 발생했습니다.\n상세: ${error.message || error}`);
@@ -334,11 +339,9 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {!matrixData ? (
-        // --- FULL SCREEN ONBOARDING HERO (THEME B: CLEAN MINIMALIST) ---
-        // Rendered unconditionally underneath the Splash Screen to avoid unmount flickers
+      {!matrixData && (
         <motion.div
-          className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
+          className={`w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden ${showSplashMode ? 'invisible opacity-0' : 'visible opacity-100 transition-opacity duration-1000'}`}
         >
           {/* Subtle minimal background decoration */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -369,7 +372,9 @@ export default function Home() {
             </div>
           </motion.div>
         </motion.div>
-      ) : (
+      )}
+
+      {matrixData && (
         // --- MAIN HOME DASHBOARD AFTER LOGIN ---
         <motion.div
           initial={{ opacity: 0 }}
@@ -596,239 +601,248 @@ export default function Home() {
           </div>
 
         </motion.div>
-      )}
+      )
+      }
 
       {/* Daily Fortune Detail Modal */}
-      {isDailyModalOpen && matrixData && (
-        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-5 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom-5 duration-300 max-h-[90vh]">
-            <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
-              <h3 className="font-extrabold text-[18px] text-gray-900">오늘의 운세 리포트</h3>
-              <button onClick={() => setIsDailyModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6 overflow-y-auto">
-              {/* Daily Overall */}
-              <div className="flex flex-col items-center mb-6">
-                <div className="bg-[#2AC1BC] text-white text-[15px] font-extrabold px-3 py-1 rounded-full mb-3">
-                  전체 {matrixData?.daily_fortune?.monthly_score || dailyScore}점
-                </div>
-                <p className="text-[15px] text-gray-700 font-bold leading-relaxed text-center break-keep">
-                  {matrixData?.daily_fortune?.daily_message || "문을 두드리면 반드시 열리는 하루입니다."}
-                </p>
+      {
+        isDailyModalOpen && matrixData && (
+          <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-5 animate-in fade-in duration-200">
+            <div className="bg-white rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom-5 duration-300 max-h-[90vh]">
+              <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
+                <h3 className="font-extrabold text-[18px] text-gray-900">오늘의 운세 리포트</h3>
+                <button onClick={() => setIsDailyModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors">
+                  <X size={20} />
+                </button>
               </div>
+              <div className="p-6 overflow-y-auto">
+                {/* Daily Overall */}
+                <div className="flex flex-col items-center mb-6">
+                  <div className="bg-[#2AC1BC] text-white text-[15px] font-extrabold px-3 py-1 rounded-full mb-3">
+                    전체 {matrixData?.daily_fortune?.monthly_score || dailyScore}점
+                  </div>
+                  <p className="text-[15px] text-gray-700 font-bold leading-relaxed text-center break-keep">
+                    {matrixData?.daily_fortune?.daily_message || "문을 두드리면 반드시 열리는 하루입니다."}
+                  </p>
+                </div>
 
-              <div className="h-px bg-gray-100 w-full my-6"></div>
+                <div className="h-px bg-gray-100 w-full my-6"></div>
 
-              {/* Breakdown */}
-              <div className="flex flex-col gap-4">
-                {/* Morning */}
-                <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 flex gap-4 items-start">
-                  <div className="flex flex-col items-center justify-center min-w-[50px]">
-                    <span className="text-[13px] font-bold text-gray-500 mb-1">오전</span>
-                    <span className="text-[22px] font-black text-blue-600">{matrixData?.daily_fortune?.morning_score || 70}</span>
+                {/* Breakdown */}
+                <div className="flex flex-col gap-4">
+                  {/* Morning */}
+                  <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 flex gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center min-w-[50px]">
+                      <span className="text-[13px] font-bold text-gray-500 mb-1">오전</span>
+                      <span className="text-[22px] font-black text-blue-600">{matrixData?.daily_fortune?.morning_score || 70}</span>
+                    </div>
+                    <div className="w-px h-12 bg-blue-200/50 mt-1"></div>
+                    <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                      {matrixData?.daily_fortune?.morning_msg || "활기찬 시작이 예상되는 상쾌한 기운입니다."}
+                    </p>
                   </div>
-                  <div className="w-px h-12 bg-blue-200/50 mt-1"></div>
-                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
-                    {matrixData?.daily_fortune?.morning_msg || "활기찬 시작이 예상되는 상쾌한 기운입니다."}
-                  </p>
-                </div>
-                {/* Afternoon */}
-                <div className="bg-orange-50/50 rounded-2xl p-4 border border-orange-100 flex gap-4 items-start">
-                  <div className="flex flex-col items-center justify-center min-w-[50px]">
-                    <span className="text-[13px] font-bold text-gray-500 mb-1">오후</span>
-                    <span className="text-[22px] font-black text-orange-500">{matrixData?.daily_fortune?.afternoon_score || 70}</span>
+                  {/* Afternoon */}
+                  <div className="bg-orange-50/50 rounded-2xl p-4 border border-orange-100 flex gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center min-w-[50px]">
+                      <span className="text-[13px] font-bold text-gray-500 mb-1">오후</span>
+                      <span className="text-[22px] font-black text-orange-500">{matrixData?.daily_fortune?.afternoon_score || 70}</span>
+                    </div>
+                    <div className="w-px h-12 bg-orange-200/50 mt-1"></div>
+                    <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                      {matrixData?.daily_fortune?.afternoon_msg || "집중력이 높아지고 목표를 달성하기 좋은 시간입니다."}
+                    </p>
                   </div>
-                  <div className="w-px h-12 bg-orange-200/50 mt-1"></div>
-                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
-                    {matrixData?.daily_fortune?.afternoon_msg || "집중력이 높아지고 목표를 달성하기 좋은 시간입니다."}
-                  </p>
-                </div>
-                {/* Evening */}
-                <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100 flex gap-4 items-start">
-                  <div className="flex flex-col items-center justify-center min-w-[50px]">
-                    <span className="text-[13px] font-bold text-gray-500 mb-1">저녁</span>
-                    <span className="text-[22px] font-black text-indigo-600">{matrixData?.daily_fortune?.evening_score || 70}</span>
+                  {/* Evening */}
+                  <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100 flex gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center min-w-[50px]">
+                      <span className="text-[13px] font-bold text-gray-500 mb-1">저녁</span>
+                      <span className="text-[22px] font-black text-indigo-600">{matrixData?.daily_fortune?.evening_score || 70}</span>
+                    </div>
+                    <div className="w-px h-12 bg-indigo-200/50 mt-1"></div>
+                    <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
+                      {matrixData?.daily_fortune?.evening_msg || "하루를 성공적으로 마무리하며 편안한 휴식을 취하세요."}
+                    </p>
                   </div>
-                  <div className="w-px h-12 bg-indigo-200/50 mt-1"></div>
-                  <p className="text-[14px] text-gray-700 font-bold leading-snug pt-1 break-keep flex-1">
-                    {matrixData?.daily_fortune?.evening_msg || "하루를 성공적으로 마무리하며 편안한 휴식을 취하세요."}
-                  </p>
                 </div>
+
               </div>
-
-            </div>
-            {/* Modal Bottom Sticky Button */}
-            <div className="p-4 bg-white border-t border-gray-100 shrink-0 sticky bottom-0 z-10">
-              <button
-                onClick={() => setIsDailyModalOpen(false)}
-                className="w-full bg-gray-900 text-white font-bold text-[16px] h-12 rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
-              >
-                닫기
-              </button>
+              {/* Modal Bottom Sticky Button */}
+              <div className="p-4 bg-white border-t border-gray-100 shrink-0 sticky bottom-0 z-10">
+                <button
+                  onClick={() => setIsDailyModalOpen(false)}
+                  className="w-full bg-gray-900 text-white font-bold text-[16px] h-12 rounded-[16px] hover:bg-gray-800 transition-colors shadow-md"
+                >
+                  닫기
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* 1. Element Detail Modal */}
-      {elementDetailModal.isOpen && (
-        <div className="fixed inset-0 z-[110] flex justify-center items-end sm:items-center bg-black/60 backdrop-blur-sm sm:p-5 animate-in fade-in duration-200" onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}>
-          <div className="bg-white rounded-t-[32px] sm:rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-5 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="p-6 pt-8 pb-4 flex flex-col items-center border-b border-gray-100 shrink-0 sticky top-0 bg-white z-10">
-              <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-6 absolute top-3 sm:hidden"></div>
-              <h3 className="font-extrabold text-[22px] text-gray-900 mb-2">{elementDetailModal.title}</h3>
-            </div>
-
-            <div className="p-6 overflow-y-auto">
-              <div className="text-[15px] text-gray-700 leading-[1.8] font-medium break-keep">
-                {elementDetailModal.content.split('\n').map((line, i) => (
-                  <p key={i} className={line.trim() === '' ? 'h-4' : 'mb-1'}>
-                    {line.includes('**') ? (
-                      // Simple bold parser for **text**
-                      line.split(/(\*\*.*?\*\*)/).map((part, j) =>
-                        part.startsWith('**') && part.endsWith('**')
-                          ? <strong key={j} className="text-gray-900 font-extrabold">{part.slice(2, -2)}</strong>
-                          : part
-                      )
-                    ) : (
-                      line
-                    )}
-                  </p>
-                ))}
+      {
+        elementDetailModal.isOpen && (
+          <div className="fixed inset-0 z-[110] flex justify-center items-end sm:items-center bg-black/60 backdrop-blur-sm sm:p-5 animate-in fade-in duration-200" onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}>
+            <div className="bg-white rounded-t-[32px] sm:rounded-[28px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-5 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+              <div className="p-6 pt-8 pb-4 flex flex-col items-center border-b border-gray-100 shrink-0 sticky top-0 bg-white z-10">
+                <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-6 absolute top-3 sm:hidden"></div>
+                <h3 className="font-extrabold text-[22px] text-gray-900 mb-2">{elementDetailModal.title}</h3>
               </div>
-            </div>
 
-            <div className="p-5 w-full shrink-0 sticky bottom-0 bg-white border-t border-gray-50">
-              <button
-                onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}
-                className="w-full bg-[#4A5568] text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm"
-              >
-                확인 완료
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 2. Attendance Calendar Modal (Minimalist) */}
-      {isAttendanceModalOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsAttendanceModalOpen(false)}>
-          <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
-              <div>
-                <h3 className="font-extrabold text-[19px] text-gray-900 flex items-center gap-1.5"><span className="text-2xl">🌿</span> 나의 명리 출석</h3>
-                <p className="text-[12px] font-bold text-gray-500 mt-0.5">매일 조금씩 쌓이는 운의 흐름</p>
-              </div>
-              <button onClick={() => setIsAttendanceModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 overflow-y-auto">
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-                <div className="grid grid-cols-7 gap-1 mb-3">
-                  {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
-                    <div key={day} className={`text-center text-[12px] font-bold ${i === 0 ? 'text-[#FFB199]' : i === 6 ? 'text-[#A2D2FF]' : 'text-gray-400'}`}>
-                      {day}
-                    </div>
+              <div className="p-6 overflow-y-auto">
+                <div className="text-[15px] text-gray-700 leading-[1.8] font-medium break-keep">
+                  {elementDetailModal.content.split('\n').map((line, i) => (
+                    <p key={i} className={line.trim() === '' ? 'h-4' : 'mb-1'}>
+                      {line.includes('**') ? (
+                        // Simple bold parser for **text**
+                        line.split(/(\*\*.*?\*\*)/).map((part, j) =>
+                          part.startsWith('**') && part.endsWith('**')
+                            ? <strong key={j} className="text-gray-900 font-extrabold">{part.slice(2, -2)}</strong>
+                            : part
+                        )
+                      ) : (
+                        line
+                      )}
+                    </p>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-                  {Array.from({ length: 30 }).map((_, i) => {
-                    const day = i + 1;
-                    const isToday = day === new Date().getDate();
-                    const isPast = day < new Date().getDate();
-                    const isChecked = isPast && Math.random() > 0.3;
-                    const markers = ['🌱', '🌿', '🍀', '🍃', '🪴'];
-                    const dayMarker = markers[day % markers.length];
+              </div>
 
-                    return (
-                      <div key={day} className={`aspect-[4/5] sm:aspect-square rounded-xl flex flex-col items-center justify-between p-1.5 relative ${isToday ? 'bg-[#81C784] text-white shadow-sm ring-1 ring-[#81C784] ring-offset-1' : 'bg-[#FDFBFA] text-gray-600 border border-transparent hover:border-gray-200 transition-colors'}`}>
-                        <div className="w-full flex justify-start leading-none">
-                          <span className={`text-[11px] sm:text-[13px] font-bold ${isToday ? 'text-white' : 'text-gray-400'}`}>{day}</span>
-                        </div>
-                        <div className="flex-1 flex items-center justify-center w-full mt-0.5">
-                          {isChecked ? (
-                            <span className="text-[22px] sm:text-[28px] drop-shadow-sm leading-none">{dayMarker}</span>
-                          ) : isToday ? (
-                            <span className="text-[18px] sm:text-[22px] animate-pulse">✨</span>
-                          ) : (
-                            <span className="text-[14px] sm:text-[18px] opacity-20 grayscale">{dayMarker}</span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="p-5 w-full shrink-0 sticky bottom-0 bg-white border-t border-gray-50">
+                <button
+                  onClick={() => setElementDetailModal({ ...elementDetailModal, isOpen: false })}
+                  className="w-full bg-[#4A5568] text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm"
+                >
+                  확인 완료
+                </button>
               </div>
             </div>
+          </div>
+        )
+      }
 
-            <div className="p-5 bg-white shrink-0 sticky bottom-0 z-10 rounded-t-[24px] border-t border-gray-100 text-center">
-              <button
-                onClick={() => {
-                  alert("출석이 확인되었습니다!");
-                  setIsAttendanceModalOpen(false);
-                }}
-                className="w-full bg-[#4A5568] text-white font-extrabold text-[17px] h-[54px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm mb-2 flex items-center justify-center leading-none"
-              >
-                <span>오늘 출석 체크</span>
-              </button>
+      {/* 2. Attendance Calendar Modal (Minimalist) */}
+      {
+        isAttendanceModalOpen && (
+          <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsAttendanceModalOpen(false)}>
+            <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+              <div className="p-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 sticky top-0 z-10">
+                <div>
+                  <h3 className="font-extrabold text-[19px] text-gray-900 flex items-center gap-1.5"><span className="text-2xl">🌿</span> 나의 명리 출석</h3>
+                  <p className="text-[12px] font-bold text-gray-500 mt-0.5">매일 조금씩 쌓이는 운의 흐름</p>
+                </div>
+                <button onClick={() => setIsAttendanceModalOpen(false)} className="rounded-full p-2 bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 overflow-y-auto">
+                <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                  <div className="grid grid-cols-7 gap-1 mb-3">
+                    {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
+                      <div key={day} className={`text-center text-[12px] font-bold ${i === 0 ? 'text-[#FFB199]' : i === 6 ? 'text-[#A2D2FF]' : 'text-gray-400'}`}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                    {Array.from({ length: 30 }).map((_, i) => {
+                      const day = i + 1;
+                      const isToday = day === new Date().getDate();
+                      const isPast = day < new Date().getDate();
+                      const isChecked = isPast && Math.random() > 0.3;
+                      const markers = ['🌱', '🌿', '🍀', '🍃', '🪴'];
+                      const dayMarker = markers[day % markers.length];
+
+                      return (
+                        <div key={day} className={`aspect-[4/5] sm:aspect-square rounded-xl flex flex-col items-center justify-between p-1.5 relative ${isToday ? 'bg-[#81C784] text-white shadow-sm ring-1 ring-[#81C784] ring-offset-1' : 'bg-[#FDFBFA] text-gray-600 border border-transparent hover:border-gray-200 transition-colors'}`}>
+                          <div className="w-full flex justify-start leading-none">
+                            <span className={`text-[11px] sm:text-[13px] font-bold ${isToday ? 'text-white' : 'text-gray-400'}`}>{day}</span>
+                          </div>
+                          <div className="flex-1 flex items-center justify-center w-full mt-0.5">
+                            {isChecked ? (
+                              <span className="text-[22px] sm:text-[28px] drop-shadow-sm leading-none">{dayMarker}</span>
+                            ) : isToday ? (
+                              <span className="text-[18px] sm:text-[22px] animate-pulse">✨</span>
+                            ) : (
+                              <span className="text-[14px] sm:text-[18px] opacity-20 grayscale">{dayMarker}</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 bg-white shrink-0 sticky bottom-0 z-10 rounded-t-[24px] border-t border-gray-100 text-center">
+                <button
+                  onClick={() => {
+                    alert("출석이 확인되었습니다!");
+                    setIsAttendanceModalOpen(false);
+                  }}
+                  className="w-full bg-[#4A5568] text-white font-extrabold text-[17px] h-[54px] rounded-2xl hover:bg-[#2D3748] transition-colors shadow-sm mb-2 flex items-center justify-center leading-none"
+                >
+                  <span>오늘 출석 체크</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* 3. Lucky Outfit Modal (Minimalist) */}
-      {isOutfitModalOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsOutfitModalOpen(false)}>
-          <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFB199]/10 rounded-bl-full filter blur-xl z-0"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#81C784]/10 rounded-tr-full filter blur-2xl z-0"></div>
+      {
+        isOutfitModalOpen && (
+          <div className="fixed inset-0 z-[100] flex justify-center items-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setIsOutfitModalOpen(false)}>
+            <div className="bg-[#FDFBFA] border border-gray-100 rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]" onClick={e => e.stopPropagation()}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFB199]/10 rounded-bl-full filter blur-xl z-0"></div>
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#81C784]/10 rounded-tr-full filter blur-2xl z-0"></div>
 
-            <div className="p-5 flex justify-between items-center bg-white/50 border-b border-gray-100 shrink-0 sticky top-0 z-10">
-              <div className="relative z-10">
-                <h3 className="font-extrabold text-[19px] text-[#4A5568] flex items-center gap-1.5"><span className="text-2xl">✨</span> 퍼스널 럭키 컬러</h3>
-                <p className="text-[12px] font-bold text-gray-500 mt-0.5">나의 부족한 기운을 채워보세요</p>
-              </div>
-              <button onClick={() => setIsOutfitModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm relative z-10">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 overflow-y-auto relative z-10 flex flex-col items-center">
-              {/* Daily Element Card */}
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 w-full mb-5 flex flex-col text-center relative overflow-hidden group">
-                <div className="w-16 h-16 bg-[#F7F5F2] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
-                  <span className="text-[32px] drop-shadow-sm transform group-hover:scale-110 transition-transform">🌿</span>
+              <div className="p-5 flex justify-between items-center bg-white/50 border-b border-gray-100 shrink-0 sticky top-0 z-10">
+                <div className="relative z-10">
+                  <h3 className="font-extrabold text-[19px] text-[#4A5568] flex items-center gap-1.5"><span className="text-2xl">✨</span> 퍼스널 럭키 컬러</h3>
+                  <p className="text-[12px] font-bold text-gray-500 mt-0.5">나의 부족한 기운을 채워보세요</p>
                 </div>
-                <h4 className="text-[18px] font-black text-gray-900 mb-1">오늘의 보완 기운: 부드러운 목(木)</h4>
-                <p className="text-[14px] text-gray-600 font-medium leading-relaxed break-keep">
-                  상생의 흐름을 만들어 일의 추진력을 얻기 위해 차분한 파란색 계열이나 싱그러운 그린 계열의 착장이 유리합니다.
-                </p>
+                <button onClick={() => setIsOutfitModalOpen(false)} className="rounded-full p-2 bg-white/80 text-gray-400 hover:bg-gray-100 transition-colors shadow-sm relative z-10">
+                  <X size={20} />
+                </button>
               </div>
 
-              {/* Gender Specific Outfit Suggestion */}
-              <div className="bg-gradient-to-br from-white to-[#F9FAFB] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
-                <div className="text-[40px] mb-3 inline-block drop-shadow-sm opacity-80">
-                  {userGender === "male" || userGender === "M" ? "👕" : "👗"}
+              <div className="p-6 overflow-y-auto relative z-10 flex flex-col items-center">
+                {/* Daily Element Card */}
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 w-full mb-5 flex flex-col text-center relative overflow-hidden group">
+                  <div className="w-16 h-16 bg-[#F7F5F2] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                    <span className="text-[32px] drop-shadow-sm transform group-hover:scale-110 transition-transform">🌿</span>
+                  </div>
+                  <h4 className="text-[18px] font-black text-gray-900 mb-1">오늘의 보완 기운: 부드러운 목(木)</h4>
+                  <p className="text-[14px] text-gray-600 font-medium leading-relaxed break-keep">
+                    상생의 흐름을 만들어 일의 추진력을 얻기 위해 차분한 파란색 계열이나 싱그러운 그린 계열의 착장이 유리합니다.
+                  </p>
                 </div>
-                <h4 className="text-[16px] font-bold text-gray-900 mb-2">
-                  {userGender === "male" || userGender === "M" ? "차분한 네이비 셋업" : "소프트 민트 블라우스/원피스"}
-                </h4>
-                <p className="text-[14px] text-gray-500 font-medium break-keep leading-relaxed px-2">
-                  {userGender === "male" || userGender === "M"
-                    ? "깔끔한 네이비 톤의 자켓 혹은 니트는 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
-                    : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 합니다."
-                  }
-                </p>
+
+                {/* Gender Specific Outfit Suggestion */}
+                <div className="bg-gradient-to-br from-white to-[#F9FAFB] rounded-3xl p-5 shadow-sm border border-gray-100 w-full text-center">
+                  <div className="text-[40px] mb-3 inline-block drop-shadow-sm opacity-80">
+                    {userGender === "male" || userGender === "M" ? "👕" : "👗"}
+                  </div>
+                  <h4 className="text-[16px] font-bold text-gray-900 mb-2">
+                    {userGender === "male" || userGender === "M" ? "차분한 네이비 셋업" : "소프트 민트 블라우스/원피스"}
+                  </h4>
+                  <p className="text-[14px] text-gray-500 font-medium break-keep leading-relaxed px-2">
+                    {userGender === "male" || userGender === "M"
+                      ? "깔끔한 네이비 톤의 자켓 혹은 니트는 오늘 당신에게 신뢰감과 강력한 긍정적 기운을 끌어당깁니다."
+                      : "부드럽고 생기 있는 민트 계열의 원피스나 네이비 톤의 아우터는 오늘 당신의 매력을 돋보이게 합니다."
+                    }
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-    </div>
+    </div >
   );
 }

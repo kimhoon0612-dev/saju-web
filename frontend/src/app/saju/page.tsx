@@ -385,7 +385,7 @@ export default function FortuneHubPage() {
                         {/* Hidden rows from screenshot 2 but added for fullness */}
                         <Link href="/saju/confirm?type=궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <SpotIcon emoji="🐰" hasBadge />
-                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">매칭 분석</span>
+                            <span className="text-[13px] font-bold text-gray-700 tracking-tight">타인과의 궁합</span>
                         </Link>
                     </div>
                 </section>
@@ -433,7 +433,7 @@ export default function FortuneHubPage() {
                         <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
                             <CircleIcon emoji="🦊" />
                             <div className="flex flex-col">
-                                <h3 className="text-[16px] font-black text-[#4A5568]">인상 스캐너</h3>
+                                <h3 className="text-[16px] font-black text-[#4A5568]">나의 관상</h3>
                                 <p className="text-[13px] text-gray-400 mt-0.5 font-medium">AI가 분석하는 첫인상과 이미지</p>
                             </div>
                             <input
