@@ -374,77 +374,81 @@ export default function Home() {
           }`}
         onClick={handleSplashClick}
       >
-        {/* Elemental Orbs Orbital Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#0B1120]">
-          {/* Central Ambient Glow */}
+        {/* Mystic Astrolabe / Bazi Compass Background */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#0A0F1A]">
+          {/* Central Ambient Deep Space Glow */}
           <motion.div
-            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="absolute rounded-full"
             style={{
-              width: "250px", height: "250px",
-              background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)"
+              width: "60vh", height: "60vh",
+              background: "radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(0,0,0,0) 70%)"
             }}
           />
 
-          {/* Rotating Container for 5 Elements */}
+          {/* Core Orb */}
+          <motion.div
+            animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.8, 1, 0.8] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute rounded-full flex items-center justify-center"
+            style={{
+              width: "60px", height: "60px",
+              background: "radial-gradient(circle, rgba(250,204,21,0.9) 0%, rgba(250,204,21,0) 80%)",
+              boxShadow: "0 0 40px rgba(250,204,21,0.4)"
+            }}
+          />
+
+          {/* Astrolabe Ring 1: Inner Fast Sync */}
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute flex items-center justify-center"
-            style={{ width: "800px", height: "800px" }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute rounded-full border border-[#D4AF37]/30 border-dashed"
+            style={{ width: "160px", height: "160px", borderWidth: "1px" }}
+          />
+
+          {/* Astrolabe Ring 2: Medium Zodiac Wheel */}
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+            className="absolute rounded-full border border-indigo-400/20"
+            style={{ width: "260px", height: "260px", borderWidth: "1px", borderStyle: "dotted" }}
           >
-            {/* 목 (Wood) - Green */}
-            <motion.div
-              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 }}
-              className="absolute rounded-full"
-              style={{
-                top: "15%", right: "25%", width: "220px", height: "220px",
-                background: "radial-gradient(circle, rgba(74,222,128,0.7) 0%, rgba(74,222,128,0) 70%)"
-              }}
-            />
-            {/* 화 (Fire) - Red */}
-            <motion.div
-              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.4, 0.9, 0.4] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute rounded-full"
-              style={{
-                top: "40%", right: "15%", width: "250px", height: "250px",
-                background: "radial-gradient(circle, rgba(248,113,113,0.6) 0%, rgba(248,113,113,0) 70%)"
-              }}
-            />
-            {/* 토 (Earth) - Yellow */}
-            <motion.div
-              animate={{ scale: [0.9, 1.3, 0.9], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute rounded-full"
-              style={{
-                bottom: "15%", right: "30%", width: "200px", height: "200px",
-                background: "radial-gradient(circle, rgba(250,204,21,0.6) 0%, rgba(250,204,21,0) 70%)"
-              }}
-            />
-            {/* 금 (Metal) - White */}
-            <motion.div
-              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.5, 0.9, 0.5] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute rounded-full"
-              style={{
-                bottom: "25%", left: "15%", width: "220px", height: "220px",
-                background: "radial-gradient(circle, rgba(248,250,252,0.6) 0%, rgba(248,250,252,0) 70%)"
-              }}
-            />
-            {/* 수 (Water) - Blue */}
-            <motion.div
-              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-              className="absolute rounded-full"
-              style={{
-                top: "25%", left: "15%", width: "240px", height: "240px",
-                background: "radial-gradient(circle, rgba(96,165,250,0.6) 0%, rgba(96,165,250,0) 70%)"
-              }}
-            />
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="absolute w-2 h-2 bg-indigo-300/40 rounded-full"
+                style={{
+                  top: '50%', left: '50%',
+                  transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-130px)`
+                }}
+              />
+            ))}
           </motion.div>
+
+          {/* Astrolabe Ring 3: Outer Bazi Matrix */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            className="absolute rounded-full border border-white/10"
+            style={{ width: "380px", height: "380px", borderWidth: "1px", borderStyle: "dashed" }}
+          >
+            {/* 4 Cardinal points / Pillars */}
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="absolute w-4 h-1 bg-yellow-500/30"
+                style={{
+                  top: '50%', left: '50%',
+                  transform: `translate(-50%, -50%) rotate(${i * 90}deg) translateX(190px)`
+                }}
+              />
+            ))}
+          </motion.div>
+
+          {/* Giant Ambient Ring */}
+          <motion.div
+            animate={{ rotate: -360, scale: [1, 1.05, 1] }}
+            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+            className="absolute rounded-full border border-purple-500/5"
+            style={{ width: "600px", height: "600px", borderWidth: "2px", borderStyle: "solid" }}
+          />
         </div>
 
         {/* Breathing Typography */}
