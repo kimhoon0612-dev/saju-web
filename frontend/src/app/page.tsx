@@ -287,21 +287,21 @@ export default function Home() {
               initial={{ scale: 5, opacity: 0, rotate: -25 }}
               animate={{ scale: 1, opacity: 1, rotate: -10 }}
               transition={{ duration: 0.3, type: "spring", bounce: 0.5 }}
-              className="absolute z-50 pointer-events-none flex items-center justify-center"
+              className="absolute z-50 pointer-events-none flex items-center justify-center top-[65%]"
             >
               <div className="relative">
                 <div
-                  className="border-[8px] border-[#D32F2F] text-[#D32F2F] rounded-2xl px-6 py-4 inline-block font-black text-6xl md:text-8xl opacity-95 shadow-[0_0_50px_rgba(211,47,47,0.7)] bg-[#0B0D17]/60 backdrop-blur-sm"
-                  style={{ fontFamily: '"Nanum Myeongjo", "Batang", serif', letterSpacing: '8px' }}
+                  className="w-36 h-36 md:w-48 md:h-48 border-[8px] border-[#D32F2F] text-[#D32F2F] rounded-full flex items-center justify-center font-black text-5xl md:text-7xl opacity-95 shadow-[0_0_50px_rgba(211,47,47,0.7)] bg-[#0B0D17]/60 backdrop-blur-sm"
+                  style={{ fontFamily: '"Nanum Myeongjo", "Batang", serif', letterSpacing: '2px' }}
                 >
-                  <span style={{ writingMode: 'vertical-rl', textOrientation: 'upright' }}>開運</span>
+                  <span className="-ml-1">운명</span>
                 </div>
                 {/* Impact dust rings */}
                 <motion.div
                   initial={{ scale: 1, opacity: 1 }}
                   animate={{ scale: 2.5, opacity: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-                  className="absolute inset-0 border-[6px] border-[#D32F2F] rounded-2xl"
+                  className="absolute inset-0 border-[6px] border-[#D32F2F] rounded-full"
                 />
               </div>
             </motion.div>
