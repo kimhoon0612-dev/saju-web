@@ -514,29 +514,52 @@ export default function Home() {
             className="max-w-md mx-auto relative z-10 w-full pb-36 bg-[#F5F6F8]"
           >
 
-            {/* Top Title */}
-            <div className="flex items-center justify-end px-4 pt-4 pb-5">
+            {/* Header */}
+            <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 h-14 max-w-md mx-auto flex items-center px-5 justify-between border-b border-gray-50">
+              <h1 className="text-xl font-extrabold text-[#4A5568]">투데이</h1>
               <button onClick={clearMatrix} className="flex items-center gap-1.5 text-[14px] font-bold text-gray-700 hover:text-gray-900 transition-colors">
                 <RefreshCw className="w-4 h-4" />
                 <span>{matrixData.user_name || "방문자"}님</span>
               </button>
-            </div>
+            </header>
 
-            {/* Quick Links Grid */}
-            <div className="px-4 pb-8">
-              <div className="flex items-center justify-center gap-3 px-3">
-                <button
-                  onClick={() => setIsAttendanceModalOpen(true)}
-                  className="flex-1 bg-white border border-gray-100 shadow-sm rounded-2xl py-3.5 text-[15px] font-bold text-[#4A5568] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
-                >
-                  <span className="text-[18px] leading-[1]">🐾</span> 나의 출석
-                </button>
-                <button
-                  onClick={() => setIsOutfitModalOpen(true)}
-                  className="flex-1 bg-white border border-gray-100 shadow-sm rounded-2xl py-3.5 text-[15px] font-bold text-[#4A5568] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
-                >
-                  <span className="text-[18px] leading-[1]">👗</span> 럭키 컬러
-                </button>
+            <div className="px-4 pt-3 pb-4">
+              {/* Animated Ad Banner Placeholder */}
+              <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-[24px] relative overflow-hidden h-40 flex items-center justify-center border border-gray-100 shadow-sm">
+                {/* Background decorative elements */}
+                <div className="absolute inset-0 opacity-40">
+                  <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+                  <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                </div>
+
+                {/* Animated animals layer */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
+                  <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
+                  <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
+                  <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
+                  <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
+                  <span className="inline-block bg-indigo-100 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide">
+                    NOTICE
+                  </span>
+                  <h2 className="text-[18px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
+                    광고 오픈 준비 중입니다
+                  </h2>
+                  <p className="text-[13px] font-bold text-gray-600">
+                    동물 친구들이 공간을 꾸미고 있어요! 🐾
+                  </p>
+                </div>
+
+                {/* Pagination Dots (Decorative) */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                </div>
               </div>
             </div>
 
@@ -645,6 +668,13 @@ export default function Home() {
                     <div className="flex flex-col">
                       <h3 className="text-[16px] font-black text-[#4A5568]">캘린더 매니징</h3>
                       <p className="text-[13px] text-gray-400 mt-0.5 font-medium">이사/중요 일정 등 길일 찾기</p>
+                    </div>
+                  </div>
+                  <div onClick={() => setIsOutfitModalOpen(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                    <CircleIcon emoji="👗" />
+                    <div className="flex flex-col">
+                      <h3 className="text-[16px] font-black text-[#4A5568]">럭키 컬러</h3>
+                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 행운의 아이템 매칭</p>
                     </div>
                   </div>
                   <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
