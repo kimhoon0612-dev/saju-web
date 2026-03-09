@@ -341,7 +341,7 @@ export default function Home() {
 
       {!matrixData && (
         <motion.div
-          className={`w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden ${showSplashMode ? 'invisible opacity-0' : 'visible opacity-100 transition-opacity duration-1000'}`}
+          className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
         >
           {/* Subtle minimal background decoration */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
