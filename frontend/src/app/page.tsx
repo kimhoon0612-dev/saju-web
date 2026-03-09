@@ -378,46 +378,46 @@ export default function Home() {
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#0B1120]">
           {/* Central Ambient Glow */}
           <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-64 h-64 bg-white/5 rounded-full blur-[60px]"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute w-64 h-64 bg-white/10 rounded-full blur-3xl"
           />
 
           {/* Rotating Container for 5 Elements */}
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[90vw] h-[90vw] max-w-[700px] max-h-[700px] flex items-center justify-center"
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="relative w-[120vw] h-[120vw] max-w-[600px] max-h-[600px]"
           >
             {/* 목 (Wood) - Green */}
             <motion.div
-              animate={{ scale: [0.8, 1.2, 0.8] }}
+              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 }}
-              className="absolute top-[5%] w-32 h-32 bg-[#4ADE80] rounded-full blur-[45px] opacity-60 mix-blend-screen"
+              className="absolute top-[5%] right-[20%] w-32 h-32 md:w-40 md:h-40 bg-[#4ADE80] rounded-full blur-3xl"
             />
             {/* 화 (Fire) - Red */}
             <motion.div
-              animate={{ scale: [0.8, 1.3, 0.8] }}
+              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.3, 0.7, 0.3] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute right-[10%] top-[25%] w-40 h-40 bg-[#F87171] rounded-full blur-[50px] opacity-50 mix-blend-screen"
+              className="absolute right-[5%] top-[40%] w-36 h-36 md:w-48 md:h-48 bg-[#F87171] rounded-full blur-3xl"
             />
             {/* 토 (Earth) - Yellow */}
             <motion.div
-              animate={{ scale: [0.9, 1.2, 0.9] }}
+              animate={{ scale: [0.9, 1.3, 0.9], opacity: [0.4, 0.9, 0.4] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute right-[20%] bottom-[10%] w-36 h-36 bg-[#FACC15] rounded-full blur-[50px] opacity-50 mix-blend-screen"
+              className="absolute bottom-[5%] right-[25%] w-32 h-32 md:w-40 md:h-40 bg-[#FACC15] rounded-full blur-3xl"
             />
             {/* 금 (Metal) - White */}
             <motion.div
-              animate={{ scale: [0.8, 1.4, 0.8] }}
+              animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute left-[20%] bottom-[10%] w-32 h-32 bg-[#F8FAFC] rounded-full blur-[45px] opacity-60 mix-blend-screen"
+              className="absolute bottom-[15%] left-[10%] w-32 h-32 md:w-40 md:h-40 bg-[#F8FAFC] rounded-full blur-3xl"
             />
             {/* 수 (Water) - Blue */}
             <motion.div
-              animate={{ scale: [0.8, 1.2, 0.8] }}
+              animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-              className="absolute left-[10%] top-[25%] w-36 h-36 bg-[#60A5FA] rounded-full blur-[50px] opacity-55 mix-blend-screen"
+              className="absolute top-[20%] left-[5%] w-36 h-36 md:w-44 md:h-44 bg-[#60A5FA] rounded-full blur-3xl"
             />
           </motion.div>
         </div>
