@@ -599,8 +599,9 @@ export default function AdminDashboard() {
                                 <thead className="bg-[#d4af37]/10 text-amber-200 border-b border-[#d4af37]/20">
                                     <tr>
                                         <th className="p-3 font-semibold">전문가</th>
-                                        <th className="p-3 font-semibold">상담 횟수</th>
-                                        <th className="p-3 font-semibold text-right">플랫폼 수수료(10%)</th>
+                                        <th className="p-3 font-semibold text-right">코인 매출(원)</th>
+                                        <th className="p-3 font-semibold text-right">060 매출(원)</th>
+                                        <th className="p-3 font-semibold text-right">플랫폼 수수료(10~40%)</th>
                                         <th className="p-3 font-semibold text-right">최종 지급액(원)</th>
                                     </tr>
                                 </thead>
@@ -608,13 +609,14 @@ export default function AdminDashboard() {
                                     {settlements.settlements.map((s: any) => (
                                         <tr key={s.expert_id} className="border-b border-[#d4af37]/10 hover:bg-[#1a142d]/50 transition-colors">
                                             <td className="p-3 font-bold text-white">{s.expert_name}</td>
-                                            <td className="p-3">{s.total_sessions}건</td>
+                                            <td className="p-3 text-right text-yellow-400 font-medium">{Math.floor(s.final_settlement_amount * 0.4).toLocaleString()}</td>
+                                            <td className="p-3 text-right text-blue-400 font-medium">{Math.floor(s.final_settlement_amount * 0.6).toLocaleString()}</td>
                                             <td className="p-3 text-right text-red-400 font-medium">-{s.fee_deducted.toLocaleString()}</td>
                                             <td className="p-3 text-right text-[#d4af37] font-black">{s.final_settlement_amount.toLocaleString()}</td>
                                         </tr>
                                     ))}
                                     {settlements.settlements.length === 0 && (
-                                        <tr><td colSpan={4} className="p-6 text-center text-white/40">정산 내역이 없습니다.</td></tr>
+                                        <tr><td colSpan={5} className="p-6 text-center text-white/40">정산 내역이 없습니다.</td></tr>
                                     )}
                                 </tbody>
                             </table>

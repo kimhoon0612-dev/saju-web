@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Sparkles, BookOpen, Users, Mic, Square, ChevronLeft } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, BookOpen, Users, Mic, Square, ChevronLeft, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from './DestinyMatrixCard';
 
@@ -340,8 +340,27 @@ export default function AgenticChatbot({ sajuContext, isFullScreen = false }: Ag
                                     <p className="text-xs text-gray-300 mb-3 font-pretendard leading-relaxed">
                                         해당 고민은 인간 역학 전문가와의 깊이 있는 1:1 상담을 통해 명확한 해답을 얻으실 수 있습니다.
                                     </p>
-                                    <Link href="/experts" onClick={() => setIsOpen(false)} className="block w-full text-center py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold text-xs hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-all">
-                                        나에게 가장 잘 맞는 전문가 연결하기
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => alert(`📞 060-XXXX-XXXX 로 전화 다이얼이 연결됩니다.\n(상담사 랜덤 배정)\n\n※ 본 상담은 30초당 1,300원의 정보이용료가 청구됩니다.`)}
+                                            className="flex-1 py-2.5 rounded-lg bg-white text-gray-900 font-bold text-xs hover:bg-gray-100 transition-all text-center flex flex-col items-center justify-center"
+                                        >
+                                            <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-gray-600" />060 상담</span>
+                                            <span className="text-[9px] text-gray-500 font-medium">후불 (30초/1,300원)</span>
+                                        </button>
+                                        <button
+                                            onClick={() => alert(`현재 보유 코인이 부족합니다.\n\n코인 스토어로 이동하여 충전하시겠습니까?`)}
+                                            className="flex-1 py-2.5 rounded-lg bg-[#111827] border border-gray-700 text-white font-bold text-xs hover:bg-gray-800 transition-all flex flex-col items-center justify-center group relative overflow-hidden"
+                                        >
+                                            {/* Emojii decoration */}
+                                            <div className="absolute -top-1 -right-1 text-base opacity-40 group-active:scale-110 transition-transform">✨</div>
+
+                                            <span className="flex items-center gap-1.5"><span className="text-yellow-400">⚡</span>코인 상담</span>
+                                            <span className="text-[9px] text-gray-300 font-medium bg-white/10 px-1.5 py-0.5 mt-0.5 rounded">선불 (할인중)</span>
+                                        </button>
+                                    </div>
+                                    <Link href="/experts" onClick={() => setIsOpen(false)} className="block w-full text-center py-2 mt-2 rounded-lg border border-purple-500/40 text-purple-300 font-bold text-xs hover:bg-purple-500/10 transition-all">
+                                        직접 전문가 목록에서 선택하기
                                     </Link>
                                 </div>
                             )}

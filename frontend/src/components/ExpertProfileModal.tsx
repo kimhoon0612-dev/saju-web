@@ -274,29 +274,33 @@ export default function ExpertProfileModal({ expert, onClose }: Props) {
             </div>
 
             {/* Bottom Sticky Action Bar */}
-            <div className="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 py-3 flex gap-3 z-50 pb-safe">
+            <div className="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 py-3 flex gap-2 z-50 pb-safe">
                 <button
                     onClick={() => setIsLiked(!isLiked)}
-                    className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl px-5 h-14 bg-gray-50 flex-shrink-0 active:bg-gray-100 transition-colors"
+                    className="flex flex-col items-center justify-center gap-0.5 rounded-xl w-14 h-[52px] bg-gray-50 flex-shrink-0 active:bg-gray-100 transition-colors"
                 >
-                    <Heart className={cn("w-6 h-6", isLiked ? "text-red-500 fill-red-500" : "text-gray-500")} />
-                    <span className="text-[15px] font-bold text-gray-700">270</span>
+                    <Heart className={cn("w-5 h-5", isLiked ? "text-red-500 fill-red-500" : "text-gray-400")} />
+                    <span className="text-[11px] font-bold text-gray-500">270</span>
                 </button>
-                <button
-                    className="flex-1 flex items-center justify-center gap-1.5 border border-gray-800 rounded-xl h-14 bg-white active:bg-gray-50 transition-colors"
-                    onClick={() => alert('상담이 시작됩니다! (기능 준비 중)')}
-                >
-                    {expert.is_online ? (
-                        <>
-                            <span className="text-[16px] font-bold text-gray-900">바로 상담하기</span>
-                        </>
-                    ) : (
-                        <>
-                            <Bell className="w-5 h-5 text-gray-800" />
-                            <span className="text-[16px] font-bold text-gray-900">상담 가능 시 알림 받기</span>
-                        </>
-                    )}
-                </button>
+                <div className="flex-1 flex gap-2">
+                    <button
+                        className="flex-1 flex flex-col items-center justify-center border border-gray-200 rounded-xl h-[52px] bg-white active:bg-gray-50 transition-colors"
+                        onClick={() => alert(`📞 060-XXXX-XXXX 로 전화 다이얼이 연결됩니다.\n(상담사 PIN: ${expert.code})\n\n※ 본 상담은 30초당 1,300원의 정보이용료가 청구됩니다.`)}
+                    >
+                        <span className="text-[14px] font-bold text-gray-900 flex items-center gap-1"><Volume2 className="w-4 h-4 text-gray-500" />060 상담</span>
+                        <span className="text-[10px] text-gray-500 font-medium">후불 (30초/1,300원)</span>
+                    </button>
+                    <button
+                        className="flex-1 flex flex-col items-center justify-center border border-transparent rounded-xl h-[52px] bg-[#111827] text-white active:bg-gray-800 transition-colors relative overflow-hidden group"
+                        onClick={() => alert(`현재 보유 코인이 부족합니다.\n\n코인 스토어로 이동하여 충전하시겠습니까?\n(코인 상담 시 060보다 약 20% 저렴합니다.)`)}
+                    >
+                        {/* Emojii decoration */}
+                        <div className="absolute -top-1 -right-1 text-lg opacity-80 group-active:scale-110 transition-transform">✨</div>
+
+                        <span className="text-[15px] font-black flex items-center gap-1.5"><span className="text-yellow-400">⚡</span>코인 상담</span>
+                        <span className="text-[10px] text-gray-300 font-bold bg-white/10 px-2 py-0.5 rounded-full mt-0.5">선불 (할인중)</span>
+                    </button>
+                </div>
             </div>
         </div>
     );

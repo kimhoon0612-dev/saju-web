@@ -86,6 +86,8 @@ export default function DirectStorePage() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [products, setProducts] = useState<Product[]>(storeProducts);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [storeTab, setStoreTab] = useState<'MARKET' | 'COIN'>('MARKET');
+    const [userCoins, setUserCoins] = useState(0); // Mock user coin balance
 
     // Browser back button handling for the modal
     useEffect(() => {
@@ -108,6 +110,10 @@ export default function DirectStorePage() {
     const handleCloseModal = () => {
         // This will trigger popstate, which actually closes the modal
         window.history.back();
+    };
+
+    const handleChargeRequest = (amount: number, bonus: number, price: number) => {
+        alert(`[PG 연동 대기]\n\n총 ${amount + bonus}코인 충전 결제창으로 이동하시겠습니까?\n(결제 금액: ${price.toLocaleString()}원)`);
     };
 
     // Filter products based on active category
@@ -215,7 +221,6 @@ export default function DirectStorePage() {
                         </p>
                     </div>
 
-                    {/* Pagination Dots (Decorative) */}
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
@@ -223,144 +228,259 @@ export default function DirectStorePage() {
                     </div>
                 </div>
 
-                {/* Categories Grid */}
-                <div className="bg-white pt-8 pb-8 px-4 grid grid-cols-5 gap-y-6 rounded-b-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative z-20 -mt-4">
-                    {[
-                        { icon: Star, label: "전체보기", color: "text-gray-700" },
-                        { icon: BadgeDollarSign, label: "재물/사업", color: "text-gray-700" },
-                        { icon: Heart, label: "애정/인연", color: "text-gray-700" },
-                        { icon: Dumbbell, label: "건강/수호", color: "text-gray-700" },
-                        { icon: Sparkles, label: "소원/기타", color: "text-gray-700" },
-                    ].map((category, idx) => (
-                        <button key={idx} onClick={() => setActiveCategory(activeCategory === category.label ? null : category.label)} className="flex flex-col items-center justify-center gap-2 group">
-                            <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border ${activeCategory === category.label ? 'border-yellow-400 border-2 shadow-[0_4px_12px_rgba(250,204,21,0.3)]' : 'border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'} flex items-center justify-center transition-all relative overflow-hidden`}>
-                                <category.icon className={`w-6 h-6 sm:w-7 sm:h-7 ${activeCategory === category.label ? 'text-yellow-500' : category.color} stroke-[1.5] relative z-10`} />
-                            </div>
-                            <span className={`text-[12px] sm:text-[13px] font-bold ${activeCategory === category.label ? 'text-yellow-600' : 'text-gray-600'} tracking-tight sm:tracking-wide shrink-0 whitespace-nowrap`}>{category.label}</span>
-                        </button>
-                    ))}
+                {/* Top Level Tabs */}
+                <div className="flex px-4 pt-4 bg-[#F8F9FA] relative z-20">
+                    <button
+                        onClick={() => setStoreTab('MARKET')}
+                        className={`flex-1 flex flex-col items-center justify-center py-3 text-[15px] font-bold border-b-[3px] transition-colors ${storeTab === 'MARKET' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-400'} `}
+                    >
+                        부적/굿즈 마켓
+                    </button>
+                    <button
+                        onClick={() => setStoreTab('COIN')}
+                        className={`flex-1 flex items-center justify-center gap-1 py-3 text-[15px] font-bold border-b-[3px] transition-colors ${storeTab === 'COIN' ? 'border-[#d4af37] text-yellow-600' : 'border-transparent text-gray-400'} `}
+                    >
+                        <span className="text-yellow-500">⚡</span> 코인 충전소
+                    </button>
+                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
                 </div>
 
-                {/* Dynamic Category View vs Default View */}
-                {activeCategory && (
-                    <div className="mt-8 px-4 pb-20">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-[18px] font-black tracking-tight text-gray-900">[{activeCategory}] 관련 굿즈/오브제</h3>
-                            <span className="text-[13px] font-bold text-gray-400">{filteredProducts.length}개 상품</span>
+                {/* Categories Grid (Only in Market Mode) */}
+                {storeTab === 'MARKET' && (
+                    <>
+                        <div className="bg-white pt-6 pb-8 px-4 grid grid-cols-5 gap-y-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative z-10 rounded-b-[24px]">
+                            {[
+                                { icon: Star, label: "전체보기", color: "text-gray-700" },
+                                { icon: BadgeDollarSign, label: "재물/사업", color: "text-gray-700" },
+                                { icon: Heart, label: "애정/인연", color: "text-gray-700" },
+                                { icon: Dumbbell, label: "건강/수호", color: "text-gray-700" },
+                                { icon: Sparkles, label: "소원/기타", color: "text-gray-700" },
+                            ].map((category, idx) => (
+                                <button key={idx} onClick={() => setActiveCategory(activeCategory === category.label ? null : category.label)} className="flex flex-col items-center justify-center gap-2 group">
+                                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border ${activeCategory === category.label ? 'border-yellow-400 border-2 shadow-[0_4px_12px_rgba(250,204,21,0.3)]' : 'border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'} flex items-center justify-center transition-all relative overflow-hidden`}>
+                                        <category.icon className={`w-6 h-6 sm:w-7 sm:h-7 ${activeCategory === category.label ? 'text-yellow-500' : category.color} stroke-[1.5] relative z-10`} />
+                                    </div>
+                                    <span className={`text-[12px] sm:text-[13px] font-bold ${activeCategory === category.label ? 'text-yellow-600' : 'text-gray-600'} tracking-tight sm:tracking-wide shrink-0 whitespace-nowrap`}>{category.label}</span>
+                                </button>
+                            ))}
                         </div>
-                        <div className="flex flex-col gap-4">
-                            {filteredProducts.length > 0 ? filteredProducts.map((product, idx) => (
-                                <div
-                                    key={`cat_${product.id}`}
-                                    onClick={() => handleProductClick(product)}
-                                    className="flex items-center gap-4 cursor-pointer group bg-white p-3 rounded-2xl shadow-sm border border-gray-50"
+
+                        {/* Dynamic Category View vs Default View */}
+                        {activeCategory && (
+                            <div className="mt-8 px-4 pb-20">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-[18px] font-black tracking-tight text-gray-900">[{activeCategory}] 관련 굿즈/오브제</h3>
+                                    <span className="text-[13px] font-bold text-gray-400">{filteredProducts.length}개 상품</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                                    {filteredProducts.length > 0 ? filteredProducts.map((product, idx) => {
+                                        const originalPrice = Math.floor(product.price * 1.25); // Set 20% discount as mock
+                                        return (
+                                            <div
+                                                key={`cat_${product.id}`}
+                                                onClick={() => handleProductClick(product)}
+                                                className="flex flex-col cursor-pointer group bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden"
+                                            >
+                                                <div className="w-full aspect-square bg-gray-50 overflow-hidden relative flex items-center justify-center p-2 border-b border-gray-100">
+                                                    <img
+                                                        src={product.imageUrl}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                    <div className="absolute top-2 left-2 flex items-center gap-1">
+                                                        <span className="bg-[#FF3B30] text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm shadow-sm flex items-center gap-0.5 border border-red-500"><span className="text-[8px]">🚀</span>당일발급</span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3">
+                                                    <h4 className="text-[13px] font-medium text-gray-900 mb-1.5 leading-[1.3] line-clamp-2 break-keep group-hover:text-blue-600 transition-colors">
+                                                        [{product.name}] {product.description}
+                                                    </h4>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-[14px] font-bold text-red-500">20%</span>
+                                                        <span className="text-[15px] sm:text-[16px] font-black text-gray-900 tracking-tight">{product.price.toLocaleString()}원</span>
+                                                    </div>
+                                                    <div className="text-[11px] text-gray-400 line-through mb-1.5 font-medium">{originalPrice.toLocaleString()}원</div>
+                                                    <div className="flex items-center gap-1 mt-auto">
+                                                        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                                        <span className="text-[11px] font-bold text-gray-700">4.9</span>
+                                                        <span className="text-[10px] text-gray-400 font-medium">({Math.floor(Math.random() * 500) + 50})</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    }) : (
+                                        <div className="col-span-2 text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                                            <Clover className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                                            <p className="text-gray-500 font-medium text-[14px]">해당 카테고리의 상품이 준비 중입니다.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Divider if Active Category */}
+                        {activeCategory && <div className="w-full h-2 bg-gray-100 mt-4 mb-2"></div>}
+
+                        {/* MZ Recommended Horizon Scroll */}
+                        <div className="mt-8 px-4">
+                            <div className="flex items-end justify-between mb-4">
+                                <h3 className="text-[18px] font-black tracking-tight text-gray-900">요즘 MZ픽! 잇템</h3>
+                                <button onClick={() => setActiveCategory("전체보기")} className="text-[13px] font-bold text-gray-500 hover:text-gray-800 transition-colors">더보기 &gt;</button>
+                            </div>
+
+                            <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory hide-scrollbar">
+                                {mzPicks.map(product => {
+                                    const originalPrice = Math.floor(product.price * 1.15); // 13% discount
+                                    return (
+                                        <div
+                                            key={`md_${product.id}`}
+                                            onClick={() => handleProductClick(product)}
+                                            className="min-w-[140px] max-w-[140px] sm:min-w-[150px] sm:max-w-[150px] flex-shrink-0 snap-start cursor-pointer group"
+                                        >
+                                            <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-2.5 border border-gray-100 flex items-center justify-center p-2 relative shadow-sm">
+                                                <img
+                                                    src={product.imageUrl}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-500"
+                                                />
+                                                {/* Tag overlay */}
+                                                <div className="absolute top-2 left-2 flex items-center gap-0.5 bg-blue-600 rounded-sm px-1.5 py-0.5 shadow-sm border border-blue-700">
+                                                    <span className="text-[9px] font-black text-white tracking-wider">오늘특가</span>
+                                                </div>
+                                            </div>
+                                            <h4 className="text-[13px] font-medium text-gray-900 mb-1 line-clamp-2 leading-[1.3] break-keep group-hover:text-blue-600 transition-colors">
+                                                [{product.name}] {product.description}
+                                            </h4>
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-[14px] font-bold text-red-500">13%</span>
+                                                <span className="text-[15px] sm:text-[16px] font-black text-gray-900 tracking-tight">{product.price.toLocaleString()}원</span>
+                                            </div>
+                                            <div className="text-[11px] text-gray-400 line-through mb-1 font-medium">{originalPrice.toLocaleString()}원</div>
+                                            <div className="flex items-center gap-1 mt-1 inline-flex bg-gray-50 px-1.5 py-0.5 rounded text-[10px] border border-gray-100">
+                                                <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-400" />
+                                                <span className="font-bold text-gray-600">5.0</span>
+                                                <span className="text-gray-400 font-medium">({Math.floor(Math.random() * 200) + 10})</span>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-full h-2 bg-gray-100 my-2"></div>
+
+                        {/* Real-time BEST List */}
+                        <div className="mt-8 px-4 pb-20">
+                            <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-6">실시간 BEST 탑 10</h3>
+
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                                {products.sort((a, b) => b.price - a.price).slice(0, 10).map((product, idx) => {
+                                    const originalPrice = Math.floor(product.price * 1.3);
+                                    return (
+                                        <div
+                                            key={`best_${product.id}`}
+                                            onClick={() => handleProductClick(product)}
+                                            className="flex flex-col cursor-pointer group bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden relative"
+                                        >
+                                            <div className="absolute top-0 left-0 w-7 h-7 bg-gray-900/90 text-[13px] font-black z-10 rounded-br-xl backdrop-blur-sm shadow-sm border-r border-b border-gray-800 flex items-center justify-center text-white">
+                                                {idx + 1}
+                                            </div>
+                                            <div className="w-full aspect-square bg-gray-50 overflow-hidden relative flex items-center justify-center p-2 border-b border-gray-100 text-center">
+                                                <img
+                                                    src={product.imageUrl}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                            <div className="p-3 flex flex-col justify-between flex-1">
+                                                <div>
+                                                    <h4 className="text-[13px] font-medium text-gray-900 mb-1.5 leading-[1.3] line-clamp-2 break-keep group-hover:text-blue-600 transition-colors">
+                                                        [{product.name}] {product.description}
+                                                    </h4>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-[14px] font-bold text-red-500">23%</span>
+                                                        <span className="text-[15px] sm:text-[16px] font-black text-gray-900 tracking-tight">{product.price.toLocaleString()}원</span>
+                                                    </div>
+                                                    <div className="text-[11px] text-gray-400 line-through mb-1.5 font-medium">{originalPrice.toLocaleString()}원</div>
+                                                </div>
+                                                <div className="flex items-center justify-between mt-1">
+                                                    <div className="flex items-center gap-1">
+                                                        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                                        <span className="text-[11px] font-bold text-gray-700">4.8</span>
+                                                        <span className="text-[10px] text-gray-400 font-medium">({Math.floor(Math.random() * 800) + 100})</span>
+                                                    </div>
+                                                    <span className="border border-green-200 text-green-600 text-[9px] font-bold px-1.5 py-0.5 rounded-sm bg-green-50/50 hidden sm:inline-block">무료배송</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </>)}
+
+                {/* Coin Charger Mode */}
+                {storeTab === 'COIN' && (
+                    <div className="mt-6 px-4 pb-24">
+                        {/* Coin Balance Card */}
+                        <div className="bg-gradient-to-r from-gray-900 to-black rounded-3xl p-6 text-white mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.15)] relative overflow-hidden">
+                            <div className="absolute -right-10 -top-10 w-32 h-32 bg-yellow-500/20 blur-3xl rounded-full"></div>
+                            <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full"></div>
+
+                            <div className="relative z-10 flex flex-col items-center">
+                                <span className="text-[14px] font-medium text-gray-400 mb-1">현재 보유 코인</span>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="text-yellow-400 text-3xl">⚡</span>
+                                    <span className="text-4xl font-black tracking-tight">{userCoins.toLocaleString()}</span>
+                                </div>
+                                <div className="w-full bg-white/10 rounded-xl p-3 flex items-center justify-between">
+                                    <span className="text-[13px] text-gray-300">내역 확인하기</span>
+                                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-4 px-1">충전 가능한 패키지 🎁</h3>
+                        <div className="flex flex-col gap-3">
+                            {[
+                                { amount: 100, bonus: 0, price: 1000 },
+                                { amount: 500, bonus: 50, price: 5000, tag: "인기" },
+                                { amount: 1000, bonus: 150, price: 10000 },
+                                { amount: 3000, bonus: 500, price: 30000, tag: "베스트셀러" },
+                                { amount: 5000, bonus: 1000, price: 50000, highlight: true },
+                            ].map((pkg, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleChargeRequest(pkg.amount, pkg.bonus, pkg.price)}
+                                    className={`w-full bg-white rounded-2xl p-4 flex items-center justify-between transition-all group ${pkg.highlight ? 'border-2 border-yellow-400 shadow-[0_4px_15px_rgba(250,204,21,0.2)]' : 'border border-gray-100 shadow-sm hover:border-gray-300'}`}
                                 >
-                                    <div className="w-[90px] min-w-[90px] h-[90px] rounded-xl bg-gray-50 overflow-hidden relative border border-gray-100 flex items-center justify-center p-1">
-                                        <img
-                                            src={product.imageUrl}
-                                            alt={product.name}
-                                            className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
-                                        />
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${pkg.highlight ? 'bg-yellow-50' : 'bg-gray-50'}`}>
+                                            <span className={`text-2xl ${pkg.highlight ? 'text-yellow-500' : ''}`}>⚡</span>
+                                        </div>
+                                        <div className="text-left flex flex-col justify-center">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[16px] font-black text-gray-900 group-hover:scale-105 transition-transform">{pkg.amount} 코인</span>
+                                                {pkg.tag && (
+                                                    <span className="bg-red-50 text-red-500 text-[10px] font-black px-1.5 py-0.5 rounded-sm">{pkg.tag}</span>
+                                                )}
+                                            </div>
+                                            {pkg.bonus > 0 ? (
+                                                <span className="text-[12px] font-bold text-yellow-600 mt-0.5">+ {pkg.bonus} 보너스 지급!</span>
+                                            ) : (
+                                                <span className="text-[12px] font-medium text-gray-400 mt-0.5">베이직 패키지</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="text-[15px] font-bold text-gray-900 mb-1.5 leading-[1.3] line-clamp-2 tracking-tight break-keep group-hover:text-blue-600 transition-colors">
-                                            [{product.name}] {product.description}
-                                        </h4>
-                                        <div className="text-[16px] font-black text-gray-900">{product.price.toLocaleString()}원</div>
+                                    <div className={`px-4 py-2 rounded-xl text-[14px] font-bold transition-colors ${pkg.highlight ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-950' : 'bg-gray-900 text-white group-hover:bg-gray-800'}`}>
+                                        {pkg.price.toLocaleString()}원
                                     </div>
-                                </div>
-                            )) : (
-                                <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-                                    <Clover className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                                    <p className="text-gray-500 font-medium text-[14px]">해당 카테고리의 상품이 준비 중입니다.</p>
-                                </div>
-                            )}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 )}
-
-                {/* Divider if Active Category */}
-                {activeCategory && <div className="w-full h-2 bg-gray-100 mt-4 mb-2"></div>}
-
-                {/* MZ Recommended Horizon Scroll */}
-                <div className="mt-8 px-4">
-                    <div className="flex items-end justify-between mb-4">
-                        <h3 className="text-[18px] font-black tracking-tight text-gray-900">요즘 MZ픽! 잇템</h3>
-                        <button onClick={() => setActiveCategory("전체보기")} className="text-[13px] font-bold text-gray-500 hover:text-gray-800 transition-colors">더보기 &gt;</button>
-                    </div>
-
-                    <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory hide-scrollbar">
-                        {mzPicks.map(product => (
-                            <div
-                                key={`md_${product.id}`}
-                                onClick={() => handleProductClick(product)}
-                                className="min-w-[140px] max-w-[140px] sm:min-w-[160px] sm:max-w-[160px] flex-shrink-0 snap-start cursor-pointer group"
-                            >
-                                <div className="w-full aspect-square rounded-2xl overflow-hidden bg-gray-50 mb-3 border border-gray-100 flex items-center justify-center p-2 relative">
-                                    <img
-                                        src={product.imageUrl}
-                                        alt={product.name}
-                                        className="w-full h-full object-contain rounded-xl drop-shadow-sm group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    {/* Star overlay fake for design */}
-                                    <div className="absolute top-2 left-2 flex items-center gap-0.5 bg-black/40 backdrop-blur-md rounded-full px-1.5 py-0.5 pointer-events-none">
-                                        <Star className="w-2 h-2 text-yellow-400 fill-yellow-400" />
-                                        <span className="text-[9px] font-bold text-white tracking-wider">NEW</span>
-                                    </div>
-                                </div>
-                                <h4 className="text-[14px] font-bold text-gray-900 mb-1 line-clamp-2 leading-tight tracking-tight break-keep group-hover:text-blue-600 transition-colors">
-                                    [{product.name}] {product.description}
-                                </h4>
-                                <div className="text-[15px] font-black text-gray-900">{product.price.toLocaleString()}원</div>
-                                <div className="flex items-center gap-1 mt-1">
-                                    <Star className="w-3.5 h-3.5 text-[#FFC107] fill-[#FFC107]" />
-                                    <span className="text-[12px] font-bold text-gray-600">5.0</span>
-                                    <span className="text-[11px] font-medium text-gray-400 tracking-wide">(14)</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-full h-2 bg-gray-100 my-2"></div>
-
-                {/* Real-time BEST List */}
-                <div className="mt-8 px-4 pb-20">
-                    <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-6">실시간 BEST 탑 10</h3>
-
-                    <div className="flex flex-col gap-4">
-                        {products.sort((a, b) => b.price - a.price).slice(0, 10).map((product, idx) => (
-                            <div
-                                key={`best_${product.id}`}
-                                onClick={() => handleProductClick(product)}
-                                className="flex items-center gap-4 cursor-pointer group"
-                            >
-                                <div className="w-[100px] min-w-[100px] h-[100px] rounded-2xl bg-gray-50 overflow-hidden relative border border-gray-100 flex items-center justify-center p-1">
-                                    <div className="absolute top-0 left-0 w-6 h-6 bg-[#2AC1BC] text-white flex items-center justify-center text-[12px] font-black z-10 rounded-br-xl">
-                                        {idx + 1}
-                                    </div>
-                                    <img
-                                        src={product.imageUrl}
-                                        alt={product.name}
-                                        className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="text-[15px] font-bold text-gray-900 mb-1.5 leading-[1.3] line-clamp-2 tracking-tight break-keep group-hover:text-blue-600 transition-colors">
-                                        [{product.name}] {product.description}
-                                    </h4>
-                                    <div className="text-[16px] font-black text-gray-900">{product.price.toLocaleString()}원</div>
-                                    <div className="flex items-center gap-1 mt-1.5">
-                                        <Star className="w-3.5 h-3.5 text-[#FFC107] fill-[#FFC107]" />
-                                        <span className="text-[12px] font-bold text-gray-600">4.8</span>
-                                        <span className="text-[11px] font-medium text-gray-400 tracking-wide">(219)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </main>
 
             {/* Product Purchase Modal */}

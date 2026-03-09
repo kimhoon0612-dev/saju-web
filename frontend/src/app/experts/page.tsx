@@ -213,26 +213,21 @@ export default function ExpertsPage() {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 mt-4 items-end">
-                            <button className="flex items-center justify-center gap-1 border border-gray-200 rounded-[14px] px-5 py-3.5 text-gray-600 hover:bg-gray-50 flex-shrink-0">
-                                <Heart className="w-5 h-5 font-normal" /> 찜
+                        <div className="flex gap-2 mt-4 items-center">
+                            <button
+                                className="flex items-center justify-center gap-1 border border-gray-200 rounded-[14px] px-5 py-3.5 text-[15px] font-bold text-gray-700 hover:bg-gray-50 flex-shrink-0 active:bg-gray-100 transition-colors"
+                            >
+                                <Heart className="w-5 h-5 font-normal text-gray-400" /> 찜
                             </button>
-                            <div className="flex-1 relative">
-                                {expert.banner_text && (
-                                    <div className="absolute -top-7 right-4 bg-white border border-gray-200 text-[11px] font-bold text-gray-800 px-3 py-1 rounded-full shadow-sm z-10">
-                                        {expert.banner_text}
-                                        <div className="absolute -bottom-1 right-4 w-2 h-2 bg-white border-b border-r border-gray-200 rotate-45"></div>
-                                    </div>
-                                )}
-                                <button className={cn(
-                                    "w-full rounded-[14px] py-3.5 text-[15px] font-bold flex items-center justify-center transition-colors",
-                                    expert.is_free_available
-                                        ? "bg-[#1E1E1E] text-white hover:bg-black"
-                                        : "bg-white border text-gray-900 border-gray-200 hover:bg-gray-50"
-                                )}>
-                                    상담하기
-                                </button>
-                            </div>
+                            <button
+                                className="flex-1 border border-transparent rounded-[14px] py-3.5 bg-gray-900 text-white font-bold text-[15px] hover:bg-black active:bg-gray-800 transition-colors shadow-sm"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedExpert(expert);
+                                }}
+                            >
+                                프로필 및 상담하기
+                            </button>
                         </div>
                     </div>
                 ))}

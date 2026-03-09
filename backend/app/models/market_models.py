@@ -116,3 +116,20 @@ class ExpertSettlement(Base):
     status = Column(String, default="PENDING") # PENDING, COMPLETED, CANCELLED
     created_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
+
+class CallTransaction(Base):
+    """
+    기록: 상담사와의 실제 통화 내역
+    결제 수단(060 후불 vs 코인 선불)에 따른 정산 분리 목적으로 사용됩니다.
+    """
+    __tablename__ = "call_transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True) # 060의 경우 비회원일 수도 있음
+    expert_id = Column(Integer, ForeignKey("virtual_experts.id", ondelete="CASCADE"))
+    
+    payment_method = Column(String, nullable=False) # "COIN" or "060"
+    duration_seconds = Column(Integer, default=0)
+    amount_charged = Column(Integer, default=0) # 코인 소모량 또는 060 청구 예상 금액
+    status = Column(String, default="COMPLETED") # COMPLETED, FAILED, IN_PROGRESS
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
