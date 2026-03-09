@@ -374,26 +374,62 @@ export default function Home() {
           }`}
         onClick={handleSplashClick}
       >
-        {/* Minimalist Breathing Cosmic Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        {/* Elemental Orbs Orbital Background */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden bg-[#0B1120]">
+          {/* Central Ambient Glow */}
           <motion.div
-            animate={{
-              scale: [1, 1.25, 1],
-              opacity: [0.35, 0.7, 0.35],
-            }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="w-[90vw] h-[90vw] max-w-[700px] max-h-[700px] bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-full blur-[120px] mix-blend-screen"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute w-64 h-64 bg-white/5 rounded-full blur-[60px]"
           />
+
+          {/* Rotating Container for 5 Elements */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute w-[90vw] h-[90vw] max-w-[700px] max-h-[700px] flex items-center justify-center"
+          >
+            {/* 목 (Wood) - Green */}
+            <motion.div
+              animate={{ scale: [0.8, 1.2, 0.8] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 }}
+              className="absolute top-[5%] w-32 h-32 bg-[#4ADE80] rounded-full blur-[45px] opacity-60 mix-blend-screen"
+            />
+            {/* 화 (Fire) - Red */}
+            <motion.div
+              animate={{ scale: [0.8, 1.3, 0.8] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute right-[10%] top-[25%] w-40 h-40 bg-[#F87171] rounded-full blur-[50px] opacity-50 mix-blend-screen"
+            />
+            {/* 토 (Earth) - Yellow */}
+            <motion.div
+              animate={{ scale: [0.9, 1.2, 0.9] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              className="absolute right-[20%] bottom-[10%] w-36 h-36 bg-[#FACC15] rounded-full blur-[50px] opacity-50 mix-blend-screen"
+            />
+            {/* 금 (Metal) - White */}
+            <motion.div
+              animate={{ scale: [0.8, 1.4, 0.8] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute left-[20%] bottom-[10%] w-32 h-32 bg-[#F8FAFC] rounded-full blur-[45px] opacity-60 mix-blend-screen"
+            />
+            {/* 수 (Water) - Blue */}
+            <motion.div
+              animate={{ scale: [0.8, 1.2, 0.8] }}
+              transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              className="absolute left-[10%] top-[25%] w-36 h-36 bg-[#60A5FA] rounded-full blur-[50px] opacity-55 mix-blend-screen"
+            />
+          </motion.div>
         </div>
 
         {/* Breathing Typography */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
             당신의 운세가<br />궁금하십니까
           </h2>
         </motion.div>
