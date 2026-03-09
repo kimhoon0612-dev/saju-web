@@ -434,18 +434,16 @@ export default function FortuneHubPage() {
                 </div>
                 {/* Main Content Areas */}
                 <div className="flex-1 w-full pt-4 pb-32">
-                    <h1 className="text-[26px] font-black tracking-tight text-gray-900 mb-6">나의 흐름</h1>
-
                     <div className="flex flex-col gap-4">
                         {/* Bazi Grid Injected */}
                         {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
                         <div className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
-                            <div className="flex justify-between items-start w-full mb-6 px-1">
+                            <div className="flex justify-between items-start w-full mb-6 px-1 gap-2">
                                 <div>
                                     <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">나의 기본 설정</div>
-                                    <h2 className="text-[24px] font-black tracking-tight text-gray-900">나의 명식 (사주팔자)</h2>
+                                    <h2 className="text-[24px] font-black tracking-tight text-gray-900">사주팔자</h2>
                                 </div>
-                                <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3 py-1 rounded-full mt-2">{sajuStrength}</span>
+                                <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3.5 py-1.5 rounded-full mt-1.5 whitespace-nowrap shrink-0">{sajuStrength}</span>
                             </div>
 
                             <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
@@ -460,7 +458,7 @@ export default function FortuneHubPage() {
                                         </div>
 
                                         <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.heavenly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold mb-2 shadow-sm relative overflow-hidden ring-1 ring-inset ring-black/5`}>
-                                            <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.heavenly?.label)}</div>
+                                            <div className="text-[26px] leading-none mb-1 font-black opacity-90">{getHanja(pillar.data?.heavenly?.label)}</div>
                                             <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
                                                 <span>{getHangul(pillar.data?.heavenly?.label)}</span>
                                                 <span>·</span>
@@ -469,7 +467,7 @@ export default function FortuneHubPage() {
                                         </div>
 
                                         <div className={`w-full aspect-[4/5] ${ELEMENT_COLORS_BG[pillar.data?.earthly?.element || "earth"]} rounded-[12px] flex flex-col items-center justify-center font-bold shadow-sm relative overflow-hidden mb-3 ring-1 ring-inset ring-black/5`}>
-                                            <div className="text-[26px] leading-none mb-1 font-serif opacity-90">{getHanja(pillar.data?.earthly?.label)}</div>
+                                            <div className="text-[26px] leading-none mb-1 font-black opacity-90">{getHanja(pillar.data?.earthly?.label)}</div>
                                             <div className="text-[9px] opacity-70 flex gap-0.5 items-center font-pretendard font-medium">
                                                 <span>{getHangul(pillar.data?.earthly?.label)}</span>
                                                 <span>·</span>
