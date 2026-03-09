@@ -13,6 +13,8 @@ export interface Product {
     category: string;
     elementTheme?: string;
     imageUrl: string;
+    original_price?: number;
+    sales_tags?: string;
 }
 
 // Mock Products Database
@@ -160,7 +162,9 @@ export default function DirectStorePage() {
                             price: p.price,
                             category: p.category,
                             elementTheme: p.theme,
-                            imageUrl: p.image_url || '/talismans/health.png'
+                            imageUrl: p.image_url || '/talismans/health.png',
+                            original_price: p.original_price,
+                            sales_tags: p.sales_tags
                         }));
                         const allProducts = [...storeProducts, ...dbProducts];
                         const uniqueProducts = Array.from(new Map(allProducts.map(item => [item.name, item])).values());

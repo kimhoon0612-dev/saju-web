@@ -24,6 +24,8 @@ export default function AdminDashboard() {
     const [sandboxPrompt, setSandboxPrompt] = useState("");
     const [sandboxTheme, setSandboxTheme] = useState("wealth");
     const [sandboxPrice, setSandboxPrice] = useState<number>(15000);
+    const [sandboxOriginalPrice, setSandboxOriginalPrice] = useState<number>(0);
+    const [sandboxSalesTags, setSandboxSalesTags] = useState("");
     const [sandboxResult, setSandboxResult] = useState<any>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [goodsStats, setGoodsStats] = useState<any>(null);
@@ -34,6 +36,8 @@ export default function AdminDashboard() {
     const [directPrice, setDirectPrice] = useState<number>(15000);
     const [directDescription, setDirectDescription] = useState("");
     const [directTheme, setDirectTheme] = useState("wealth");
+    const [directOriginalPrice, setDirectOriginalPrice] = useState<number>(0);
+    const [directSalesTags, setDirectSalesTags] = useState("");
     const [directImageFile, setDirectImageFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -43,6 +47,8 @@ export default function AdminDashboard() {
     const [editPrice, setEditPrice] = useState<number>(0);
     const [editDescription, setEditDescription] = useState("");
     const [editTheme, setEditTheme] = useState("wealth");
+    const [editOriginalPrice, setEditOriginalPrice] = useState<number>(0);
+    const [editSalesTags, setEditSalesTags] = useState("");
     const [editImageFile, setEditImageFile] = useState<File | null>(null);
 
     // Expert Registration State
@@ -159,6 +165,8 @@ export default function AdminDashboard() {
                     name: `${themeName} 프리미엄 AI 부적`,
                     theme: sandboxTheme,
                     price_points: sandboxPrice,
+                    original_price: sandboxOriginalPrice > 0 ? sandboxOriginalPrice : null,
+                    sales_tags: sandboxSalesTags || null,
                     prompt_template: sandboxPrompt,
                     is_active: true,
                     image_url: sandboxResult.preview_image_url
@@ -210,6 +218,8 @@ export default function AdminDashboard() {
                     name: directName,
                     theme: directTheme,
                     price_points: directPrice,
+                    original_price: directOriginalPrice > 0 ? directOriginalPrice : null,
+                    sales_tags: directSalesTags || null,
                     prompt_template: directDescription || "관리자 직접 업로드 상품",
                     is_active: true,
                     image_url: imageUrl
@@ -234,6 +244,8 @@ export default function AdminDashboard() {
         setEditPrice(product.price);
         setEditDescription(product.description || "");
         setEditTheme(product.theme);
+        setEditOriginalPrice(product.original_price || 0);
+        setEditSalesTags(product.sales_tags || "");
         setEditImageFile(null);
     };
 
@@ -253,6 +265,8 @@ export default function AdminDashboard() {
                     name: editName,
                     theme: editTheme,
                     price_points: editPrice,
+                    original_price: editOriginalPrice > 0 ? editOriginalPrice : null,
+                    sales_tags: editSalesTags || null,
                     prompt_template: editDescription || "수정된 상품",
                     is_active: true,
                     image_url: imageUrl
@@ -454,6 +468,26 @@ export default function AdminDashboard() {
                                         className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
                                         placeholder="예: 15000"
                                     />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">이커머스 정가 (원)</label>
+                                        <input
+                                            type="number"
+                                            value={sandboxOriginalPrice} onChange={e => setSandboxOriginalPrice(Number(e.target.value))}
+                                            className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
+                                            placeholder="예: 25000"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">뱃지 / 커머스 태그</label>
+                                        <input
+                                            type="text"
+                                            value={sandboxSalesTags} onChange={e => setSandboxSalesTags(e.target.value)}
+                                            className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
+                                            placeholder="쉼표로 구분 (예: BEST,무료배송)"
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="text-sm font-bold text-white/70 mb-1 block">프롬프트 상세 템플릿</label>

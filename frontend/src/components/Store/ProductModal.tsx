@@ -10,6 +10,8 @@ interface ProductModalProps {
         description: string;
         price: number;
         imageUrl: string;
+        original_price?: number;
+        sales_tags?: string;
     };
     onClose: () => void;
 }
@@ -61,14 +63,40 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                         {/* Product Info Summary */}
                         <div className="p-5">
+                            {product.sales_tags && (
+                                <div className="flex flex-wrap gap-1.5 mb-2">
+                                    {product.sales_tags.split(',').map((tag, i) => (
+                                        <span key={i} className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-black leading-none bg-red-100 text-red-600 border border-red-200">
+                                            {tag.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                             <h1 className="text-[22px] font-bold text-gray-900 leading-[1.3] tracking-tight mb-2 break-keep">
                                 {product.name}
                             </h1>
-                            <div className="flex items-center justify-between mb-4">
-                                <strong className="text-[24px] font-black text-gray-900">{product.price.toLocaleString()}원</strong>
-                                <button className="text-gray-400 hover:text-gray-600"><Share2 className="w-5 h-5" /></button>
+
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex flex-col">
+                                    {product.original_price && product.original_price > product.price && (
+                                        <span className="text-gray-400 text-sm line-through decoration-gray-300 font-medium">
+                                            {product.original_price.toLocaleString()}원
+                                        </span>
+                                    )}
+                                    <div className="flex items-baseline gap-2">
+                                        {product.original_price && product.original_price > product.price && (
+                                            <span className="text-[28px] font-black text-red-500">
+                                                {Math.round(((product.original_price - product.price) / product.original_price) * 100)}%
+                                            </span>
+                                        )}
+                                        <strong className="text-[28px] font-black text-gray-900 leading-none">
+                                            {product.price.toLocaleString()}<span className="text-lg font-bold">원</span>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <button className="text-gray-400 hover:text-gray-600 p-1 mt-1"><Share2 className="w-6 h-6" /></button>
                             </div>
-                            <div className="flex items-center gap-1.5 pb-5 border-b border-gray-100">
+                            <div className="flex items-center gap-1.5 pb-5 border-b border-gray-100 mt-2">
                                 <Star className="w-4 h-4 text-[#FFC107] fill-[#FFC107]" />
                                 <span className="text-[14px] font-bold text-gray-800">5.0</span>
                                 <span className="text-[14px] font-medium text-gray-500 underline underline-offset-2">후기 4건</span>
@@ -212,14 +240,20 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
             {/* Fixed Bottom Buy Button (Only visible on Detail & Checkout) */}
             {step !== "complete" && (
-                <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-100 pb-safe z-50">
+                <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-100 pb-safe z-50 flex gap-2">
                     {step === "detail" ? (
-                        <button
-                            onClick={handleBuyClick}
-                            className="w-full h-[54px] bg-[#FFF000] text-black font-black text-[16px] rounded-[12px] shadow-sm hover:brightness-95 active:scale-[0.98] transition-all"
-                        >
-                            구매하기
-                        </button>
+                        <>
+                            <button className="w-14 h-[54px] items-center justify-center flex flex-col bg-white border border-gray-200 text-gray-500 font-bold text-[10px] rounded-[12px] shadow-sm hover:bg-gray-50 transition-all shrink-0">
+                                <Heart className="w-6 h-6 mb-0.5 text-gray-400" />
+                                찜
+                            </button>
+                            <button
+                                onClick={handleBuyClick}
+                                className="flex-1 h-[54px] bg-[#03C75A] text-white font-black text-[18px] rounded-[12px] shadow-md hover:bg-[#02b350] active:scale-[0.98] transition-all"
+                            >
+                                구매하기
+                            </button>
+                        </>
                     ) : (
                         <button
                             onClick={handlePaymentSubmit}

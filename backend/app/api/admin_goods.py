@@ -30,6 +30,8 @@ class InventoryRequest(BaseModel):
     prompt_template: str
     is_active: bool
     image_url: str = None
+    original_price: int = None
+    sales_tags: str = None
 
 @router.get("/stats")
 async def get_talisman_stats():
@@ -98,6 +100,8 @@ async def publish_talisman_to_inventory(req: InventoryRequest, db: AsyncSession 
         category="wish",
         theme=req.theme,
         image_url=req.image_url or "/talismans/wealth.png",
+        original_price=req.original_price,
+        sales_tags=req.sales_tags,
         is_active=req.is_active
     )
     db.add(new_product)
@@ -133,6 +137,8 @@ async def update_product(product_id: int, req: InventoryRequest, db: AsyncSessio
     product.name = req.name
     product.description = req.prompt_template
     product.price = req.price_points
+    product.original_price = req.original_price
+    product.sales_tags = req.sales_tags
     product.theme = req.theme
     product.is_active = req.is_active
     
