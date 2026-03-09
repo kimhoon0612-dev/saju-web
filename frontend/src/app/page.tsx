@@ -370,45 +370,45 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B1120] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
         onClick={handleSplashClick}
       >
-        {/* Minimalist Breathing Background */}
+        {/* Minimalist Breathing Cosmic Background */}
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
           <motion.div
             animate={{
-              scale: [1, 1.15, 1],
-              opacity: [0.3, 0.6, 0.3],
+              scale: [1, 1.25, 1],
+              opacity: [0.35, 0.7, 0.35],
             }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-[#E2E8F0] rounded-full blur-[100px]"
+            className="w-[90vw] h-[90vw] max-w-[700px] max-h-[700px] bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-full blur-[120px] mix-blend-screen"
           />
         </div>
 
         {/* Breathing Typography */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6">
+          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
             당신의 운세가<br />궁금하십니까
           </h2>
         </motion.div>
 
-        {/* Minimal Enter Button */}
+        {/* Minimal Glassmorphism Enter Button */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 1, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
-          <div className="bg-[#2D3748] text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_24px_rgba(45,55,72,0.15)] group relative overflow-hidden flex items-center gap-2">
-            <span className="relative z-10 tracking-wide">내 운명의 결 확인하기</span>
-            <ChevronRight className="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] group relative overflow-hidden flex items-center gap-2">
+            <span className="relative z-10 tracking-wide text-white/90 group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
+            <ChevronRight className="w-4 h-4 relative z-10 text-white/70 group-hover:text-white transition-all group-hover:translate-x-1" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
           </div>
         </motion.div>
       </motion.div>
