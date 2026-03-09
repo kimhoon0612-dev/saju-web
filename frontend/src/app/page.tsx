@@ -27,8 +27,6 @@ export default function Home() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
   const [showSplashMode, setShowSplashMode] = useState(true);
-  const [showStamp, setShowStamp] = useState(false);
-  const [isStamping, setIsStamping] = useState(false);
 
   // New Modal States
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
@@ -231,38 +229,11 @@ export default function Home() {
     }
     keysToRemove.forEach(k => sessionStorage.removeItem(k));
   };
-
-  // Trigger stamp animation automatically on splash screen load
-  useEffect(() => {
-    if (!showSplashMode || matrixData || showStamp) return;
-
-    const timer1 = setTimeout(() => {
-      setShowStamp(true); // Drop stamp
-    }, 800); // Wait 800ms for initial text fade-in
-
-    const timer2 = setTimeout(() => {
-      setIsStamping(true); // Trigger screen shake
-    }, 1100);
-
-    const timer3 = setTimeout(() => {
-      setIsStamping(false); // Stop screen shake
-    }, 1900);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
-  }, [showSplashMode, matrixData, showStamp]);
-
   const handleSplashClick = () => {
     if (!showSplashMode) return;
-    // Don't allow closing while it's actively shaking to ensure impact is felt
-    if (!showStamp || isStamping) return;
-
     setShowSplashMode(false);
   };
-  // Render a full-screen loading skeleton instead of 'null' to prevent FOUC
+
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center">
@@ -274,138 +245,99 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        animate={isStamping ? { x: [-12, 12, -10, 10, -5, 5, 0], y: [-6, 6, -5, 5, -2, 2, 0] } : {}}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B0D17] overflow-hidden cursor-pointer transition-all duration-[1200ms] ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FDFBFA] overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
         onClick={handleSplashClick}
       >
-        {/* The Stamp Animation Overlay */}
-        <AnimatePresence>
-          {showStamp && (
-            <motion.div
-              initial={{ scale: 5, opacity: 0, rotate: -25 }}
-              animate={{ scale: 1, opacity: 1, rotate: -10 }}
-              transition={{ duration: 0.3, type: "spring", bounce: 0.5 }}
-              className="absolute z-50 pointer-events-none flex items-center justify-center top-[65%]"
-            >
-              <div className="relative">
-                <div
-                  className="w-36 h-36 md:w-48 md:h-48 rounded-full flex items-center justify-center font-black text-5xl md:text-7xl opacity-90 shadow-[0_0_30px_rgba(180,20,20,0.5)] bg-[#0B0D17]/40 backdrop-blur-sm relative overflow-hidden text-[#C41E3A]"
-                  style={{
-                    fontFamily: '"Gowun Dodum", "Nanum Myeongjo", "Batang", serif',
-                    letterSpacing: '2px',
-                    // Realistic irregular ink stamp border using SVG data URI
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C24 2 2 24 2 50C2 76 24 98 50 98C76 98 98 76 98 50C98 24 76 2 50 2ZM50 8C73 8 92 27 92 50C92 73 73 92 50 92C27 92 8 73 8 50C8 27 27 8 50 8Z' fill='%23C41E3A' /%3E%3Cpath d='M10 40Q15 30 25 20T40 10T60 10T75 20T85 30T90 40T90 60T85 70T75 80T60 90T40 90T25 80T15 70T10 60Z' fill='none' stroke='%23C41E3A' stroke-width='3' stroke-linecap='round' stroke-dasharray='10 15 5 20 15 5' opacity='0.7'/%3E%3Cpath d='M12 50C12 29 29 12 50 12C71 12 88 29 88 50C88 71 71 88 50 88C29 88 12 71 12 50Z' fill='none' stroke='%23A01830' stroke-width='1.5' stroke-dasharray='4 8 2 12' opacity='0.5'/%3E%3C/svg%3E")`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}
-                >
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')] opacity-20 mix-blend-multiply rounded-full pointer-events-none"></div>
-                  <div className="absolute inset-0 bg-[#C41E3A] opacity-[0.08] mix-blend-color-burn rounded-full pointer-events-none"></div>
-                  <span className="-ml-1 relative z-10" style={{ textShadow: '0px 0px 2px rgba(180,20,20,0.8), -1px 1px 0px rgba(100,10,10,0.4)', filter: 'url(#roughpaper)' }}>운명</span>
-                </div>
-
-                {/* SVG Filter definition for ink bleed effect inside the stamp container */}
-                <svg className="absolute w-0 h-0">
-                  <filter id="roughpaper">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
-                  </filter>
-                </svg>
-                {/* Impact dust rings */}
-                <motion.div
-                  initial={{ scale: 1, opacity: 1 }}
-                  animate={{ scale: 2.5, opacity: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-                  className="absolute inset-0 border-[6px] border-[#D32F2F] rounded-full"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Very subtle noise texture overlay for Tarot feel */}
-        <div className="absolute inset-0 opacity-[0.06] mix-blend-screen pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.75\" numOctaves=\"4\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E')" }}></div>
-
-        {/* Elegant Dark Nebula Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-90 transition-opacity duration-1000">
+        {/* Soft, vibrant MZ-style background gradients */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
           <motion.div
             animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.4, 0.6, 0.4]
+              x: [-20, 20, -20],
+              y: [-20, 20, -20],
+              scale: [1, 1.1, 1],
             }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-[120vw] h-[120vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#281B43] via-[#100918] to-transparent rounded-full blur-[80px]"
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] bg-[#FFB199] opacity-30 rounded-full blur-[80px] mix-blend-multiply"
           />
           <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[100vw] h-[100vw] max-w-[600px] max-h-[600px] bg-[conic-gradient(from_0deg,_transparent_0deg,_#6B4C9A_90deg,_transparent_180deg,_#B89F65_270deg,_transparent_360deg)] opacity-10 rounded-full blur-[60px] mix-blend-screen"
+            animate={{
+              x: [20, -20, 20],
+              y: [20, -20, 20],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] bg-[#81C784] opacity-30 rounded-full blur-[70px] mix-blend-multiply"
+          />
+          <motion.div
+            animate={{
+              y: [-30, 30, -30],
+              scale: [0.9, 1.1, 0.9]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-[30%] left-[20%] w-[50vw] h-[50vw] max-w-[400px] max-h-[400px] bg-[#A2D2FF] opacity-20 rounded-full blur-[60px] mix-blend-multiply"
           />
         </div>
 
-        {/* Glowing Tarot Crystal/Orb Concept - Refined */}
-        <motion.div
-          animate={{ y: [-8, 8, -8] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="relative z-10 flex flex-col items-center justify-center mb-16"
-        >
-          <div className="w-36 h-36 md:w-44 md:h-44 relative flex items-center justify-center group">
-            {/* Ethereal Glow */}
-            <motion.div
-              animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.4, 0.7, 0.4] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-[-20px] rounded-full bg-[#8A4FFF]/30 blur-2xl"
-            />
-
-            {/* Cosmic Inner Orb - Minimal & Elegant */}
-            <div className="absolute inset-0 rounded-full border-[1.5px] border-[#D4AF37]/40 shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden backdrop-blur-md"
-              style={{ background: 'radial-gradient(circle at 40% 30%, rgba(212, 175, 55, 0.15), rgba(16, 10, 28, 0.8))' }}
-            >
+        {/* Floating Emojis / Modern 3D feel Elements */}
+        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center pointer-events-none pt-10">
+          <motion.div
+            animate={{ y: [-15, 15, -15], rotate: [-5, 5, -5] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+          >
+            <div className="w-40 h-40 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[40px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] flex items-center justify-center group overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent"></div>
               <motion.div
-                animate={{ rotate: [0, -360] }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-[-50%] bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-screen"
-              />
-              {/* Subtle sweep gradient inside orb */}
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,_transparent_0deg,_rgba(255,255,255,0.1)_90deg,_transparent_180deg)]"
-              />
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="text-[72px] drop-shadow-md relative z-10"
+              >
+                🔮
+              </motion.div>
             </div>
 
-            {/* Center Core element: Elegant glowing star */}
+            {/* Small floating badges */}
             <motion.div
-              animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.85, 1, 0.85] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="relative z-10 text-[#FCEEB5] drop-shadow-[0_0_12px_rgba(252,238,181,0.6)]"
+              animate={{ y: [-5, 5, -5], rotate: [10, -10, 10] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -top-4 -right-6 w-14 h-14 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-white flex items-center justify-center text-xl"
             >
-              <Sparkles className="w-14 h-14 md:w-16 md:h-16" strokeWidth={1} />
+              ✨
             </motion.div>
-          </div>
-        </motion.div>
+            <motion.div
+              animate={{ y: [5, -5, 5], rotate: [-10, 10, -10] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              className="absolute -bottom-6 -left-6 w-16 h-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-white flex items-center justify-center text-2xl"
+            >
+              🍀
+            </motion.div>
+          </motion.div>
+        </div>
 
-        {/* Typography - Clean, Modern Occult Feel */}
+        {/* Clean, bold Typography */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
-          className="relative z-10 text-center flex flex-col items-center px-6"
+          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 text-center flex flex-col items-center px-6 pb-24 w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-extrabold text-[#F5F5F7] tracking-tight leading-[1.35] mb-6 font-pretendard drop-shadow-md">
-            당신의 <span className="text-[#D4AF37] font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">운세</span>가 <span className="block mt-1">궁금한가요?</span>
+          <span className="bg-[#4A5568]/10 text-[#4A5568] px-4 py-1.5 rounded-full text-xs font-bold mb-5 tracking-wide uppercase">
+            Personal Analytics
+          </span>
+          <h2 className="text-[32px] md:text-[40px] font-black text-[#111827] tracking-tight leading-[1.2] mb-6 font-pretendard">
+            당신의 매일이 <br />더 완벽해지도록
           </h2>
 
           <motion.div
-            animate={{ opacity: [0.5, 1, 0.5], y: [0, 2, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            className="mt-6 flex flex-col items-center gap-2"
+            animate={{ opacity: [0.7, 1, 0.7], y: [0, 2, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mt-2 w-full max-w-[280px]"
           >
-            <div className="flex items-center gap-2 text-[13px] font-bold tracking-wide text-[#E2E8F0] bg-white/5 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
-              <span>화면을 탭하여 운명의 책 열기</span>
-              <ChevronRight className="w-4 h-4" />
+            <div className="w-full bg-[#111827] text-white flex items-center justify-center gap-3 py-4 rounded-[20px] font-bold text-[16px] shadow-[0_8px_20px_rgba(17,24,39,0.15)] group relative overflow-hidden">
+              <span className="relative z-10">내 인생 알고리즘 보기</span>
+              <ChevronRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
             </div>
           </motion.div>
         </motion.div>
