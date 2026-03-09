@@ -50,9 +50,6 @@ export default function TarotPage() {
             <div className="px-5 pt-4 pb-2">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-black text-[#4A5568]">마인드 타로</h1>
-                    <button className="text-sm font-bold text-gray-500 flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
-                        <Sparkles size={14} className="text-[#81C784]" /> 성향 설정
-                    </button>
                 </div>
 
                 <div className="mb-2">
