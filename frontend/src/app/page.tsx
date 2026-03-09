@@ -374,97 +374,42 @@ export default function Home() {
           }`}
         onClick={handleSplashClick}
       >
-        {/* Soft, vibrant MZ-style background gradients */}
+        {/* Minimalist Breathing Background */}
         <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
           <motion.div
             animate={{
-              x: [-20, 20, -20],
-              y: [-20, 20, -20],
-              scale: [1, 1.1, 1],
+              scale: [1, 1.15, 1],
+              opacity: [0.3, 0.6, 0.3],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] bg-[#FFB199] opacity-30 rounded-full blur-[80px] mix-blend-multiply"
-          />
-          <motion.div
-            animate={{
-              x: [20, -20, 20],
-              y: [20, -20, 20],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] bg-[#81C784] opacity-30 rounded-full blur-[70px] mix-blend-multiply"
-          />
-          <motion.div
-            animate={{
-              y: [-30, 30, -30],
-              scale: [0.9, 1.1, 0.9]
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-[30%] left-[20%] w-[50vw] h-[50vw] max-w-[400px] max-h-[400px] bg-[#A2D2FF] opacity-20 rounded-full blur-[60px] mix-blend-multiply"
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            className="w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-[#E2E8F0] rounded-full blur-[100px]"
           />
         </div>
 
-        {/* Floating Emojis / Modern 3D feel Elements */}
-        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center pointer-events-none pt-10">
-          <motion.div
-            animate={{ y: [-15, 15, -15], rotate: [-5, 5, -5] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
-          >
-            <div className="w-40 h-40 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[40px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] flex items-center justify-center group overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent"></div>
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="text-[72px] drop-shadow-md relative z-10"
-              >
-                🔮
-              </motion.div>
-            </div>
-
-            {/* Small floating badges */}
-            <motion.div
-              animate={{ y: [-5, 5, -5], rotate: [10, -10, 10] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -top-4 -right-6 w-14 h-14 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-white flex items-center justify-center text-xl"
-            >
-              ✨
-            </motion.div>
-            <motion.div
-              animate={{ y: [5, -5, 5], rotate: [-10, 10, -10] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute -bottom-6 -left-6 w-16 h-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-white flex items-center justify-center text-2xl"
-            >
-              🍀
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Clean, bold Typography */}
+        {/* Breathing Typography */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 text-center flex flex-col items-center px-6 pb-24 w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <span className="bg-[#4A5568]/10 text-[#4A5568] px-4 py-1.5 rounded-full text-xs font-bold mb-5 tracking-wide uppercase">
-            Personal Analytics
-          </span>
-          <h2 className="text-[32px] md:text-[40px] font-black text-[#111827] tracking-tight leading-[1.2] mb-6 font-pretendard">
-            당신의 매일이 <br />더 완벽해지도록
+          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6">
+            당신의 운세가<br />궁금하십니까
           </h2>
+        </motion.div>
 
-          <motion.div
-            animate={{ opacity: [0.7, 1, 0.7], y: [0, 2, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="mt-2 w-full max-w-[280px]"
-          >
-            <div className="w-full bg-[#111827] text-white flex items-center justify-center gap-3 py-4 rounded-[20px] font-bold text-[16px] shadow-[0_8px_20px_rgba(17,24,39,0.15)] group relative overflow-hidden">
-              <span className="relative z-10">내 인생 알고리즘 보기</span>
-              <ChevronRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            </div>
-          </motion.div>
+        {/* Minimal Enter Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 1, ease: "easeOut" }}
+          className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
+        >
+          <div className="bg-[#2D3748] text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_24px_rgba(45,55,72,0.15)] group relative overflow-hidden flex items-center gap-2">
+            <span className="relative z-10 tracking-wide">내 운명의 결 확인하기</span>
+            <ChevronRight className="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          </div>
         </motion.div>
       </motion.div>
 
