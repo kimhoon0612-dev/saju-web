@@ -433,16 +433,19 @@ export default function FortuneHubPage() {
                     </div>
                 </div>
                 {/* Main Content Areas */}
-                <div className="flex-1 w-full max-w-md mx-auto pt-4 pb-32">
-                    <h1 className="text-[26px] font-black tracking-tight text-gray-900 mb-6 px-4">나의 흐름</h1>
+                <div className="flex-1 w-full pt-4 pb-32">
+                    <h1 className="text-[26px] font-black tracking-tight text-gray-900 mb-6">나의 흐름</h1>
 
-                    <div className="flex flex-col gap-4 px-4">
+                    <div className="flex flex-col gap-4">
                         {/* Bazi Grid Injected */}
                         {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
                         <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
-                            <div className="flex justify-between items-center w-full mb-6 px-1">
-                                <h2 className="text-[20px] font-extrabold text-[#111]">나의 명식 (사주팔자)</h2>
-                                <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3 py-1 rounded-full">{sajuStrength}</span>
+                            <div className="flex justify-between items-start w-full mb-6 px-1">
+                                <div>
+                                    <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">나의 기본 설정</div>
+                                    <h2 className="text-[24px] font-black tracking-tight text-gray-900">나의 명식 (사주팔자)</h2>
+                                </div>
+                                <span className="text-[13px] font-bold text-[#3B705C] bg-[#3B705C]/10 px-3 py-1 rounded-full mt-2">{sajuStrength}</span>
                             </div>
 
                             <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
@@ -569,9 +572,9 @@ export default function FortuneHubPage() {
 
                         {/* ==== 영역 2: 내 삶의 나침반! 심층 분석 ==== */}
                         <section className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-8">
-                            <div className="mb-2">
-                                <span className="text-[12px] text-gray-400 font-bold tracking-tight">내 삶의 나침반</span>
-                                <h2 className="text-[20px] font-black mt-0.5 text-[#4A5568]">정통 사주 심층 분석</h2>
+                            <div>
+                                <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">내 삶의 나침반</div>
+                                <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-2">정통 사주 심층 분석</h2>
                             </div>
 
                             {/* 정통 사주 리딩 파트 */}
