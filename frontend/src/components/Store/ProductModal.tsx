@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { X, ChevronLeft, Star, Heart, Share2, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { X, ChevronLeft, Star, Heart, Share2, Upload, AlertCircle, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface ProductModalProps {
     product: {
@@ -119,35 +119,44 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                             ))}
                         </div>
 
-                        {/* Product Rich Description Body (Mock content mimicking the red screenshot) */}
+                        {/* Product Rich Description Body (Clean E-Commerce Style) */}
                         {activeTab === "info" && (
-                            <div className="bg-[#6B1414] text-white p-6 relative overflow-hidden flex flex-col items-center">
-                                {/* Decorative elements */}
-                                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-red-800/20 blur-[50px] rounded-full pointer-events-none" />
-
-                                <div className="text-center mt-8 mb-12 relative z-10">
-                                    <div className="text-[32px] font-serif text-[#FFD700] mb-2 tracking-widest">명리학 부적</div>
-                                    <div className="text-[14px] text-gray-300 tracking-widest mb-4">맞춤형 기운 보강</div>
-                                    <div className="text-[10px] text-gray-400 tracking-[0.2em] mb-4">PREMIUM EDITION</div>
-                                    <div className="text-[28px] font-serif text-[#FFD700] border-t border-b border-[#FFD700]/30 py-3 px-6 break-keep">
+                            <div className="bg-white p-6 pb-20 relative flex flex-col items-center border-t border-gray-100">
+                                {/* Brand/Category Badge */}
+                                <div className="text-center mt-6 mb-10">
+                                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-[11px] font-bold tracking-widest rounded-full mb-3">
+                                        PREMIUM ITEM
+                                    </span>
+                                    <h2 className="text-[26px] font-black text-gray-900 mb-2 leading-tight break-keep">
                                         {product.name}
-                                    </div>
+                                    </h2>
+                                    <p className="text-[14px] text-gray-500 font-medium">맞춤형 명리학 솔루션</p>
                                 </div>
 
-                                <img src={product.imageUrl} alt={product.name} className="w-[80%] max-w-[280px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] relative z-10 mb-16" />
+                                <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    className="w-full max-w-[320px] object-cover scale-100 relative z-10 mb-12 shadow-sm border border-gray-100 rounded-2xl p-4 bg-gray-50"
+                                />
 
-                                <div className="text-left w-full space-y-12 relative z-10 px-2 lg:px-8">
-                                    <div>
-                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">해당 부적의 효능 및 기운</h3>
-                                        <p className="text-[15px] text-gray-300 leading-relaxed font-light break-keep">
+                                <div className="text-left w-full space-y-10 px-0 lg:px-4">
+                                    <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
+                                        <h3 className="text-[18px] font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                            <Sparkles className="w-5 h-5 text-blue-500" />
+                                            상품 효능 및 설명
+                                        </h3>
+                                        <p className="text-[15px] text-gray-700 leading-relaxed font-medium break-keep whitespace-pre-wrap">
                                             {product.description}
                                         </p>
                                     </div>
-                                    <div>
-                                        <h3 className="text-[22px] font-bold text-white mb-4 leading-tight break-keep">신비로운 기운의 상징</h3>
-                                        <p className="text-[15px] text-gray-300 leading-relaxed font-light break-keep">
-                                            이 부적은 예로부터 전해 내려오는 비전(秘傳)의 방식들을 응용하여, 사용자에게 필요한 기운이 스며들 수 있도록 돕는 상징적인 매개체입니다.<br />
-                                            모든 일에 긍정과 열정을 가지고 임할 때, 본 부적이 든든한 조력자 역할을 해줄 것입니다.
+
+                                    <div className="bg-gray-50 p-6 rounded-2xl">
+                                        <h3 className="text-[18px] font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                            신뢰할 수 있는 퀄리티
+                                        </h3>
+                                        <p className="text-[14px] text-gray-600 leading-relaxed break-keep">
+                                            이 상품은 구매하시는 모든 고객님들께 언제나 최고의 효능을 드리기 위해 꼼꼼하게 제작된 <strong>프리미엄 굿즈</strong>입니다. 구매 후 수령하신 날부터 바로 효력을 경험해보세요!
                                         </p>
                                     </div>
                                 </div>
