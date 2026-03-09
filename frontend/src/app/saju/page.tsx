@@ -359,15 +359,15 @@ export default function FortuneHubPage() {
                     </div>
                     <div className="grid grid-cols-3 gap-y-7 gap-x-2">
                         <Link href="/saju/confirm?type=신년 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐍" hasBadge />
+                            <SpotIcon emoji="🐍" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">신년 흐름</span>
                         </Link>
                         <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐉" hasBadge />
+                            <SpotIcon emoji="🐉" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">토정비결</span>
                         </Link>
                         <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐯" hasBadge />
+                            <SpotIcon emoji="🐯" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">정통 명리</span>
                         </Link>
                         <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
@@ -384,7 +384,7 @@ export default function FortuneHubPage() {
                         </Link>
                         {/* Hidden rows from screenshot 2 but added for fullness */}
                         <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
-                            <SpotIcon emoji="🐰" hasBadge />
+                            <SpotIcon emoji="🐰" />
                             <span className="text-[13px] font-bold text-gray-700 tracking-tight">타인과의 궁합</span>
                         </Link>
                     </div>
