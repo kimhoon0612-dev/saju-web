@@ -273,9 +273,23 @@ function TarotPlayContent() {
                                 </div>
                             ))}
 
+                            {/* Expert Consultation CTA */}
+                            <div className="bg-[#1e152e] rounded-2xl p-5 border border-purple-500/20 mt-2 mb-4 text-center">
+                                <h3 className="text-white/90 font-bold mb-1">더 깊은 해답이 필요하신가요?</h3>
+                                <p className="text-white/50 text-[13px] mb-4">
+                                    카드의 직관적인 메시지를 넘어,<br />전문가와 1:1로 구체적인 고민을 나누어보세요.
+                                </p>
+                                <button
+                                    onClick={() => router.push('/experts')}
+                                    className="w-full bg-purple-600/20 text-purple-300 border border-purple-500/30 py-3 rounded-xl font-bold text-[15px] hover:bg-purple-600/30 transition-colors"
+                                >
+                                    전문가에게 깊이 있는 상담받기
+                                </button>
+                            </div>
+
                             <button
                                 onClick={() => router.push('/tarot')}
-                                className="w-full mt-6 bg-amber-500 text-[#111] py-4 rounded-2xl font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] mb-8"
+                                className="w-full bg-amber-500 text-[#111] py-4 rounded-2xl font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] mb-8"
                             >
                                 확인 완료
                             </button>
