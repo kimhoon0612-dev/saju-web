@@ -439,7 +439,7 @@ export default function FortuneHubPage() {
                     <div className="flex flex-col gap-4">
                         {/* Bazi Grid Injected */}
                         {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
-                        <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
+                        <div className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center">
                             <div className="flex justify-between items-start w-full mb-6 px-1">
                                 <div>
                                     <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">나의 기본 설정</div>
@@ -489,7 +489,7 @@ export default function FortuneHubPage() {
                         </div>
 
                         {/* Radar Chart Card (오늘의 운세 흐름 읽기) */}
-                        <div className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50">
+                        <div className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50">
                             <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">나의 분석 모델</div>
                             <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-6">{userSaju?.user_name || "당신"}의 선천적 밸런스</h2>
 
@@ -571,7 +571,7 @@ export default function FortuneHubPage() {
                         </div>
 
                         {/* ==== 영역 2: 내 삶의 나침반! 심층 분석 ==== */}
-                        <section className="bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-8">
+                        <section className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-8">
                             <div>
                                 <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">내 삶의 나침반</div>
                                 <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-2">정통 사주 심층 분석</h2>
