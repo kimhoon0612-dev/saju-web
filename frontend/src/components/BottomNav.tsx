@@ -7,8 +7,8 @@ export default function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "투데이", path: "/", emoji: "🏠" },
         { name: "나의 흐름", path: "/saju", emoji: "🐹" },
+        { name: "투데이", path: "/today", emoji: "🏠" },
         { name: "타로", path: "/tarot", emoji: "🔮" },
         { name: "멘토", path: "/experts", emoji: "🦉" },
         { name: "마켓", path: "/store", emoji: "🛍️" },

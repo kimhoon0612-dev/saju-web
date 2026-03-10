@@ -251,9 +251,10 @@ export default function Home() {
     const storedUserInfo = sessionStorage.getItem("saju_user_info");
 
     if (stored) {
-      setMatrixData(JSON.parse(stored));
-      setShowSplashMode(false); // Skip splash if data exists
+      router.push("/saju");
+      return; // Stop execution to prevent flashing
     }
+
     if (storedUserInfo) {
       try {
         const parsed = JSON.parse(storedUserInfo);
@@ -262,7 +263,7 @@ export default function Home() {
     }
 
     setIsInitializing(false);
-  }, []);
+  }, [router]);
 
   const handleCalculate = async (data: { name: string; birth_time_iso: string; longitude: number; is_lunar: boolean; is_leap_month: boolean; gender: string }) => {
     setIsLoading(true);
@@ -320,14 +321,8 @@ export default function Home() {
       }
       keysToRemoveH.forEach(k => sessionStorage.removeItem(k));
 
-      console.log("Data saved to sessionStorage. Showing dashboard...");
-      setMatrixData(completeMatrix);
-      setUserGender(data.gender);
-
-      // Scroll to top of the matrix dashboard
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 50);
+      console.log("Data saved to sessionStorage. Redirecting to My Flow (Saju)...");
+      router.push('/saju');
 
     } catch (error: any) {
       console.error("데이터 동기화 실패:", error);
@@ -377,48 +372,37 @@ export default function Home() {
         transition={{ duration: 5, ease: "easeInOut", times: [0, 0.4, 0.8, 1] }}
         onClick={handleSplashClick}
       >
-        {/* Cinematic Sunrise Orb */}
+        {/* Background Video Layer */}
         <motion.div
-          initial={{ y: "150%", scale: 0.5, opacity: 0.5 }}
-          animate={{ y: "-20%", scale: [0.5, 1.5, 3, 5], opacity: [0.8, 1, 0.3, 0] }}
-          transition={{ duration: 6, ease: "easeInOut", times: [0, 0.4, 0.7, 1] }}
-          className="absolute w-[60vh] h-[60vh] rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(255,223,137,1) 0%, rgba(255,177,153,0.8) 50%, rgba(255,255,255,0) 80%)"
-          }}
-        />
-
-        {/* Floating Morning Dew / Stardust */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 20) }}
-            animate={{ opacity: [0, 0.8, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 30) }}
-            transition={{
-              duration: 4 + (i % 3),
-              ease: "easeOut",
-              delay: 1 + (i % 2)
-            }}
-            className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-white/60 pointer-events-none blur-[1px]"
-          />
-        ))}
-
-        {/* Ambient Overlay to blend sun out softly into the #FDFBFA app background */}
-        <motion.div
+          className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 3, duration: 2 }}
-          className="absolute inset-0 bg-[#FDFBFA] pointer-events-none z-0"
-        />
+          transition={{ duration: 2 }}
+        >
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLVideoElement).style.display = 'none';
+            }}
+          >
+            <source src="/videos/intro_bg.mp4" type="video/mp4" />
+          </video>
+          {/* Subtle gradient overlay to ensure text is always readable */}
+          <div className="absolute inset-0 bg-black/30 bg-gradient-to-b from-transparent via-black/10 to-black/60 pointer-events-none"></div>
+        </motion.div>
 
         {/* Cinematic Typography Reveal */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2, delay: 3.5, ease: "easeOut" }}
+          transition={{ duration: 2, delay: 1.5, ease: "easeOut" }}
           className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
         >
-          <h2 className="text-[26px] md:text-[32px] font-black text-[#2D3748] tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6">
+          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
             당신의 운세가<br />궁금하십니까
           </h2>
         </motion.div>
@@ -427,13 +411,13 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 4.5, duration: 1, ease: "easeOut" }}
+          transition={{ delay: 2.5, duration: 1, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
-          <div className="bg-[#2D3748] text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_24px_rgba(45,55,72,0.15)] group relative overflow-hidden flex items-center gap-2">
-            <span className="relative z-10 tracking-wide text-white/95 group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
-            <ChevronRight className="w-4 h-4 relative z-10 text-white/80 group-hover:text-white transition-all group-hover:translate-x-1" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] group relative overflow-hidden flex items-center gap-2">
+            <span className="relative z-10 tracking-wide text-white group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
+            <ChevronRight className="w-4 h-4 relative z-10 text-white transition-all group-hover:translate-x-1" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
           </div>
         </motion.div>
       </motion.div>
