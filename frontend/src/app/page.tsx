@@ -365,49 +365,88 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#050914] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-          }`}
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#FDFBFA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
-        {/* Mystic Sync: Dynamic Grid & Ethereal Nebulas */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-100">
+        {/* MZ Cute Zodiac Animation Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gradient-to-br from-[#FFF0F5] via-[#FFF8E7] to-[#F0F8FF]">
+
+          {/* Animated Blob Background Elements */}
           <motion.div
             animate={{
               rotate: 360,
-              scale: [1, 1.2, 1]
+              scale: [1, 1.2, 0.9, 1],
+              borderRadius: ["40%", "60%", "30%", "40%"]
             }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] opacity-100 mix-blend-screen"
-            style={{
-              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 223, 137, 0.6) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.6) 75%, rgba(255, 255, 255, 0) 100%)",
-              filter: "blur(30px)"
-            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-[#FFB199]/20 blur-[60px]"
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_90%)]"></div>
+          <motion.div
+            animate={{
+              rotate: -360,
+              scale: [1, 0.8, 1.1, 1],
+              borderRadius: ["60%", "30%", "50%", "60%"]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-[10%] -right-[10%] w-[80vw] h-[80vw] bg-[#81C784]/20 blur-[60px]"
+          />
+
+          {/* Floating Hanja Characters */}
+          {['甲', '을', '丙', '정', '戊', '기', '庚', '신', '壬', '계'].map((char, i) => (
+            <motion.div
+              key={`hanja-${i}`}
+              initial={{ opacity: 0, scale: 0, x: (i % 2 === 0 ? '-50vw' : '50vw'), y: '100vh' }}
+              animate={{
+                opacity: [0, 0.4, 0],
+                scale: [0.5, 1.5, 0.5],
+                x: (i % 2 === 0 ? '50vw' : '-50vw'),
+                y: '-20vh',
+                rotate: [0, i % 2 === 0 ? 180 : -180]
+              }}
+              transition={{ duration: 8 + (i % 5), repeat: Infinity, ease: "linear", delay: i * 0.7 }}
+              className="absolute font-black text-4xl text-[#FFB199]/40 drop-shadow-sm font-nanum pointer-events-none"
+              style={{
+                left: `${10 + (i * 8)}%`,
+              }}
+            >
+              {char}
+            </motion.div>
+          ))}
+
+          {/* Bouncing Cute Zodiac Animals */}
+          {['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'].map((emoji, i) => (
+            <motion.div
+              key={`zodiac-${i}`}
+              initial={{ opacity: 0, y: "110vh", x: (i % 2 === 0 ? 50 : -50) }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                y: ["110vh", "30vh", "10vh", "-20vh"],
+                x: [
+                  (i % 2 === 0 ? 50 : -50),
+                  (i % 2 === 0 ? -100 : 100),
+                  (i % 2 === 0 ? 50 : -50),
+                  (i % 2 === 0 ? -150 : 150)
+                ],
+                rotate: [0, -15, 15, -10, 10, 0],
+                scale: [0.8, 1.2, 1, 1.1, 0.9]
+              }}
+              transition={{
+                duration: 6 + (i % 4),
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.4
+              }}
+              className="absolute text-[40px] md:text-[50px] drop-shadow-md pointer-events-none z-0"
+              style={{
+                left: `${(i * 8)}%`,
+              }}
+            >
+              {emoji}
+            </motion.div>
+          ))}
         </div>
 
-        {/* Floating Mystical Orbs (Souls/Energy) */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 20) }}
-            animate={{ opacity: [0, 1, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 30) }}
-            transition={{
-              duration: 4 + (i % 3),
-              ease: "easeOut",
-              delay: (i % 3) * 0.5
-            }}
-            className="absolute bottom-0 rounded-full pointer-events-none"
-            style={{
-              width: `${4 + (i % 5)}px`,
-              height: `${4 + (i % 5)}px`,
-              backgroundColor: i % 2 === 0 ? "#FFFFFF" : (i % 3 === 0 ? "#FFDF89" : "#FFB199"),
-              boxShadow: `0 0 12px ${i % 2 === 0 ? "rgba(255,255,255,0.9)" : (i % 3 === 0 ? "rgba(255,223,137,0.9)" : "rgba(255,177,153,0.9)")}`
-            }}
-          />
-        ))}
-
-        {/* Kinetic Typography (Slow Letter Reveal with Blur) */}
+        {/* Bubbly Typography Reveal */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
           <motion.div
             initial="hidden"
@@ -416,10 +455,10 @@ export default function Home() {
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.15, delayChildren: 1 }
+                transition: { staggerChildren: 0.1, delayChildren: 0.5 }
               }
             }}
-            className="text-[32px] md:text-[40px] font-black tracking-[0.2em] text-center leading-[1.6] font-pretendard px-6 flex flex-wrap justify-center gap-x-2"
+            className="text-[36px] md:text-[46px] font-black tracking-widest text-[#FF7E67] text-center leading-[1.4] font-jalnan px-6 flex flex-wrap justify-center gap-x-2 drop-shadow-[0_4px_10px_rgba(255,126,103,0.2)]"
           >
             {['당', '신', '의', ' ', '운', '세'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-3"></span>;
@@ -427,36 +466,51 @@ export default function Home() {
                 <motion.span
                   key={index}
                   variants={{
-                    hidden: { opacity: 0, y: 15, filter: "blur(6px)" },
-                    visible: { opacity: 1, y: 0, filter: "blur(0px)" }
+                    hidden: { opacity: 0, y: 30, scale: 0.5 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: { type: "spring", stiffness: 300, damping: 12 }
+                    }
                   }}
-                  transition={{ duration: 0.9, ease: "easeOut" }}
-                  className="inline-block text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                  className="inline-block"
                 >
                   {char}
                 </motion.span>
               );
             })}
           </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.5, type: "spring", stiffness: 200, damping: 15 }}
+            className="mt-4 px-4 py-1.5 bg-white/60 backdrop-blur-md rounded-full text-[#81C784] font-bold text-[14px] shadow-sm border border-[#81C784]/30"
+          >
+            #사주팝콘 #내운명어때
+          </motion.div>
         </div>
 
-        {/* High-end Minimal Enter Button with Spin Gradient Border */}
+        {/* Cute Jelly Enter Button */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.5, duration: 1.2, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, type: "spring", stiffness: 150, damping: 12 }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
-          <div className="relative group overflow-hidden rounded-[24px] p-[1.5px] cursor-pointer">
-            {/* Spinning gradient border */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FFB199] via-[#81C784] to-[#4A5568] animate-[spin_3s_linear_infinite] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative cursor-pointer group"
+          >
+            {/* Playful shadow offset */}
+            <div className="absolute top-1.5 left-0 w-full h-full bg-[#FFB199] rounded-[28px] transition-transform group-hover:translate-y-1"></div>
 
             {/* Inner Button Content */}
-            <div className="relative bg-[#050914] px-10 py-3.5 rounded-[23px] font-bold text-[16px] flex items-center justify-center gap-2 h-full w-full">
-              <span className="tracking-wide text-white group-hover:text-white transition-colors">명리의 세계로</span>
-              <ChevronRight className="w-4 h-4 text-white/80 transition-all group-hover:translate-x-1 group-hover:text-white" />
+            <div className="relative bg-white border-2 border-[#FFB199] px-10 py-4 rounded-[28px] font-bold text-[18px] flex items-center justify-center gap-2 h-full w-full shadow-[0_4px_15px_rgba(255,177,153,0.3)]">
+              <span className="tracking-wide text-[#333333] font-jalnan">명리의 세계로 🚀</span>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
 
