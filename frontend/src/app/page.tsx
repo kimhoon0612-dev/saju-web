@@ -370,48 +370,50 @@ export default function Home() {
         onClick={handleSplashClick}
       >
         {/* Mystic Sync: Dynamic Grid & Ethereal Nebulas */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-100">
           <motion.div
             animate={{
               rotate: 360,
-              scale: [1, 1.1, 1]
+              scale: [1, 1.2, 1]
             }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] opacity-60"
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] opacity-100 mix-blend-screen"
             style={{
-              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.4) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.4) 75%, rgba(255, 255, 255, 0) 100%)",
+              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.8) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.8) 75%, rgba(255, 255, 255, 0) 100%)",
+              filter: "blur(20px)"
             }}
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_70%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_90%)]"></div>
 
           {/* Vertical Matrix Lines (Abstract Fate Strings) */}
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={`line-${i}`}
-              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784]/60 to-transparent"
+              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784] to-transparent shadow-[0_0_15px_rgba(129,199,132,0.8)]"
               style={{ left: `${10 + i * 11}%`, top: "-20%", height: "140%" }}
-              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.2, 0.6, 0.2] }}
-              transition={{ duration: 5 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.4, 0.9, 0.4] }}
+              transition={{ duration: 4 + i * 1.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
             />
           ))}
         </div>
 
         {/* Floating Mystical Orbs (Like Souls/Data packets) */}
-        {[...Array(12)].map((_, i) => (
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={`particle-${i}`}
-            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 15) }}
-            animate={{ opacity: [0, 0.7, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 25) }}
+            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 20) }}
+            animate={{ opacity: [0, 1, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 30) }}
             transition={{
-              duration: 3 + (i % 4),
+              duration: 4 + (i % 3),
               ease: "easeOut",
-              delay: (i % 3) * 0.8
+              delay: (i % 3) * 0.5
             }}
-            className="absolute bottom-0 rounded-full pointer-events-none blur-[2px]"
+            className="absolute bottom-0 rounded-full pointer-events-none"
             style={{
-              width: `${3 + (i % 4)}px`,
-              height: `${3 + (i % 4)}px`,
-              backgroundColor: i % 2 === 0 ? "#FFB199" : "#81C784"
+              width: `${4 + (i % 5)}px`,
+              height: `${4 + (i % 5)}px`,
+              backgroundColor: i % 2 === 0 ? "#FFFFFF" : "#81C784",
+              boxShadow: `0 0 12px ${i % 2 === 0 ? "rgba(255,255,255,0.9)" : "rgba(129,199,132,0.9)"}`
             }}
           />
         ))}
