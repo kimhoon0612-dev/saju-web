@@ -365,59 +365,107 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#050914] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
           }`}
-        initial={{ backgroundColor: "#0B1120" }}
-        animate={{ backgroundColor: ["#0B1120", "#31263E", "#FFB199", "#FDFBFA"] }}
-        transition={{ duration: 5, ease: "easeInOut", times: [0, 0.4, 0.8, 1] }}
         onClick={handleSplashClick}
       >
-        {/* Background Video Layer */}
-        <motion.div
-          className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
-        >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLVideoElement).style.display = 'none';
+        {/* Mystic Sync: Dynamic Grid & Ethereal Nebulas */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60">
+          <motion.div
+            animate={{
+              rotate: 360,
+              scale: [1, 1.1, 1]
             }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] opacity-30"
+            style={{
+              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.3) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.3) 75%, rgba(255, 255, 255, 0) 100%)",
+            }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_80%)]"></div>
+
+          {/* Vertical Matrix Lines (Abstract Fate Strings) */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`line-${i}`}
+              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784]/30 to-transparent"
+              style={{ left: `${10 + i * 11}%`, top: "-20%", height: "140%" }}
+              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.1, 0.4, 0.1] }}
+              transition={{ duration: 5 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+            />
+          ))}
+        </div>
+
+        {/* Floating Mystical Orbs (Like Souls/Data packets) */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 15) }}
+            animate={{ opacity: [0, 0.6, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 25) }}
+            transition={{
+              duration: 3 + (i % 4),
+              ease: "easeOut",
+              delay: (i % 3) * 0.8
+            }}
+            className="absolute bottom-0 rounded-full pointer-events-none blur-[2px]"
+            style={{
+              width: `${3 + (i % 4)}px`,
+              height: `${3 + (i % 4)}px`,
+              backgroundColor: i % 2 === 0 ? "#FFB199" : "#81C784"
+            }}
+          />
+        ))}
+
+        {/* Kinetic Typography (Slow Letter Reveal with Blur) */}
+        <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.15, delayChildren: 1 }
+              }
+            }}
+            className="text-[26px] md:text-[32px] font-black tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 flex flex-wrap justify-center gap-x-1.5"
           >
-            <source src="/videos/intro_bg2.mp4" type="video/mp4" />
-          </video>
-          {/* Subtle gradient overlay to ensure text is always readable */}
-          <div className="absolute inset-0 bg-black/30 bg-gradient-to-b from-transparent via-black/10 to-black/60 pointer-events-none"></div>
-        </motion.div>
+            {['당', '신', '의', ' ', '운', '세', '가', <br key="br" />, '궁', '금', '하', '십', '니', '까'].map((char, index) => {
+              if (typeof char !== 'string') return char;
+              if (char === ' ') return <span key={index} className="w-2"></span>;
+              return (
+                <motion.span
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, y: 15, filter: "blur(6px)" },
+                    visible: { opacity: 1, y: 0, filter: "blur(0px)" }
+                  }}
+                  transition={{ duration: 0.9, ease: "easeOut" }}
+                  className="inline-block text-white/95 drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
+                >
+                  {char}
+                </motion.span>
+              );
+            })}
+          </motion.div>
+        </div>
 
-        {/* Cinematic Typography Reveal */}
+        {/* High-end Minimal Enter Button with Spin Gradient Border */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2, delay: 1.5, ease: "easeOut" }}
-          className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full"
-        >
-          <h2 className="text-[26px] md:text-[32px] font-black text-white tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
-            당신의 운세가<br />궁금하십니까
-          </h2>
-        </motion.div>
-
-        {/* Minimal Enter Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5, duration: 1, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
-          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-3.5 rounded-[24px] font-bold text-[15px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] group relative overflow-hidden flex items-center gap-2">
-            <span className="relative z-10 tracking-wide text-white group-hover:text-white transition-colors">내 운명의 결 확인하기</span>
-            <ChevronRight className="w-4 h-4 relative z-10 text-white transition-all group-hover:translate-x-1" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          <div className="relative group overflow-hidden rounded-[24px] p-[1.5px] cursor-pointer">
+            {/* Spinning gradient border */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FFB199] via-[#81C784] to-[#4A5568] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity"></div>
+
+            {/* Inner Button Content */}
+            <div className="relative bg-[#050914] px-8 py-3.5 rounded-[23px] font-bold text-[15px] flex items-center justify-center gap-2 h-full w-full">
+              <span className="tracking-wide text-white/90 group-hover:text-white transition-colors">명리 매트릭스 동기화</span>
+              <ChevronRight className="w-4 h-4 text-white/70 transition-all group-hover:translate-x-1 group-hover:text-white" />
+            </div>
           </div>
         </motion.div>
       </motion.div>
