@@ -377,20 +377,20 @@ export default function Home() {
               scale: [1, 1.1, 1]
             }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] opacity-30"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] opacity-60"
             style={{
-              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.3) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.3) 75%, rgba(255, 255, 255, 0) 100%)",
+              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.4) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.4) 75%, rgba(255, 255, 255, 0) 100%)",
             }}
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_80%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_70%)]"></div>
 
           {/* Vertical Matrix Lines (Abstract Fate Strings) */}
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={`line-${i}`}
-              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784]/30 to-transparent"
+              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784]/60 to-transparent"
               style={{ left: `${10 + i * 11}%`, top: "-20%", height: "140%" }}
-              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.1, 0.4, 0.1] }}
+              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.2, 0.6, 0.2] }}
               transition={{ duration: 5 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
             />
           ))}
@@ -401,7 +401,7 @@ export default function Home() {
           <motion.div
             key={`particle-${i}`}
             initial={{ opacity: 0, y: "100vh", x: (i % 2 === 0 ? 1 : -1) * (i * 15) }}
-            animate={{ opacity: [0, 0.6, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 25) }}
+            animate={{ opacity: [0, 0.7, 0], y: "-20vh", x: (i % 2 === 0 ? -1 : 1) * (i * 25) }}
             transition={{
               duration: 3 + (i % 4),
               ease: "easeOut",
@@ -428,11 +428,10 @@ export default function Home() {
                 transition: { staggerChildren: 0.15, delayChildren: 1 }
               }
             }}
-            className="text-[26px] md:text-[32px] font-black tracking-[0.15em] text-center leading-[1.6] font-pretendard px-6 flex flex-wrap justify-center gap-x-1.5"
+            className="text-[32px] md:text-[40px] font-black tracking-[0.2em] text-center leading-[1.6] font-pretendard px-6 flex flex-wrap justify-center gap-x-2"
           >
-            {['당', '신', '의', ' ', '운', '세', '가', <br key="br" />, '궁', '금', '하', '십', '니', '까'].map((char, index) => {
-              if (typeof char !== 'string') return char;
-              if (char === ' ') return <span key={index} className="w-2"></span>;
+            {['당', '신', '의', ' ', '운', '세'].map((char, index) => {
+              if (char === ' ') return <span key={index} className="w-3"></span>;
               return (
                 <motion.span
                   key={index}
@@ -441,7 +440,7 @@ export default function Home() {
                     visible: { opacity: 1, y: 0, filter: "blur(0px)" }
                   }}
                   transition={{ duration: 0.9, ease: "easeOut" }}
-                  className="inline-block text-white/95 drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
+                  className="inline-block text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                 >
                   {char}
                 </motion.span>
@@ -454,17 +453,17 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
+          transition={{ delay: 2.5, duration: 1.2, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
           <div className="relative group overflow-hidden rounded-[24px] p-[1.5px] cursor-pointer">
             {/* Spinning gradient border */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FFB199] via-[#81C784] to-[#4A5568] animate-[spin_3s_linear_infinite] opacity-60 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FFB199] via-[#81C784] to-[#4A5568] animate-[spin_3s_linear_infinite] opacity-80 group-hover:opacity-100 transition-opacity"></div>
 
             {/* Inner Button Content */}
-            <div className="relative bg-[#050914] px-8 py-3.5 rounded-[23px] font-bold text-[15px] flex items-center justify-center gap-2 h-full w-full">
-              <span className="tracking-wide text-white/90 group-hover:text-white transition-colors">명리 매트릭스 동기화</span>
-              <ChevronRight className="w-4 h-4 text-white/70 transition-all group-hover:translate-x-1 group-hover:text-white" />
+            <div className="relative bg-[#050914] px-10 py-3.5 rounded-[23px] font-bold text-[16px] flex items-center justify-center gap-2 h-full w-full">
+              <span className="tracking-wide text-white group-hover:text-white transition-colors">명리의 세계로</span>
+              <ChevronRight className="w-4 h-4 text-white/80 transition-all group-hover:translate-x-1 group-hover:text-white" />
             </div>
           </div>
         </motion.div>
