@@ -379,25 +379,14 @@ export default function Home() {
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] opacity-100 mix-blend-screen"
             style={{
-              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(129, 199, 132, 0.8) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.8) 75%, rgba(255, 255, 255, 0) 100%)",
-              filter: "blur(20px)"
+              background: "conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 223, 137, 0.6) 25%, rgba(255, 255, 255, 0) 50%, rgba(255, 177, 153, 0.6) 75%, rgba(255, 255, 255, 0) 100%)",
+              filter: "blur(30px)"
             }}
           />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_90%)]"></div>
-
-          {/* Vertical Matrix Lines (Abstract Fate Strings) */}
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={`line-${i}`}
-              className="absolute w-px bg-gradient-to-b from-transparent via-[#81C784] to-transparent shadow-[0_0_15px_rgba(129,199,132,0.8)]"
-              style={{ left: `${10 + i * 11}%`, top: "-20%", height: "140%" }}
-              animate={{ y: ["-10%", "10%", "-10%"], opacity: [0.4, 0.9, 0.4] }}
-              transition={{ duration: 4 + i * 1.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-            />
-          ))}
         </div>
 
-        {/* Floating Mystical Orbs (Like Souls/Data packets) */}
+        {/* Floating Mystical Orbs (Souls/Energy) */}
         {[...Array(15)].map((_, i) => (
           <motion.div
             key={`particle-${i}`}
@@ -412,8 +401,8 @@ export default function Home() {
             style={{
               width: `${4 + (i % 5)}px`,
               height: `${4 + (i % 5)}px`,
-              backgroundColor: i % 2 === 0 ? "#FFFFFF" : "#81C784",
-              boxShadow: `0 0 12px ${i % 2 === 0 ? "rgba(255,255,255,0.9)" : "rgba(129,199,132,0.9)"}`
+              backgroundColor: i % 2 === 0 ? "#FFFFFF" : (i % 3 === 0 ? "#FFDF89" : "#FFB199"),
+              boxShadow: `0 0 12px ${i % 2 === 0 ? "rgba(255,255,255,0.9)" : (i % 3 === 0 ? "rgba(255,223,137,0.9)" : "rgba(255,177,153,0.9)")}`
             }}
           />
         ))}
