@@ -69,7 +69,7 @@ export default function Home() {
   // Palmistry States
   const [showPalm, setShowPalm] = useState(false);
   const [isAnalyzingPalm, setIsAnalyzingPalm] = useState(false);
-  const [palmResult, setPalmResult] = useState("");
+  const [palmResult, setPalmResult] = useState<any>(null);
   const palmInputRef = useRef<HTMLInputElement>(null);
 
   // User Profile
@@ -258,7 +258,7 @@ export default function Home() {
 
     setShowPalm(true);
     setIsAnalyzingPalm(true);
-    setPalmResult("");
+    setPalmResult(null);
 
     const MAX_WIDTH = 600;
     const MAX_HEIGHT = 600;
@@ -313,12 +313,12 @@ export default function Home() {
 
         if (res.ok) {
           const data = await res.json();
-          setPalmResult(data.result);
+          setPalmResult(data);
         } else {
-          setPalmResult("AI 분석 서버와 연결이 원활하지 않습니다. 다시 시도해 주세요.");
+          setPalmResult({ error: "AI 분석 서버와 연결이 원활하지 않습니다. 다시 시도해 주세요." });
         }
       } catch (err) {
-        setPalmResult("분석 중 오류가 발생했습니다.");
+        setPalmResult({ error: "분석 중 오류가 발생했습니다." });
       } finally {
         setIsAnalyzingPalm(false);
       }
@@ -940,8 +940,53 @@ export default function Home() {
               </div>
             ) : (
               <div className="w-full flex flex-col gap-4">
-                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-left max-h-[50vh] overflow-y-auto hidden-scrollbar">
-                  <p className="text-[15px] text-gray-800 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult}</p>
+                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 sm:p-5 text-left max-h-[60vh] overflow-y-auto hidden-scrollbar flex flex-col gap-4">
+                    {palmResult?.error ? (
+                        <p className="text-[15px] text-red-500 font-bold">{palmResult.error}</p>
+                    ) : palmResult ? (
+                        <>
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0 mt-0.5"><span className="text-lg">🧬</span></div>
+                                <div>
+                                    <h4 className="text-[15px] font-black text-gray-900 mb-1">생명선 <span className="text-[12px] text-gray-400 font-medium ml-1">건강·수명</span></h4>
+                                    <p className="text-[14px] text-gray-700 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult.life_line}</p>
+                                </div>
+                            </div>
+                            <div className="w-full h-px bg-gray-200/60"></div>
+                            
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5"><span className="text-lg">🧠</span></div>
+                                <div>
+                                    <h4 className="text-[15px] font-black text-gray-900 mb-1">두뇌선 <span className="text-[12px] text-gray-400 font-medium ml-1">지능·적성</span></h4>
+                                    <p className="text-[14px] text-gray-700 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult.brain_line}</p>
+                                </div>
+                            </div>
+                            <div className="w-full h-px bg-gray-200/60"></div>
+                            
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center shrink-0 mt-0.5"><span className="text-lg">❤️</span></div>
+                                <div>
+                                    <h4 className="text-[15px] font-black text-gray-900 mb-1">감정선 <span className="text-[12px] text-gray-400 font-medium ml-1">성격·연애</span></h4>
+                                    <p className="text-[14px] text-gray-700 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult.heart_line}</p>
+                                </div>
+                            </div>
+                            <div className="w-full h-px bg-gray-200/60"></div>
+                            
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center shrink-0 mt-0.5"><span className="text-lg">💼</span></div>
+                                <div>
+                                    <h4 className="text-[15px] font-black text-gray-900 mb-1">운명선 <span className="text-[12px] text-gray-400 font-medium ml-1">직업·재물</span></h4>
+                                    <p className="text-[14px] text-gray-700 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult.fate_line}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-2 bg-blue-50/50 rounded-xl p-3 border border-blue-100/50">
+                                <p className="text-[13px] text-blue-800 font-bold leading-relaxed break-keep leading-[1.6]">
+                                    <span className="text-[15px] mr-1">✨</span>{palmResult.summary}
+                                </p>
+                            </div>
+                        </>
+                    ) : null}
                 </div>
                 <button onClick={() => setShowPalm(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
                   확인 완료
