@@ -8,7 +8,7 @@ import {
 } from 'recharts';
 import ExpertsManager from './experts/ExpertsManager';
 
-type TabId = 'analytics' | 'goods' | 'market' | 'system' | 'experts';
+type TabId = 'analytics' | 'goods' | 'market' | 'system' | 'experts' | 'users';
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<TabId>('analytics');
@@ -19,6 +19,7 @@ export default function AdminDashboard() {
     const [marketData, setMarketData] = useState<any>(null);
     const [systemData, setSystemData] = useState<any>(null);
     const [inventoryData, setInventoryData] = useState<any[]>([]);
+    const [usersList, setUsersList] = useState<any[]>([]);
 
     // Sandbox State
     const [sandboxPrompt, setSandboxPrompt] = useState("");
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
         if (activeTab === 'goods') fetchInventory();
         if (activeTab === 'market') fetchMarket();
         if (activeTab === 'system') fetchSystem();
+        if (activeTab === 'users') fetchUsers();
 
         return () => {
             if (interval) clearInterval(interval);
@@ -131,6 +133,16 @@ export default function AdminDashboard() {
                 fetch('/api/admin/system/privacy-audit', { cache: 'no-store' }).then(r => r.json())
             ]);
             setSystemData({ health: healthRes, audit: auditRes });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch('/api/admin/users', { cache: 'no-store' });
+            const data = await res.json();
+            setUsersList(data);
         } catch (e) {
             console.error(e);
         }
@@ -759,6 +771,61 @@ export default function AdminDashboard() {
         );
     };
 
+    const renderUsers = () => {
+        return (
+            <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+                <h2 className="text-2xl font-bold text-amber-100 tracking-tight mb-2 flex items-center gap-2">
+                    <Users className="w-6 h-6 text-[#d4af37]" /> 회원 관리 (Users)
+                </h2>
+
+                <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20 flex flex-col">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-amber-100 flex items-center gap-2">
+                            <Database className="w-5 h-5 text-[#d4af37]" /> 가입된 전체 회원 목록
+                        </h3>
+                        <span className="text-xs text-white/50 bg-[#110e1b] px-3 py-1.5 rounded-full border border-white/10">총 {usersList.length}명</span>
+                    </div>
+
+                    <div className="flex-1 border border-[#d4af37]/20 rounded-xl overflow-hidden bg-[#110e1b] w-full overflow-x-auto">
+                        <table className="w-full text-left text-sm text-white/80 whitespace-nowrap">
+                            <thead className="bg-[#d4af37]/10 text-amber-200 border-b border-[#d4af37]/20">
+                                <tr>
+                                    <th className="p-3 font-semibold">ID</th>
+                                    <th className="p-3 font-semibold">가입 이메일</th>
+                                    <th className="p-3 font-semibold">이름</th>
+                                    <th className="p-3 font-semibold">성별</th>
+                                    <th className="p-3 font-semibold">생년월일(ISO)</th>
+                                    <th className="p-3 font-semibold">음력/윤달</th>
+                                    <th className="p-3 font-semibold">보유 포인트</th>
+                                    <th className="p-3 font-semibold">가입일</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {usersList.map((user: any) => (
+                                    <tr key={user.id} className="border-b border-[#d4af37]/10 hover:bg-[#1a142d]/50 transition-colors">
+                                        <td className="p-3 text-white/60">#{user.id}</td>
+                                        <td className="p-3 font-bold text-white">{user.email || '미연동'}</td>
+                                        <td className="p-3 text-white/90">{user.name || '알 수 없음'}</td>
+                                        <td className="p-3 text-white/70">{user.gender === 'M' ? '남성' : (user.gender === 'F' ? '여성' : '-')}</td>
+                                        <td className="p-3 text-white/70">{user.birth_time_iso ? user.birth_time_iso.replace('T', ' ') : '-'}</td>
+                                        <td className="p-3 text-white/50 text-xs">
+                                            {user.is_lunar ? '음력' : '양력'}{user.is_leap_month ? ' (윤달)' : ''}
+                                        </td>
+                                        <td className="p-3 text-amber-400 font-bold">{user.point_balance.toLocaleString()} P</td>
+                                        <td className="p-3 text-white/40 text-xs">{new Date(user.created_at).toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                                {usersList.length === 0 && (
+                                    <tr><td colSpan={8} className="p-6 text-center text-white/40">가입된 회원이 없습니다.</td></tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="min-h-screen bg-[#0d0914] relative font-pretendard flex flex-col md:flex-row pt-[72px]">
             {/* Background elements */}
@@ -806,6 +873,12 @@ export default function AdminDashboard() {
                     >
                         <Sparkles className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">상담사 관리</span>
                     </button>
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'users' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
+                    >
+                        <Users className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">회원/멤버십</span>
+                    </button>
                 </nav>
 
                 {/* Admin Profile Foot */}
@@ -850,6 +923,7 @@ export default function AdminDashboard() {
                 {activeTab === 'goods' && renderGoods()}
                 {activeTab === 'market' && renderMarket()}
                 {activeTab === 'system' && renderSystem()}
+                {activeTab === 'users' && renderUsers()}
                 {activeTab === 'experts' && <ExpertsManager />}
             </main>
 

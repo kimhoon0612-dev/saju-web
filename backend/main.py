@@ -291,6 +291,8 @@ from app.api.tarot import router as tarot_router
 from app.api.physiognomy import router as physiognomy_router
 from app.api.experts import router as experts_router
 from app.api.admin_experts import router as admin_experts_router
+from app.api.auth import router as auth_router
+from app.api.admin_users import router as admin_users_router
 
 app.include_router(marketplace_router)
 app.include_router(admin_analytics_router)
@@ -304,3 +306,5 @@ app.include_router(physiognomy_router, prefix="/api")
 app.include_router(experts_router, prefix="/api/experts", tags=["experts"])
 app.include_router(admin_experts_router, prefix="/api/admin/experts", tags=["admin-experts"])
 
+app.include_router(auth_router)
+app.include_router(admin_users_router)

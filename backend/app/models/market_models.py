@@ -18,9 +18,20 @@ class ReservationStatus(str, enum.Enum):
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False) # Will use email as username
+    email = Column(String, unique=True, index=True, nullable=True) # Will store email or kakao id
+    password_hash = Column(String, nullable=True) # Password hash for email login
+    name = Column(String, nullable=True)
+    
+    # Birth data fields
+    gender = Column(String, nullable=True)
+    birth_time_iso = Column(String, nullable=True)
+    is_lunar = Column(Boolean, default=False)
+    is_leap_month = Column(Boolean, default=False)
+    
     role = Column(Enum(UserRole), default=UserRole.USER)
     point_balance = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
     
     # 사주 특성 (오행 등 텍스트 요약)
     saju_summary = Column(Text, nullable=True)

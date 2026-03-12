@@ -84,11 +84,16 @@ export default function FortuneHubPage() {
     const [showTalisman, setShowTalisman] = useState(false);
     const [talismanResults, setTalismanResults] = useState<{ type: string, title: string, desc: string }[]>([]);
 
-    // Physiognomy States
     const [showFace, setShowFace] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [faceResult, setFaceResult] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Palmistry States
+    const [showPalm, setShowPalm] = useState(false);
+    const [isAnalyzingPalm, setIsAnalyzingPalm] = useState(false);
+    const [palmResult, setPalmResult] = useState("");
+    const palmInputRef = useRef<HTMLInputElement>(null);
 
     // Calculate Element Counts and Saju Strength
     let elementCounts: Record<string, number> = { "목": 0, "화": 0, "토": 0, "금": 0, "수": 0 };
@@ -359,7 +364,8 @@ export default function FortuneHubPage() {
             const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
 
             try {
-                const res = await fetch("https://saju-web.onrender.com/api/physiognomy", {
+                const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+                const res = await fetch(`${API_BASE}/api/physiognomy`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ image_base64: compressedBase64 })
@@ -375,6 +381,82 @@ export default function FortuneHubPage() {
                 setFaceResult("분석 중 오류가 발생했습니다.");
             } finally {
                 setIsAnalyzing(false);
+            }
+        };
+
+        img.src = objectUrl;
+    };
+
+    // 6. Palm Reading Logic
+    const handlePalmUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setShowPalm(true);
+        setIsAnalyzingPalm(true);
+        setPalmResult("");
+
+        const MAX_WIDTH = 600;
+        const MAX_HEIGHT = 600;
+
+        const img = new Image();
+        img.onerror = () => {
+            setPalmResult("이미지를 불러오는데 실패했습니다.");
+            setIsAnalyzingPalm(false);
+        };
+
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = async () => {
+            URL.revokeObjectURL(objectUrl);
+
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height = Math.round((height *= MAX_WIDTH / width));
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width = Math.round((width *= MAX_HEIGHT / height));
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+
+            if (!ctx) {
+                setPalmResult("이미지 처리 중 오류가 발생했습니다.");
+                setIsAnalyzingPalm(false);
+                return;
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+            try {
+                const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+                const res = await fetch(`${API_BASE}/api/palmistry`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image_base64: compressedBase64 })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    setPalmResult(data.result);
+                } else {
+                    setPalmResult("AI 분석 서버와 연결이 원활하지 않습니다. 다시 시도해 주세요.");
+                }
+            } catch (err) {
+                setPalmResult("분석 중 오류가 발생했습니다.");
+            } finally {
+                setIsAnalyzingPalm(false);
             }
         };
 
@@ -646,6 +728,11 @@ export default function FortuneHubPage() {
                                         <SpotIcon emoji="🎂" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">나침반 흐름</span>
                                     </Link>
+                                    <div onClick={() => palmInputRef.current?.click()} className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                                        <SpotIcon emoji="🖐️" />
+                                        <span className="text-[13px] font-bold text-gray-700 tracking-tight">나의 손금</span>
+                                        <input type="file" accept="image/*" ref={palmInputRef} className="hidden" onChange={handlePalmUpload} />
+                                    </div>
                                     <Link href="/saju/confirm?type=전생운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                                         <SpotIcon emoji="🔮" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">과거의 나</span>
@@ -677,6 +764,67 @@ export default function FortuneHubPage() {
                 </div>
             )}
 
+            {/* Face Reading Modal */}
+            {showFace && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowFace(false)}>
+                    <div className="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center flex flex-col items-center animate-scale-in" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => setShowFace(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors"><X size={24} /></button>
+                        
+                        <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+                            <span className="text-[32px]">🦊</span>
+                        </div>
+                        
+                        <h3 className="text-[22px] font-black text-gray-900 mb-2">AI 관상 분석</h3>
+                        
+                        {isAnalyzing ? (
+                            <div className="flex flex-col items-center py-8">
+                                <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+                                <p className="text-[15px] font-bold text-gray-600">명리학 기반으로<br/>얼굴에 담긴 기운을 분석하는 중입니다...</p>
+                            </div>
+                        ) : (
+                            <div className="w-full flex flex-col gap-4">
+                                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-left max-h-[50vh] overflow-y-auto">
+                                    <p className="text-[15px] text-gray-800 leading-relaxed font-medium break-keep whitespace-pre-wrap">{faceResult}</p>
+                                </div>
+                                <button onClick={() => setShowFace(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
+                                    확인 완료
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Palmistry Modal */}
+            {showPalm && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowPalm(false)}>
+                    <div className="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center flex flex-col items-center animate-scale-in" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => setShowPalm(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors"><X size={24} /></button>
+                        
+                        <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+                            <span className="text-[32px]">🖐️</span>
+                        </div>
+                        
+                        <h3 className="text-[22px] font-black text-gray-900 mb-2">AI 손금 분석</h3>
+                        
+                        {isAnalyzingPalm ? (
+                            <div className="flex flex-col items-center py-8">
+                                <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+                                <p className="text-[15px] font-bold text-gray-600">수상학 기반으로<br/>손바닥에 새겨진 길흉을 분석하는 중입니다...</p>
+                            </div>
+                        ) : (
+                            <div className="w-full flex flex-col gap-4">
+                                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-left max-h-[50vh] overflow-y-auto hidden-scrollbar">
+                                    <p className="text-[15px] text-gray-800 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult}</p>
+                                </div>
+                                <button onClick={() => setShowPalm(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
+                                    확인 완료
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
         </div>
     );

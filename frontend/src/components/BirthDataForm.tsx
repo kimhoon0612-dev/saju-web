@@ -23,6 +23,12 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     const [isLeapMonth, setIsLeapMonth] = useState(false);
     const [gender, setGender] = useState('F');
     const [name, setName] = useState('');
+    
+    // 회원가입 관련 상태 반환
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
+    
     const [isRemembered, setIsRemembered] = useState(false);
 
     // 컴포넌트 마운트 시 로컬 스토리지에서 저장된 정보 불러오기
@@ -69,13 +75,18 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         if (isRemembered) {
             const dataToSave = {
                 year, month, day, ampm, hour, minute,
-                gender, isLunar, isLeapMonth, name
+                gender, isLunar, isLeapMonth, name, email
             };
             localStorage.setItem('saju_saved_user_info', JSON.stringify(dataToSave));
         } else {
             localStorage.removeItem('saju_saved_user_info');
         }
 
+        const submitFn = isRegistering ? handleRegister : handleCalculate;
+        submitFn(isoString);
+    };
+
+    const handleCalculate = (isoString: string) => {
         onCalculate({
             name: name.trim() || "방문자",
             birth_time_iso: isoString,
@@ -84,6 +95,37 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
             is_leap_month: isLeapMonth,
             gender: gender
         });
+    };
+
+    const handleRegister = async (isoString: string) => {
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    name: name.trim() || "회원",
+                    gender: gender,
+                    birth_time_iso: isoString,
+                    is_lunar: isLunar,
+                    is_leap_month: isLeapMonth,
+                    login_type: "email"
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("회원가입이 완료되었습니다! 분석 결과를 확인합니다.");
+                // Immediately proceed to calculate after success
+                handleCalculate(isoString);
+            } else {
+                alert(`가입 실패: ${data.detail || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            alert("서버 오류로 인해 가입에 실패했습니다.");
+        }
     };
 
     const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
@@ -252,8 +294,35 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     </div>
                 </div>
 
+                {/* Registration Optional Fields */}
+                <div className="flex flex-col gap-2 border-t border-gray-100 pt-6 mt-2">
+                    <label className="font-pretendard text-[14px] text-gray-800 flex items-center gap-1.5 font-extrabold px-1">
+                        계정 만들기 (선택사항)
+                    </label>
+                    <p className="text-[12px] text-gray-500 font-medium px-1 mb-2">
+                        가입하시면 분석 결과와 찜한 전문가 목록이 저장됩니다.
+                    </p>
+                    
+                    <div className="flex flex-col gap-3">
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="이메일 주소"
+                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                        />
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="비밀번호"
+                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                        />
+                    </div>
+                </div>
+
                 {/* 내 정보 기억하기 Checkbox */}
-                <div className="flex items-center justify-end w-full px-2">
+                <div className="flex items-center justify-end w-full px-2 mt-4">
                     <button
                         type="button"
                         onClick={() => setIsRemembered(!isRemembered)}
@@ -275,26 +344,39 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     </button>
                 </div>
 
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={cn(
-                        "mt-2 w-full h-[60px] rounded-[20px] font-pretendard font-extrabold text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
-                        isLoading
-                            ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
-                            : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0"
-                    )}
-                >
-                    {isLoading ? (
-                        <>
-                            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
-                            정보 분석 중...
-                        </>
-                    ) : (
-                        buttonText || "나의 사주 보러가기"
-                    )}
-                </button>
+                {/* Submit Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        onClick={() => setIsRegistering(false)}
+                        className={cn(
+                            "flex-1 h-[56px] rounded-[18px] font-pretendard font-extrabold text-[16px] transition-all duration-300 flex items-center justify-center gap-2",
+                            isLoading
+                                ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
+                                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
+                        )}
+                    >
+                        비회원으로 결과만 보기
+                    </button>
+                    
+                    <button
+                        type="submit"
+                        disabled={isLoading || (!email && isRegistering)}
+                        onClick={() => setIsRegistering(true)}
+                        className={cn(
+                            "flex-1 h-[56px] rounded-[18px] font-pretendard font-extrabold text-[16px] transition-all duration-300 flex items-center justify-center gap-2",
+                            isLoading
+                                ? "bg-blue-300 text-white cursor-not-allowed"
+                                : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
+                        )}
+                    >
+                        {isLoading && isRegistering ? (
+                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        ) : null}
+                        회원가입 후 저장하기
+                    </button>
+                </div>
 
             </form>
         </div>
