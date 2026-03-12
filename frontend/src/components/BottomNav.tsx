@@ -33,7 +33,7 @@ export default function BottomNav() {
                                 {item.emoji}
                             </div>
                             <span
-                                className={`text-[10px] font-pretendard transition-colors ${isActive ? "text-[#4A5568] font-extrabold tracking-tight" : "text-gray-400 font-medium tracking-tight"
+                                className={`text-[11px] font-pretendard transition-colors ${isActive ? "text-[#2D3748] font-black tracking-tight" : "text-gray-500 font-bold tracking-tight"
                                     }`}
                             >
                                 {item.name}

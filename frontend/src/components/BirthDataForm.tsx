@@ -82,8 +82,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
             localStorage.removeItem('saju_saved_user_info');
         }
 
-        const submitFn = isRegistering ? handleRegister : handleCalculate;
-        submitFn(isoString);
+        handleRegister(isoString);
     };
 
     const handleCalculate = (isoString: string) => {
@@ -244,21 +243,21 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {years.map(y => <option key={y} value={y} className="text-gray-900">{y}</option>)}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
                             <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
                         </div>
                         <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
                             <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {months.map(m => <option key={m} value={m} className="text-gray-900">{m}</option>)}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
                             <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
                         </div>
                         <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
                             <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {days.map(d => <option key={d} value={d} className="text-gray-900">{d}</option>)}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
                             <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
                         </div>
                     </div>
@@ -275,20 +274,20 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 <option value="오전" className="text-gray-900">오전</option>
                                 <option value="오후" className="text-gray-900">오후</option>
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-3 pointer-events-none" strokeWidth={3} />
                         </div>
                         <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
                             <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {hours.map(h => <option key={h} value={h} className="text-gray-900">{h}</option>)}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
                             <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
                         </div>
                         <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
                             <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {minutes.map(m => <option key={m} value={m} className="text-gray-900">{m.toString().padStart(2, '0')}</option>)}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" />
+                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
                             <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
                         </div>
                     </div>
@@ -345,33 +344,18 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 </div>
 
                 {/* Submit Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                <div className="flex flex-col mt-4">
                     <button
                         type="submit"
-                        disabled={isLoading}
-                        onClick={() => setIsRegistering(false)}
+                        disabled={isLoading || !email || !password}
                         className={cn(
-                            "flex-1 h-[56px] rounded-[18px] font-pretendard font-extrabold text-[16px] transition-all duration-300 flex items-center justify-center gap-2",
-                            isLoading
-                                ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
-                                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
-                        )}
-                    >
-                        비회원으로 결과만 보기
-                    </button>
-                    
-                    <button
-                        type="submit"
-                        disabled={isLoading || (!email && isRegistering)}
-                        onClick={() => setIsRegistering(true)}
-                        className={cn(
-                            "flex-1 h-[56px] rounded-[18px] font-pretendard font-extrabold text-[16px] transition-all duration-300 flex items-center justify-center gap-2",
-                            isLoading
+                            "w-full h-[64px] rounded-[18px] font-pretendard font-black text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
+                            (isLoading || !email || !password)
                                 ? "bg-blue-300 text-white cursor-not-allowed"
                                 : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
                         )}
                     >
-                        {isLoading && isRegistering ? (
+                        {isLoading ? (
                             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : null}
                         회원가입 후 저장하기

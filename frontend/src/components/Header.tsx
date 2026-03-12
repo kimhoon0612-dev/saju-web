@@ -22,11 +22,11 @@ export default function Header() {
                     </div>
 
                     <button className="w-8 h-8 flex items-center justify-center text-gray-800 hover:text-black transition-all">
-                        <Search className="w-5 h-5" strokeWidth={2.5} />
+                        <Search className="w-5 h-5" strokeWidth={3} />
                     </button>
 
                     <button className="w-7 h-7 bg-[#212124] rounded-full flex items-center justify-center text-white transition-all shadow-sm">
-                        <User className="w-[14px] h-[14px]" strokeWidth={2.5} />
+                        <User className="w-[14px] h-[14px]" strokeWidth={3} />
                     </button>
                 </div>
             </div>
