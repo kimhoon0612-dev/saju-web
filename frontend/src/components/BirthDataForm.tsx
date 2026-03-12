@@ -315,7 +315,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="비밀번호"
-                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm hidden"
                         />
                     </div>
                 </div>
@@ -347,10 +347,10 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 <div className="flex flex-col mt-4">
                     <button
                         type="submit"
-                        disabled={isLoading || !email || !password}
+                        disabled={isLoading || !email}
                         className={cn(
                             "w-full h-[64px] rounded-[18px] font-pretendard font-black text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
-                            (isLoading || !email || !password)
+                            (isLoading || !email)
                                 ? "bg-blue-300 text-white cursor-not-allowed"
                                 : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
                         )}
