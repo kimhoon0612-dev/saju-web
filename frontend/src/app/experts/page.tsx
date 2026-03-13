@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Star, ChevronDown, Heart, Search, User, TicketPercent } from 'lucide-react';
+import { Star, ChevronDown, Heart, Search, User, TicketPercent, Sparkles } from 'lucide-react';
 import { cn } from '../../components/DestinyMatrixCard';
 import ExpertProfileModal, { Expert } from '../../components/ExpertProfileModal';
 import Link from 'next/link';
@@ -43,80 +43,25 @@ export default function ExpertsPage() {
                 </div>
             </div>
 
-            {/* Animated Ad Banner Placeholder */}
-            <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden h-48 flex items-center justify-center border-b border-gray-100">
-
+            {/* Premium Hero Section */}
+            <div className="w-full bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 relative overflow-hidden flex flex-col items-center justify-center border-b border-indigo-950/50 py-10">
                 {/* Background decorative elements */}
-                <div className="absolute inset-0 opacity-40">
-                    <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-                    <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                </div>
-
-                {/* Animated animals layer */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
-                    <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
-                    <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
-                    <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
-                    <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-400 rounded-full mix-blend-screen filter blur-3xl"></div>
+                    <div className="absolute top-20 -right-10 w-48 h-48 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl"></div>
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-8 py-5 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
-                    <span className="inline-block bg-indigo-100 text-indigo-700 text-[11px] font-black px-3 py-1 rounded-full mb-3 tracking-wide">
-                        NOTICE
+                <div className="relative z-10 flex flex-col items-center text-center px-4">
+                    <span className="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-100 text-[11px] font-bold px-3 py-1 rounded-full mb-4 outline outline-1 outline-indigo-400/30 backdrop-blur-sm">
+                        <Sparkles className="w-3 h-3 text-indigo-300" /> 프리미엄 1:1 상담
                     </span>
-                    <h2 className="text-[20px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
-                        광고 오픈 준비 중입니다
+                    <h2 className="text-[24px] font-black text-white leading-[1.3] tracking-tight mb-2">
+                        당신의 운명을 밝혀줄<br />최고의 멘토를 만나보세요
                     </h2>
-                    <p className="text-[14px] font-bold text-gray-600">
-                        동물 친구들이 열심히 공간을<br />꾸미고 있어요! 🐾
+                    <p className="text-[14px] text-indigo-200/80 font-medium max-w-[260px]">
+                        엄선된 명리·타로 전문가들이 당신만의 깊이 있는 인생 해답을 제시합니다.
                     </p>
-                </div>
-
-                {/* Pagination Dots (Decorative) */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
-                </div>
-            </div>
-
-            {/* Category Grid */}
-            <div className="bg-white px-4 py-8 rounded-b-[24px] shadow-sm mb-2 relative z-20">
-                <div className="grid grid-cols-4 gap-y-6">
-                    {/* Simplified category icons */}
-                    {[
-                        { icon: '📜', label: '명리 코칭', tab: '운세' },
-                        { icon: '🃏', label: '타로 리딩', tab: '타로' },
-                        { icon: '🤖', label: 'AI 챗', href: '/experts/ai-chat' },
-                        { icon: '📖', label: '이용가이드' },
-                    ].map((item, i) => {
-                        const content = (
-                            <>
-                                <div className="w-14 h-14 rounded-2xl bg-white border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center text-[24px] group-hover:scale-105 transition-transform">
-                                    {item.icon}
-                                </div>
-                                <span className="text-[12px] font-bold text-gray-800 tracking-tight">{item.label}</span>
-                            </>
-                        );
-
-                        return item.href ? (
-                            <Link key={i} href={item.href} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
-                                {content}
-                            </Link>
-                        ) : (
-                            <div key={i} onClick={() => {
-                                if (item.label === '이용가이드') {
-                                    alert('현재 이용가이드 내용을 리뉴얼 중입니다. 조금만 기다려주세요! 🛠️');
-                                } else if (item.tab) {
-                                    setSelectedTab(item.tab);
-                                }
-                            }} className="flex flex-col items-center justify-center gap-2 cursor-pointer group">
-                                {content}
-                            </div>
-                        );
-                    })}
                 </div>
             </div>
 
@@ -157,8 +102,8 @@ export default function ExpertsPage() {
 
             </div>
 
-            {/* List */}
-            <div className="flex flex-col">
+            {/* Grid List */}
+            <div className="px-4 py-4 grid grid-cols-2 gap-3 sm:gap-4">
                 {experts.filter(expert => {
                     const matchesTab = selectedTab === '전체' || expert.category === selectedTab;
                     const matchesSearch = expert.display_name.includes(searchTerm) || (expert.tags && expert.tags.includes(searchTerm));
@@ -167,67 +112,70 @@ export default function ExpertsPage() {
                     <div
                         key={expert.id}
                         onClick={() => setSelectedExpert(expert)}
-                        className="bg-white p-5 cursor-pointer border-b border-gray-100"
+                        className="bg-white rounded-[20px] cursor-pointer shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden group hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 transform hover:-translate-y-1"
                     >
-                        {/* Tags */}
-                        {expert.id === 3 && (
-                            <div className="inline-block bg-gray-100 text-gray-600 text-[11px] font-bold px-1.5 py-0.5 rounded-sm mb-2">
-                                15% 할인
-                            </div>
-                        )}
-                        <div className="flex items-start justify-between">
-                            <div className="flex-1 pr-4">
-                                <div className="flex items-center gap-1.5 mb-1.5">
-                                    <span className={cn(
-                                        "text-[15px] font-black",
-                                        expert.category === '운세' ? "text-green-600" : "text-purple-500"
-                                    )}>{expert.category}</span>
-                                    <h3 className="text-[18px] font-black text-gray-900 tracking-tight">
-                                        {expert.display_name} <span className="text-gray-400 font-bold ml-0.5">({expert.code})</span>
-                                    </h3>
-                                </div>
+                        {/* Premium Card Header / Image */}
+                        <div className="w-full aspect-[4/5] bg-gray-50 relative overflow-hidden">
+                            <img 
+                                src={expert.image_url} 
+                                alt={expert.display_name} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                            />
+                            
+                            {/* Overlay Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
-                                <p className="text-[13px] text-gray-400 font-medium mb-3 leading-snug line-clamp-1 w-[90%]">
-                                    {(expert.tags || "").split(',').map(t => t.trim()).join(' ')}
+                            {/* Top Badges */}
+                            <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                                <span className={cn(
+                                    "text-[10px] font-black px-2 py-1 rounded-full shadow-sm backdrop-blur-md border border-white/20",
+                                    expert.category === '운세' ? "bg-emerald-500/90 text-white" : "bg-indigo-500/90 text-white"
+                                )}>{expert.category}</span>
+                            </div>
+
+                            {/* Online Status */}
+                            {expert.is_online && (
+                                <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10">
+                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+                                    <span className="text-[10px] font-bold text-white tracking-wide">상담가능</span>
+                                </div>
+                            )}
+
+                            {/* Bottom Identity Overlay */}
+                            <div className="absolute bottom-3 left-3 right-3 text-white">
+                                <h3 className="text-[17px] font-black tracking-tight mb-0.5 drop-shadow-md">
+                                    {expert.display_name}
+                                </h3>
+                                <p className="text-[12px] font-medium text-white/80 line-clamp-1 drop-shadow-sm leading-snug">
+                                    {(expert.tags || "").split(',').slice(0, 2).map(t => t.trim()).join(' · ')}
                                 </p>
-
-                                <div className="flex items-center gap-2 text-[12px]">
-                                    <div className="flex items-center gap-1">
-                                        <Star className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-                                        <span className="font-bold text-gray-900">{expert.rating?.toFixed(1) || "5.0"} <span className="text-gray-500 font-medium">({expert.reviews_count?.toLocaleString() || 0})</span></span>
-                                    </div>
-                                    <div className="w-[1px] h-2.5 bg-gray-300"></div>
-                                    <span className="text-gray-500">평균 <span className="font-bold text-gray-700">{expert.avg_minutes}분</span></span>
-                                    <div className="w-[1px] h-2.5 bg-gray-300"></div>
-                                    <span className="text-gray-500">누적 <span className="font-bold text-gray-700">{expert.total_consults?.toLocaleString() || 0}{(expert.total_consults || 0) > 5000 ? '+' : ''}회</span></span>
-                                </div>
-                            </div>
-
-                            <div className="relative">
-                                <div className="w-[68px] h-[68px] rounded-full overflow-hidden bg-gray-100 border border-gray-200 relative mb-4">
-                                    <img src={expert.image_url} alt={expert.display_name} className="w-full h-full object-cover" />
-                                </div>
-                                {expert.is_online && (
-                                    <div className="absolute top-1 right-2 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
-                                )}
                             </div>
                         </div>
 
-                        <div className="flex gap-2 mt-4 items-center">
-                            <button
-                                className="flex items-center justify-center gap-1 border border-gray-200 rounded-[14px] px-5 py-3.5 text-[15px] font-bold text-gray-700 hover:bg-gray-50 flex-shrink-0 active:bg-gray-100 transition-colors"
-                            >
-                                <Heart className="w-5 h-5 font-normal text-gray-400" /> 찜
-                            </button>
-                            <button
-                                className="flex-1 border border-transparent rounded-[14px] py-3.5 bg-gray-900 text-white font-bold text-[15px] hover:bg-black active:bg-gray-800 transition-colors shadow-sm"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedExpert(expert);
-                                }}
-                            >
-                                프로필 및 상담하기
-                            </button>
+                        {/* Card Body - Content */}
+                        <div className="p-3">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                                    <span className="text-[13px] font-bold text-gray-900">
+                                        {expert.rating?.toFixed(1) || "5.0"}
+                                    </span>
+                                    <span className="text-[11px] text-gray-400 font-medium">({expert.reviews_count?.toLocaleString() || 0})</span>
+                                </div>
+                                <div className="text-[11px] font-bold text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded-md border border-gray-100">
+                                    {expert.avg_minutes}분 평균
+                                </div>
+                            </div>
+
+                            {/* Footer actions visually compact */}
+                            <div className="w-full pt-2 border-t border-gray-50 flex items-center justify-between mt-1">
+                                <span className="text-[11px] text-gray-400 font-medium tracking-tight">
+                                    누적 {expert.total_consults?.toLocaleString() || 0}{(expert.total_consults || 0) > 5000 ? '+' : ''}회
+                                </span>
+                                <span className="text-[12px] font-black text-indigo-600 group-hover:text-indigo-700 transition-colors">
+                                    상담하기 &gt;
+                                </span>
+                            </div>
                         </div>
                     </div>
                 ))}
