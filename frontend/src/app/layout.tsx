@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 
 const outfit = Outfit({
@@ -28,8 +27,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-pretendard antialiased bg-[#F5F6F8] text-[#111111]`}
       >
-        <Header />
-        <main className="pt-20 sm:pt-24 pb-24 md:pb-8 min-h-screen">
+        <main className="pb-24 md:pb-8 min-h-screen">
           {children}
         </main>
         <BottomNav />
