@@ -5,6 +5,7 @@ import { Star, ChevronDown, Heart, Search, User, TicketPercent, Sparkles } from 
 import { cn } from '../../components/DestinyMatrixCard';
 import ExpertProfileModal, { Expert } from '../../components/ExpertProfileModal';
 import Link from 'next/link';
+import UserBadge from '@/components/UserBadge';
 
 export default function ExpertsPage() {
     const [selectedTab, setSelectedTab] = useState("전체");
@@ -38,8 +39,11 @@ export default function ExpertsPage() {
 
             <div className="bg-white px-4 pt-1 pb-3 flex items-center justify-between">
                 <h1 className="text-2xl font-black text-[#4A5568] tracking-tight">멘토링</h1>
-                <div className="p-1.5 border border-gray-200 rounded-lg">
-                    <TicketPercent className="w-5 h-5 text-gray-700" />
+                <div className="flex items-center gap-2">
+                    <UserBadge />
+                    <div className="p-1.5 border border-gray-200 rounded-lg bg-gray-50 shadow-sm cursor-pointer hover:bg-gray-100 transition-colors">
+                        <TicketPercent className="w-4 h-4 text-gray-600" />
+                    </div>
                 </div>
             </div>
 

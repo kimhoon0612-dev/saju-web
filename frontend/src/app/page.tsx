@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AgenticChatbot from "@/components/AgenticChatbot";
 import BirthDataForm from "@/components/BirthDataForm";
+import UserBadge from "@/components/UserBadge";
 
 
 const ELEMENT_KOR: Record<string, string> = {
@@ -646,10 +647,7 @@ export default function Home() {
             {/* Header */}
             <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 h-14 max-w-md mx-auto flex items-center px-5 justify-between border-b border-gray-50">
               <h1 className="text-xl font-extrabold text-[#4A5568]">투데이</h1>
-              <button onClick={clearMatrix} className="flex items-center gap-1.5 text-[14px] font-bold text-gray-700 hover:text-gray-900 transition-colors">
-                <RefreshCw className="w-4 h-4" />
-                <span>{matrixData.user_name || "방문자"}님</span>
-              </button>
+              <UserBadge onClick={clearMatrix} />
             </header>
 
             <div className="px-4 pt-3 pb-4">

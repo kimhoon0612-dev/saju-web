@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Sparkles, BookOpen, Users, Mic, Square, ChevronLeft, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from './DestinyMatrixCard';
+import UserBadge from '@/components/UserBadge';
 
 interface ChatMessage {
     role: 'user' | 'ai';
@@ -195,6 +196,7 @@ export default function AgenticChatbot({ sajuContext, isFullScreen = false }: Ag
                             <p className="text-[11px] text-[#2AC1BC] font-medium">명리학 기반 맞춤 상담</p>
                         </div>
                     </div>
+                    <UserBadge />
                 </div>
 
                 {/* Messages Area */}

@@ -6,6 +6,7 @@ import { ArrowLeft, Info, Share2, Plus, Calendar as CalendarIcon, X, ChevronLeft
 import Link from "next/link";
 import { getAstrologyData } from "@/utils/astrology";
 import AstrologyHeroCard from "@/components/AstrologyHeroCard";
+import UserBadge from "@/components/UserBadge";
 
 interface SajuUserInfo {
     name: string;
@@ -227,9 +228,9 @@ function ConfirmContent() {
                     <ArrowLeft size={24} />
                 </button>
                 <h1 className="font-bold text-[18px] text-gray-900 absolute left-1/2 -translate-x-1/2">{type}</h1>
-                <div className="flex gap-4 text-gray-800">
-                    <Info size={22} className="cursor-pointer" />
-                    <Share2 size={22} className="cursor-pointer" />
+                <div className="flex items-center gap-3 text-gray-800">
+                    <Share2 size={20} className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" />
+                    <UserBadge />
                 </div>
             </header>
 

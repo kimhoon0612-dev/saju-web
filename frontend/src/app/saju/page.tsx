@@ -34,6 +34,7 @@ import {
     Puzzle // 정통궁합
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import UserBadge from "@/components/UserBadge";
 
 const ELEMENT_COLORS_BG: Record<string, string> = {
     "wood": "bg-[#A8D5BA] text-gray-800", // Pastel Green
@@ -469,10 +470,7 @@ export default function FortuneHubPage() {
             {/* Header */}
             <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 h-14 max-w-md mx-auto flex items-center px-5 justify-between border-b border-gray-50">
                 <h1 className="text-xl font-extrabold text-[#4A5568]">나의 흐름</h1>
-                <button className="flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-gray-100 shadow-sm">
-                    <RefreshCw size={14} className="text-gray-400" />
-                    {userName ? `${userName}님` : "방문자님"}
-                </button>
+                <UserBadge />
             </header>
 
             <main className="max-w-md mx-auto flex flex-col gap-3 px-4 pt-3">

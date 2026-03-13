@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, Sparkles, Loader2, Star, Moon } from "lucide-react";
+import UserBadge from "@/components/UserBadge";
 
 function TarotPlayContent() {
     const router = useRouter();
@@ -122,8 +123,11 @@ function TarotPlayContent() {
                 <button onClick={() => router.back()} className="p-2 -ml-2 text-white/80 hover:text-white transition-colors rounded-full">
                     <ChevronLeft size={28} />
                 </button>
-                <div className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center">
-                    <span className="text-white/80 text-lg font-medium">?</span>
+                <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+                        <span className="text-white/80 text-sm font-medium">?</span>
+                    </div>
+                    <UserBadge />
                 </div>
             </header>
 
