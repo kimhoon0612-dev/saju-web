@@ -26,7 +26,6 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     
     // 회원가입 관련 상태 반환
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     
     const [isRemembered, setIsRemembered] = useState(false);
@@ -103,7 +102,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email,
-                    password: password,
+                    password: "dummy_password_for_saju",
                     name: name.trim() || "회원",
                     gender: gender,
                     birth_time_iso: isoString,
@@ -307,15 +306,8 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="이메일 주소"
+                            placeholder="결과를 저장할 이메일 주소를 입력해주세요"
                             className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
-                        />
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="비밀번호"
-                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm hidden"
                         />
                     </div>
                 </div>

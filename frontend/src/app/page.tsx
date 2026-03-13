@@ -1122,6 +1122,8 @@ export default function Home() {
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 sm:p-5 text-left max-h-[60vh] overflow-y-auto hidden-scrollbar flex flex-col gap-4">
                     {palmResult?.error ? (
                         <p className="text-[15px] text-red-500 font-bold">{palmResult.error}</p>
+                    ) : palmResult?.result ? (
+                        <p className="text-[15px] text-gray-800 leading-relaxed font-medium break-keep whitespace-pre-wrap">{palmResult.result}</p>
                     ) : palmResult ? (
                         <>
                             <div className="flex items-start gap-3">
