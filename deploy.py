@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "fix: temp bypass email verification requirement to allow usage without SMTP config"])
+    subprocess.run(["git", "commit", "-m", "fix: add db lifespan seed for virtual_experts so the grid renders securely on new environments"])
     
     # 3. Push
     subprocess.run(["git", "push"])

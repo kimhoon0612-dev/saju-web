@@ -68,7 +68,7 @@ export default function ExpertsPage() {
             {/* Expert List Section - Tabs */}
             <div className="bg-white sticky top-[56px] z-40 border-b border-gray-100 mt-2 rounded-t-[24px] overflow-hidden">
                 {/* Search banner */}
-                <div className="px-4 py-3">
+                <div className="px-4 py-3 border-b border-gray-100">
                     <div className="w-full bg-gray-50 rounded-full py-2 px-4 flex items-center gap-2 border border-gray-100 focus-within:border-gray-400 focus-within:bg-white transition-colors">
                         <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
                         <input
@@ -81,7 +81,7 @@ export default function ExpertsPage() {
                     </div>
                 </div>
 
-                <div className="flex px-4 overflow-x-auto hide-scrollbar gap-2 relative border-b border-gray-100">
+                <div className="flex px-4 overflow-x-auto hide-scrollbar gap-2 relative">
                     {tabs.map(tab => (
                         <button
                             key={tab}
@@ -98,8 +98,6 @@ export default function ExpertsPage() {
                     ))}
                     <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
                 </div>
-
-
             </div>
 
             {/* Grid List */}
