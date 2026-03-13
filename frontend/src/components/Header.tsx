@@ -5,14 +5,7 @@ import { Search, User } from 'lucide-react';
 export default function Header() {
     return (
         <header className="w-full fixed top-0 z-50 bg-white backdrop-blur-md">
-            <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-                {/* Left side: Weather / Fine dust */}
-                <div className="flex items-center gap-2 text-[11px] font-medium text-gray-500">
-                    <div>미세 <span className="text-[#2AC1BC] font-bold">· 좋음</span></div>
-                    <div className="w-[1px] h-2.5 bg-gray-200"></div>
-                    <div>초미세 <span className="text-[#2AC1BC] font-bold">· 좋음</span></div>
-                </div>
-
+            <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-end">
                 {/* Right Actions */}
                 <div className="flex items-center gap-3">
                     {/* Lucky bag indicator */}
