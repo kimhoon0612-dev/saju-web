@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, Sparkles, ChevronDown, User, CheckSquare, Square } from 'lucide-react';
+import { ChevronDown, CheckSquare, Square } from 'lucide-react';
 import { cn } from './DestinyMatrixCard';
 
 interface BirthDataFormProps {
@@ -200,13 +200,11 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     return (
         <div className="w-full rounded-[32px] bg-white/95 backdrop-blur-md border border-gray-100 p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
             <header className="mb-8 z-10 relative flex flex-col items-center">
-                <div className="w-14 h-14 bg-blue-50 rounded-[20px] flex items-center justify-center mb-4 text-blue-500 shadow-sm border border-blue-100/50">
-                    <Sparkles className="w-7 h-7" />
-                </div>
-                <h3 className="font-pretendard text-[24px] sm:text-[28px] font-black text-gray-900 tracking-tight text-center">
+                <span className="text-[32px] mb-2">✨</span>
+                <h3 className="font-pretendard text-[24px] font-black text-gray-900 tracking-tight text-center">
                     나의 운명 코드
                 </h3>
-                <p className="text-[14px] text-gray-500 mt-2 font-bold text-center">정확한 사주 분석을 위해 정보를 입력해주세요</p>
+                <p className="text-[14px] text-gray-500 mt-1 font-medium text-center">정확한 사주 분석을 위해 정보를 입력해주세요</p>
             </header>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6 relative z-10">
@@ -220,7 +218,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="이름이나 닉네임을 입력해주세요 (선택)"
-                        className="w-full h-14 bg-gray-50/50 border border-gray-200 rounded-[18px] px-5 font-pretendard text-[16px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                        className="w-full h-14 bg-gray-50/50 border border-gray-200 rounded-[18px] px-5 font-pretendard text-[16px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
                     />
                 </div>
 
@@ -235,7 +233,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             onClick={(e) => { e.preventDefault(); setGender('M'); }}
                             className={cn(
                                 "flex-1 py-4 rounded-[18px] text-[16px] font-black transition-all duration-200 border",
-                                gender === 'M' ? "bg-blue-50 text-blue-600 border-blue-200 shadow-sm" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
+                                gender === 'M' ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                             )}
                         >
                             남성
@@ -245,7 +243,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             onClick={(e) => { e.preventDefault(); setGender('F'); }}
                             className={cn(
                                 "flex-1 py-4 rounded-[18px] text-[16px] font-black transition-all duration-200 border",
-                                gender === 'F' ? "bg-red-50 text-red-500 border-red-200 shadow-sm" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
+                                gender === 'F' ? "bg-gray-900 text-white border-gray-900" : "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                             )}
                         >
                             여성
@@ -299,26 +297,26 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     )}
 
                     <div className="flex items-center gap-2 w-full">
-                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-[1.2] flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={year} onChange={(e) => setYear(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {years.map(y => <option key={y} value={y} className="text-gray-900">{y}</option>)}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
-                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={2.5} />
+                            <span className="text-gray-700 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">년</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={month} onChange={(e) => setMonth(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {months.map(m => <option key={m} value={m} className="text-gray-900">{m}</option>)}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
-                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={2.5} />
+                            <span className="text-gray-700 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">월</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={day} onChange={(e) => setDay(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {days.map(d => <option key={d} value={d} className="text-gray-900">{d}</option>)}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
-                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={2.5} />
+                            <span className="text-gray-700 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">일</span>
                         </div>
                     </div>
                 </div>
@@ -329,26 +327,26 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                         태어난 시간
                     </label>
                     <div className="flex items-center gap-2 w-full">
-                        <div className="flex-[0.8] flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-[0.8] flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={ampm} onChange={(e) => setAmpm(e.target.value)} className="bg-transparent text-gray-900 font-pretendard font-black text-[16px] outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 <option value="오전" className="text-gray-900">오전</option>
                                 <option value="오후" className="text-gray-900">오후</option>
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-3 pointer-events-none" strokeWidth={3} />
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-3 pointer-events-none" strokeWidth={2.5} />
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={hour} onChange={(e) => setHour(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {hours.map(h => <option key={h} value={h} className="text-gray-900">{h}</option>)}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
-                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={2.5} />
+                            <span className="text-gray-700 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">시</span>
                         </div>
-                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 relative shadow-sm">
+                        <div className="flex-1 flex items-center bg-gray-50/50 border border-gray-200 rounded-[18px] px-3 py-4 hover:border-gray-300 transition-all focus-within:ring-2 focus-within:ring-gray-900/10 focus-within:border-gray-900 relative">
                             <select value={minute} onChange={(e) => setMinute(e.target.value)} className="bg-transparent text-gray-900 font-outfit text-lg font-black outline-none w-full appearance-none cursor-pointer text-center relative z-10">
                                 {minutes.map(m => <option key={m} value={m} className="text-gray-900">{m.toString().padStart(2, '0')}</option>)}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gray-500 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={3} />
-                            <span className="text-gray-500 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
+                            <ChevronDown className="w-5 h-5 text-gray-400 absolute right-6 sm:right-8 pointer-events-none" strokeWidth={2.5} />
+                            <span className="text-gray-700 font-pretendard text-[15px] font-bold shrink-0 whitespace-nowrap ml-1 relative z-10 pointer-events-none">분</span>
                         </div>
                     </div>
                 </div>
@@ -376,7 +374,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 disabled={isCodeVerified}
                                 placeholder="결과를 저장할 이메일 주소를 입력해주세요"
                                 className={cn(
-                                    "flex-1 h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm",
+                                    "flex-1 h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all",
                                     isCodeVerified ? "text-gray-500 bg-gray-100" : "text-gray-900"
                                 )}
                             />
@@ -386,8 +384,8 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 disabled={!email || isCodeVerified || isSendingCode}
                                 className={cn(
                                     "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
-                                    isCodeVerified ? "bg-green-100 text-green-700 cursor-not-allowed" :
-                                    (!email || isSendingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200"
+                                    isCodeVerified ? "bg-gray-100 text-gray-500 cursor-not-allowed" :
+                                    (!email || isSendingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-black"
                                 )}
                             >
                                 {isSendingCode ? "전송 중..." : isCodeVerified ? "인증 완료" : isCodeSent ? "재전송" : "인증코드 받기"}
@@ -401,7 +399,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                     value={verificationCode}
                                     onChange={(e) => setVerificationCode(e.target.value)}
                                     placeholder="인증코드 6자리"
-                                    className="flex-1 h-12 bg-blue-50/30 border border-blue-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                                    className="flex-1 h-12 bg-gray-50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
                                     maxLength={6}
                                 />
                                 <button
@@ -410,7 +408,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                     disabled={verificationCode.length !== 6 || isVerifyingCode}
                                     className={cn(
                                         "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
-                                        (verificationCode.length !== 6 || isVerifyingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+                                        (verificationCode.length !== 6 || isVerifyingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-black"
                                     )}
                                 >
                                     {isVerifyingCode ? "확인 중..." : "확인"}
@@ -429,14 +427,14 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     >
                         <div className="relative flex items-center justify-center w-5 h-5">
                             {isRemembered ? (
-                                <CheckSquare className="w-5 h-5 text-blue-500" />
+                                <CheckSquare className="w-5 h-5 text-gray-900" />
                             ) : (
                                 <Square className="w-5 h-5 text-gray-300 group-hover:text-gray-400 transition-colors" />
                             )}
                         </div>
                         <span className={cn(
                             "text-[14px] font-pretendard transition-all",
-                            isRemembered ? "text-blue-600 font-black" : "text-gray-500 font-bold group-hover:text-gray-700"
+                            isRemembered ? "text-gray-900 font-black" : "text-gray-500 font-bold group-hover:text-gray-700"
                         )}>
                             내 정보 기억하기
                         </span>
@@ -447,18 +445,18 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 <div className="flex flex-col mt-4">
                     <button
                         type="submit"
-                        disabled={isLoading || !email || !isCodeVerified}
+                        disabled={isLoading || (email.length > 0 && !isCodeVerified)}
                         className={cn(
                             "w-full h-[64px] rounded-[18px] font-pretendard font-black text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
-                            (isLoading || !email || !isCodeVerified)
+                            (isLoading || (email.length > 0 && !isCodeVerified))
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
+                                : "bg-gray-900 text-white shadow-lg hover:bg-black hover:shadow-xl hover:-translate-y-0.5"
                         )}
                     >
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : null}
-                        회원가입 후 저장하기
+                        {email === '' ? "바로 결과 보기" : email !== '' && !isCodeVerified ? "이메일 인증을 완료해주세요" : "회원가입하고 결과 보기"}
                     </button>
                 </div>
 
