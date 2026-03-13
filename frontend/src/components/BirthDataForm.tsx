@@ -89,10 +89,11 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         }
 
         // 이메일을 입력했는데 인증을 안 한 상태로 저장하기를 누른 경우
-        if (email.length > 0 && !isCodeVerified) {
-            alert("이메일 우측의 '인증코드 받기'를 눌러 이메일 인증을 먼저 완료해주세요.");
-            return;
-        }
+        // TEMP BYPASS: Allow them to submit anyway
+        // if (email.length > 0 && !isCodeVerified) {
+        //     alert("이메일 우측의 '인증코드 받기'를 눌러 이메일 인증을 먼저 완료해주세요.");
+        //     return;
+        // }
 
         if (email.length > 0) {
             handleRegister(isoString);
@@ -466,7 +467,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : null}
-                        {email === '' ? "바로 결과 보기" : email !== '' && !isCodeVerified ? "이메일 인증을 완료해주세요" : "회원가입하고 결과 보기"}
+                        {email === '' ? "바로 결과 보기" : "회원가입하고 결과 보기"}
                     </button>
                 </div>
 

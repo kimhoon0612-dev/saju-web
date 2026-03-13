@@ -54,14 +54,16 @@ async def register_user(request: RegisterRequest, db: AsyncSession = Depends(get
     """
     # For email registration, force verification check
     if request.login_type == "email":
-        verification_result = await db.execute(select(EmailVerification).where(EmailVerification.email == request.email))
-        verification = verification_result.scalars().first()
-        
-        if not verification or not verification.is_verified:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="이메일 인증이 완료되지 않았습니다."
-            )
+        pass
+        # TEMP BYPASS: Allow registration even without email verification while SMTP is not set up.
+        # verification_result = await db.execute(select(EmailVerification).where(EmailVerification.email == request.email))
+        # verification = verification_result.scalars().first()
+        # 
+        # if not verification or not verification.is_verified:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="이메일 인증이 완료되지 않았습니다."
+        #     )
 
     # Check if user already exists
     result = await db.execute(select(User).where(User.email == request.email))
