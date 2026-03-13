@@ -88,7 +88,17 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
             localStorage.removeItem('saju_saved_user_info');
         }
 
-        handleRegister(isoString);
+        // 이메일을 입력했는데 인증을 안 한 상태로 저장하기를 누른 경우
+        if (email.length > 0 && !isCodeVerified) {
+            alert("이메일 우측의 '인증코드 받기'를 눌러 이메일 인증을 먼저 완료해주세요.");
+            return;
+        }
+
+        if (email.length > 0) {
+            handleRegister(isoString);
+        } else {
+            handleCalculate(isoString);
+        }
     };
 
     const handleCalculate = (isoString: string) => {
@@ -361,7 +371,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     </p>
                     
                     <div className="flex flex-col gap-3">
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full">
                             <input
                                 type="email"
                                 value={email}
@@ -374,7 +384,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 disabled={isCodeVerified}
                                 placeholder="결과를 저장할 이메일 주소를 입력해주세요"
                                 className={cn(
-                                    "flex-1 h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all",
+                                    "flex-1 min-w-0 h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all",
                                     isCodeVerified ? "text-gray-500 bg-gray-100" : "text-gray-900"
                                 )}
                             />
@@ -383,7 +393,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                 onClick={handleSendVerificationCode}
                                 disabled={!email || isCodeVerified || isSendingCode}
                                 className={cn(
-                                    "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
+                                    "shrink-0 h-12 px-3 sm:px-4 rounded-[14px] font-pretendard text-[13px] sm:text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[80px]",
                                     isCodeVerified ? "bg-gray-100 text-gray-500 cursor-not-allowed" :
                                     (!email || isSendingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-black"
                                 )}
@@ -393,13 +403,13 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                         </div>
                         
                         {isCodeSent && !isCodeVerified && (
-                            <div className="flex gap-2 animate-in slide-in-from-top-2 duration-300">
+                            <div className="flex gap-2 w-full animate-in slide-in-from-top-2 duration-300">
                                 <input
                                     type="text"
                                     value={verificationCode}
                                     onChange={(e) => setVerificationCode(e.target.value)}
                                     placeholder="인증코드 6자리"
-                                    className="flex-1 h-12 bg-gray-50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
+                                    className="flex-1 min-w-0 h-12 bg-gray-50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
                                     maxLength={6}
                                 />
                                 <button
@@ -407,7 +417,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                                     onClick={handleVerifyCode}
                                     disabled={verificationCode.length !== 6 || isVerifyingCode}
                                     className={cn(
-                                        "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
+                                        "shrink-0 h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[80px]",
                                         (verificationCode.length !== 6 || isVerifyingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-black"
                                     )}
                                 >
@@ -445,10 +455,10 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 <div className="flex flex-col mt-4">
                     <button
                         type="submit"
-                        disabled={isLoading || (email.length > 0 && !isCodeVerified)}
+                        disabled={isLoading}
                         className={cn(
                             "w-full h-[64px] rounded-[18px] font-pretendard font-black text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
-                            (isLoading || (email.length > 0 && !isCodeVerified))
+                            isLoading
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 : "bg-gray-900 text-white shadow-lg hover:bg-black hover:shadow-xl hover:-translate-y-0.5"
                         )}
