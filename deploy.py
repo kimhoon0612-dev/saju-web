@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "fix: make palmistry UI resilient to old backend response format"])
+    subprocess.run(["git", "commit", "-m", "feat: implement 6-digit email verification flow for registration"])
     
     # 3. Push
     subprocess.run(["git", "push"])

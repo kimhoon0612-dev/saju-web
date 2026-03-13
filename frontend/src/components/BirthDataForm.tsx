@@ -28,6 +28,13 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     const [email, setEmail] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     
+    // 이메일 인증 관련 상태
+    const [verificationCode, setVerificationCode] = useState('');
+    const [isCodeSent, setIsCodeSent] = useState(false);
+    const [isCodeVerified, setIsCodeVerified] = useState(false);
+    const [isSendingCode, setIsSendingCode] = useState(false);
+    const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+    
     const [isRemembered, setIsRemembered] = useState(false);
 
     // 컴포넌트 마운트 시 로컬 스토리지에서 저장된 정보 불러오기
@@ -93,6 +100,60 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
             is_leap_month: isLeapMonth,
             gender: gender
         });
+    };
+
+    const handleSendVerificationCode = async () => {
+        if (!email) {
+            alert("이메일 주소를 입력해주세요.");
+            return;
+        }
+        setIsSendingCode(true);
+        try {
+            const res = await fetch('/api/auth/send-verification-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("인증 코드가 이메일로 전송되었습니다. 10분 내에 입력해주세요.");
+                setIsCodeSent(true);
+            } else {
+                alert(`전송 실패: ${data.detail || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("서버 오류로 인해 인증 코드를 전송하지 못했습니다.");
+        } finally {
+            setIsSendingCode(false);
+        }
+    };
+
+    const handleVerifyCode = async () => {
+        if (!verificationCode) {
+            alert("인증 코드를 입력해주세요.");
+            return;
+        }
+        setIsVerifyingCode(true);
+        try {
+            const res = await fetch('/api/auth/verify-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, code: verificationCode })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("이메일 인증이 성공적으로 완료되었습니다.");
+                setIsCodeVerified(true);
+            } else {
+                alert(`인증 실패: ${data.detail || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("서버 오류로 인해 인증을 완료하지 못했습니다.");
+        } finally {
+            setIsVerifyingCode(false);
+        }
     };
 
     const handleRegister = async (isoString: string) => {
@@ -302,13 +363,60 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                     </p>
                     
                     <div className="flex flex-col gap-3">
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="결과를 저장할 이메일 주소를 입력해주세요"
-                            className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
-                        />
+                        <div className="flex gap-2">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setIsCodeSent(false);
+                                    setIsCodeVerified(false);
+                                    setVerificationCode('');
+                                }}
+                                disabled={isCodeVerified}
+                                placeholder="결과를 저장할 이메일 주소를 입력해주세요"
+                                className={cn(
+                                    "flex-1 h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm",
+                                    isCodeVerified ? "text-gray-500 bg-gray-100" : "text-gray-900"
+                                )}
+                            />
+                            <button
+                                type="button"
+                                onClick={handleSendVerificationCode}
+                                disabled={!email || isCodeVerified || isSendingCode}
+                                className={cn(
+                                    "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
+                                    isCodeVerified ? "bg-green-100 text-green-700 cursor-not-allowed" :
+                                    (!email || isSendingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200"
+                                )}
+                            >
+                                {isSendingCode ? "전송 중..." : isCodeVerified ? "인증 완료" : isCodeSent ? "재전송" : "인증코드 받기"}
+                            </button>
+                        </div>
+                        
+                        {isCodeSent && !isCodeVerified && (
+                            <div className="flex gap-2 animate-in slide-in-from-top-2 duration-300">
+                                <input
+                                    type="text"
+                                    value={verificationCode}
+                                    onChange={(e) => setVerificationCode(e.target.value)}
+                                    placeholder="인증코드 6자리"
+                                    className="flex-1 h-12 bg-blue-50/30 border border-blue-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+                                    maxLength={6}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleVerifyCode}
+                                    disabled={verificationCode.length !== 6 || isVerifyingCode}
+                                    className={cn(
+                                        "h-12 px-4 rounded-[14px] font-pretendard text-[14px] font-bold whitespace-nowrap transition-colors flex items-center justify-center min-w-[100px]",
+                                        (verificationCode.length !== 6 || isVerifyingCode) ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+                                    )}
+                                >
+                                    {isVerifyingCode ? "확인 중..." : "확인"}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -339,11 +447,11 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 <div className="flex flex-col mt-4">
                     <button
                         type="submit"
-                        disabled={isLoading || !email}
+                        disabled={isLoading || !email || !isCodeVerified}
                         className={cn(
                             "w-full h-[64px] rounded-[18px] font-pretendard font-black text-[18px] transition-all duration-300 flex items-center justify-center gap-2",
-                            (isLoading || !email)
-                                ? "bg-blue-300 text-white cursor-not-allowed"
+                            (isLoading || !email || !isCodeVerified)
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 : "bg-[#1E90FF] text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
                         )}
                     >
