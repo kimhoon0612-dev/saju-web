@@ -102,8 +102,8 @@ export default function DestinyMatrixCard({ matrix, timeInfo }: Props) {
         { titleKo: '년 주', titleEn: 'Year Pillar', heavenly: { id: 'h4', element: 'wood', label: '乙(을)', ten_god: '비견' }, earthly: { id: 'e4', element: 'water', label: '亥(해)', ten_god: '정인' }, hidden_stems: [{ label: '戊', ten_god: '정재' }, { label: '甲', ten_god: '겁재' }, { label: '壬', ten_god: '정인' }], twelve_state: '사', symbolic_stars: ['지살', '겁살'] },
     ];
 
-    const emptyBranches = pillars.map(p => p.symbolic_stars?.includes('공망') ? p.earthly.label.charAt(0) : null).filter(Boolean) as string[];
-    const heavenlyNobles = pillars.map(p => p.symbolic_stars?.includes('천을귀인') ? p.earthly.label.charAt(0) : null).filter(Boolean) as string[];
+    const emptyBranches: string[] = pillars.map(p => p.symbolic_stars?.includes('공망') ? p.earthly.label.charAt(0) : null).filter((item): item is string => item !== null);
+    const heavenlyNobles: string[] = pillars.map(p => p.symbolic_stars?.includes('천을귀인') ? p.earthly.label.charAt(0) : null).filter((item): item is string => item !== null);
 
     // 수집된 모든 신살 추출 (중복 제거)
     const allSkills = Array.from(new Set(
