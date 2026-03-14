@@ -113,6 +113,8 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         });
     };
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+
     const handleSendVerificationCode = async () => {
         if (!email) {
             alert("이메일 주소를 입력해주세요.");
@@ -120,21 +122,29 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         }
         setIsSendingCode(true);
         try {
-            const res = await fetch('/api/auth/send-verification-code', {
+            const res = await fetch(`${API_BASE}/api/auth/send-verification-code`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
-            const data = await res.json();
-            if (res.ok) {
-                alert("인증 코드가 이메일로 전송되었습니다. 10분 내에 입력해주세요.");
-                setIsCodeSent(true);
-            } else {
-                alert(`전송 실패: ${data.detail || '알 수 없는 오류'}`);
+
+            // If Render was asleep or returned an error page
+            if (!res.ok) {
+                try {
+                    const data = await res.json();
+                    alert(`전송 실패: ${data.detail || '알 수 없는 오류'}`);
+                } catch (e) {
+                    alert(`서버 응답 오류 (상태코드: ${res.status}). 잠시 후 다시 시도해주세요.`);
+                }
+                return;
             }
+
+            const data = await res.json();
+            alert("인증 코드가 이메일로 전송되었습니다. 10분 내에 입력해주세요.");
+            setIsCodeSent(true);
         } catch (error) {
             console.error(error);
-            alert("서버 오류로 인해 인증 코드를 전송하지 못했습니다.");
+            alert("네트워크 오류 또는 서버 접속 지연입니다. 1~2분 뒤에 다시 시도해주세요.");
         } finally {
             setIsSendingCode(false);
         }
@@ -147,7 +157,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         }
         setIsVerifyingCode(true);
         try {
-            const res = await fetch('/api/auth/verify-code', {
+            const res = await fetch(`${API_BASE}/api/auth/verify-code`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, code: verificationCode })
@@ -169,7 +179,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
 
     const handleRegister = async (isoString: string) => {
         try {
-            const res = await fetch('/api/auth/register', {
+            const res = await fetch(`${API_BASE}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
