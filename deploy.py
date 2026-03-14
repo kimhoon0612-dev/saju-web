@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "fix: Add .npmrc to bypass React 19 peer dependency crash on Vercel", "--allow-empty"])
+    subprocess.run(["git", "commit", "-m", "fix: Remove admin tab from mobile navigation bar", "--allow-empty"])
     
     # 3. Push
     subprocess.run(["git", "push"])
