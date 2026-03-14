@@ -827,7 +827,7 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0d0914] relative font-pretendard flex flex-col md:flex-row pt-[72px]">
+        <div className="min-h-screen bg-[#0d0914] text-white font-pretendard flex flex-col md:flex-row pb-24 md:pb-8">
             {/* Background elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-[#1a142d] to-transparent opacity-80" />
@@ -836,36 +836,45 @@ export default function AdminDashboard() {
             </div>
 
             {/* Sidebar Navigation */}
-            <aside className="w-full md:w-64 md:h-[calc(100vh-72px)] md:fixed md:top-[72px] md:left-0 bg-[#110e1b]/90 backdrop-blur-xl shadow-[2px_0_15px_rgba(0,0,0,0.5)] border-r border-[#d4af37]/20 z-40 flex flex-col">
-                <div className="p-6 pb-2 hidden md:block">
-                    <h1 className="text-2xl font-black font-outfit text-amber-100 tracking-tight flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#d4af37]" /> 운명의 관리자</h1>
-                    <p className="text-[11px] text-[#d4af37]/60 tracking-widest font-bold mt-1 uppercase">Fate Control Panel</p>
+            <aside className="w-full md:w-64 bg-[#110e1b] border-r border-[#d4af37]/20 flex flex-col md:fixed md:h-screen z-20 shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
+                {/* Admin Profile & Logo */}
+                <div className="p-6 border-b border-[#d4af37]/20 flex items-center justify-between md:justify-start gap-4 bg-gradient-to-b from-[#1a142d] to-transparent">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex justify-center items-center shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                            <Sparkles className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-black font-outfit tracking-tight text-white drop-shadow-md">FateName <span className="text-[#d4af37]">OS</span></h2>
+                            <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-0.5">Control Center</p>
+                        </div>
+                    </div>
                 </div>
 
-                <nav className="flex-1 flex md:flex-col gap-2 p-4 pt-4 md:pt-6 overflow-x-auto hide-scrollbar">
+                {/* Navigation Links */}
+                <nav className="flex-1 overflow-y-auto p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible custom-scrollbar">
                     <button
                         onClick={() => setActiveTab('analytics')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'analytics' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <LayoutDashboard className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">운명의 흐름 (통계)</span>
+                        <Activity className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">핵심 지표 모니터링</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('goods')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'goods' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <ShoppingBag className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">비급 상점 관리</span>
+                        <ShoppingBag className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">부적 인벤토리 (AI)</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('market')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'market' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <Users className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">도사 마켓/정산</span>
+                        <DollarSign className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">스토어 매출/결제 관리</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('system')}
-                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'system' ? 'bg-red-900/30 text-red-400 border-l-4 border-red-500' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
+                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'system' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <ShieldAlert className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">보안 및 설정</span>
+                        <ShieldAlert className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">시스템 설정 (프롬프트)</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('experts')}
@@ -895,7 +904,7 @@ export default function AdminDashboard() {
             </aside>
 
             {/* Main Content Pane */}
-            <main className="flex-1 md:ml-64 p-4 md:p-8 pt-6 relative z-10 w-full overflow-x-hidden min-h-screen">
+            <main className="flex-1 md:ml-64 p-4 md:p-8 pt-6 pb-32 mb-16 relative z-10 w-full overflow-x-hidden min-h-screen">
                 {/* Top App Bar Header Search */}
                 <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-[#d4af37]/20 gap-4">
                     <div className="sm:hidden flex items-center w-full justify-between">
