@@ -122,13 +122,13 @@ export default function ExpertsManager() {
     return (
         <div className="flex flex-col gap-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between mb-2">
-                <h2 className="text-2xl font-bold text-amber-100 tracking-tight flex items-center gap-2">
-                    <Sparkles className="w-6 h-6 text-[#d4af37]" /> 상담사 일괄 관리
+                <h2 className="text-2xl font-bold text-gray-800 tracking-tight flex items-center gap-2">
+                    <Sparkles className="w-6 h-6 text-[#4A5568]" /> 상담사 일괄 관리
                 </h2>
-                <div className="flex bg-[#110e1b] rounded-lg p-1 border border-[#d4af37]/20">
-                    <button onClick={() => setActiveTab('list')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'list' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>전문가 목록</button>
-                    <button onClick={() => setActiveTab('reviews')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'reviews' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>리뷰 관리</button>
-                    <button onClick={() => setActiveTab('settlements')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'settlements' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>정산 현황 (가상)</button>
+                <div className="flex bg-gray-50 rounded-lg p-1 border border-gray-200">
+                    <button onClick={() => setActiveTab('list')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'list' ? 'bg-[#4A5568] text-white' : 'text-gray-500 hover:text-[#2D3748]'}`}>전문가 목록</button>
+                    <button onClick={() => setActiveTab('reviews')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'reviews' ? 'bg-[#4A5568] text-white' : 'text-gray-500 hover:text-[#2D3748]'}`}>리뷰 관리</button>
+                    <button onClick={() => setActiveTab('settlements')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'settlements' ? 'bg-[#4A5568] text-white' : 'text-gray-500 hover:text-[#2D3748]'}`}>정산 현황 (가상)</button>
                 </div>
             </div>
 
@@ -136,12 +136,12 @@ export default function ExpertsManager() {
 
             {/* List Tab */}
             {activeTab === 'list' && (
-                <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20">
+                <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-200">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-amber-200">등록된 전문가 목록</h3>
+                        <h3 className="text-lg font-bold text-gray-700">등록된 전문가 목록</h3>
                         <button onClick={() => {
                             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                        }} className="bg-[#d4af37] text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-amber-400">
+                        }} className="bg-[#4A5568] text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-gray-600">
                             신규 등록 (아래로)
                         </button>
                     </div>
@@ -149,7 +149,7 @@ export default function ExpertsManager() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr className="border-b border-white/10 text-white/50">
+                                <tr className="border-b border-gray-200 text-gray-500">
                                     <th className="py-3 px-4 font-normal">구분</th>
                                     <th className="py-3 px-4 font-normal">코드</th>
                                     <th className="py-3 px-4 font-normal">이름</th>
@@ -159,25 +159,25 @@ export default function ExpertsManager() {
                             </thead>
                             <tbody>
                                 {experts.map(ex => (
-                                    <tr key={ex.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <tr key={ex.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                         <td className="py-3 px-4">
                                             <span className={`px-2 py-1 rounded-md text-xs font-bold ${ex.category === '운세' ? 'bg-green-900/40 text-green-400' : 'bg-purple-900/40 text-purple-400'}`}>
                                                 {ex.category}
                                             </span>
                                         </td>
-                                        <td className="py-3 px-4 text-white/70">{ex.code}</td>
-                                        <td className="py-3 px-4 font-bold text-amber-100">{ex.display_name}</td>
+                                        <td className="py-3 px-4 text-gray-600">{ex.code}</td>
+                                        <td className="py-3 px-4 font-bold text-gray-800">{ex.display_name}</td>
                                         <td className="py-3 px-4">
-                                            <span className={`flex items-center gap-1.5 text-xs font-bold ${ex.is_online ? 'text-green-400' : 'text-white/40'}`}>
+                                            <span className={`flex items-center gap-1.5 text-xs font-bold ${ex.is_online ? 'text-green-400' : 'text-gray-400'}`}>
                                                 <div className={`w-2 h-2 rounded-full ${ex.is_online ? 'bg-green-400' : 'bg-white/40'}`} />
                                                 {ex.is_online ? '상담가능' : '부재중'}
                                             </span>
                                         </td>
                                         <td className="py-3 px-4 flex justify-end gap-2">
-                                            <button onClick={() => { setSelectedExpert(ex.id); setActiveTab('reviews'); }} className="p-1.5 bg-[#110e1b] rounded-md text-amber-400 hover:bg-white/10" title="리뷰 보기">
+                                            <button onClick={() => { setSelectedExpert(ex.id); setActiveTab('reviews'); }} className="p-1.5 bg-gray-50 rounded-md text-[#4A5568] hover:bg-gray-100" title="리뷰 보기">
                                                 <Eye className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => openEditForm(ex)} className="p-1.5 bg-[#110e1b] rounded-md text-blue-400 hover:bg-white/10" title="수정">
+                                            <button onClick={() => openEditForm(ex)} className="p-1.5 bg-gray-50 rounded-md text-blue-400 hover:bg-gray-100" title="수정">
                                                 <Edit2 className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => handleDeleteExpert(ex.id)} className="p-1.5 bg-red-900/30 rounded-md text-red-400 hover:bg-red-900/50" title="삭제">
@@ -191,19 +191,19 @@ export default function ExpertsManager() {
                     </div>
 
                     {/* Moved Partner Registration Form Here */}
-                    <div className="mt-8 pt-8 border-t border-[#d4af37]/20">
-                        <h3 className="text-xl font-bold text-amber-100 mb-6 flex items-center gap-2">
+                    <div className="mt-8 pt-8 border-t border-gray-200">
+                        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                             <Users className="w-6 h-6 text-indigo-400" /> 신규 파트너 상담사 계정 섭외 / 등록
                         </h3>
-                        <p className="text-sm text-white/60 mb-8 border-b border-white/10 pb-4">이곳에서 등록된 상담사는 실제 결제 및 월간 정산이 연동되는 공식 파트너 계정입니다.</p>
+                        <p className="text-sm text-gray-500 mb-8 border-b border-gray-200 pb-4">이곳에서 등록된 상담사는 실제 결제 및 월간 정산이 연동되는 공식 파트너 계정입니다.</p>
                         <form onSubmit={handleExpertRegister} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
                             <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">활동명 (닉네임)</label>
-                                <input required type="text" value={expertName} onChange={e => setExpertName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 도원선사" />
+                                <label className="text-xs font-bold text-gray-600 mb-1 block">활동명 (닉네임)</label>
+                                <input required type="text" value={expertName} onChange={e => setExpertName(e.target.value)} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 도원선사" />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">전문 분야</label>
-                                <select value={expertSpecialty} onChange={e => setExpertSpecialty(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                <label className="text-xs font-bold text-gray-600 mb-1 block">전문 분야</label>
+                                <select value={expertSpecialty} onChange={e => setExpertSpecialty(e.target.value)} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]">
                                     <option value="사주/명리">사주/명리</option>
                                     <option value="타로/점성술">타로/점성술</option>
                                     <option value="신점/무속">신점/무속</option>
@@ -211,19 +211,19 @@ export default function ExpertsManager() {
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">세션당 상담액 (원)</label>
-                                <input required type="number" value={expertPrice} onChange={e => setExpertPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                                <label className="text-xs font-bold text-gray-600 mb-1 block">세션당 상담액 (원)</label>
+                                <input required type="number" value={expertPrice} onChange={e => setExpertPrice(Number(e.target.value))} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-[#d4af37] mb-1 block">수익 배분비 (상담사 %)</label>
-                                <input required type="number" min="0" max="100" value={expertShareRatio} onChange={e => setExpertShareRatio(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/60 rounded-lg p-3 text-[#d4af37] font-bold text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                                <label className="text-xs font-bold text-[#4A5568] mb-1 block">수익 배분비 (상담사 %)</label>
+                                <input required type="number" min="0" max="100" value={expertShareRatio} onChange={e => setExpertShareRatio(Number(e.target.value))} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#4A5568] font-bold text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
                             <div className="md:col-span-2 lg:col-span-5 grid grid-cols-1 lg:grid-cols-5 gap-6 items-end mt-2">
                                 <div className="lg:col-span-4">
-                                    <label className="text-xs font-bold text-white/70 mb-1 block">한줄 소개 (Bio)</label>
-                                    <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
+                                    <label className="text-xs font-bold text-gray-600 mb-1 block">한줄 소개 (Bio)</label>
+                                    <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
                                 </div>
-                                <button type="submit" disabled={isRegistering} className="w-full py-3 bg-gradient-to-r from-[#d4af37] to-amber-500 hover:from-amber-400 hover:to-amber-300 text-[#111] font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)] whitespace-nowrap">
+                                <button type="submit" disabled={isRegistering} className="w-full py-3 bg-gradient-to-r from-[#4A5568] to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)] whitespace-nowrap">
                                     {isRegistering ? "등록 중..." : "파트너 계정 생성"}
                                 </button>
                             </div>
@@ -234,11 +234,11 @@ export default function ExpertsManager() {
 
             {/* Reviews Tab */}
             {activeTab === 'reviews' && (
-                <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20">
+                <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-200">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-amber-200">후기(리뷰) 관리</h3>
+                        <h3 className="text-lg font-bold text-gray-700">후기(리뷰) 관리</h3>
                         <select
-                            className="bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-2 text-white text-sm focus:outline-none focus:border-[#d4af37]"
+                            className="bg-gray-50 border border-gray-300 rounded-xl p-2 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568]"
                             value={selectedExpert || ''}
                             onChange={(e) => setSelectedExpert(Number(e.target.value))}
                         >
@@ -248,26 +248,26 @@ export default function ExpertsManager() {
                     </div>
 
                     {!selectedExpert ? (
-                        <div className="text-center py-10 text-white/40">조회할 전문가를 선택해주세요.</div>
+                        <div className="text-center py-10 text-gray-400">조회할 전문가를 선택해주세요.</div>
                     ) : reviews.length === 0 ? (
-                        <div className="text-center py-10 text-white/40">해당 전문가의 후기가 없습니다.</div>
+                        <div className="text-center py-10 text-gray-400">해당 전문가의 후기가 없습니다.</div>
                     ) : (
                         <div className="space-y-4">
                             {reviews.map(rev => (
-                                <div key={rev.id} className={`p-4 rounded-xl border ${rev.is_hidden ? 'border-red-900/50 bg-red-900/10 opacity-70' : 'border-[#d4af37]/20 bg-[#110e1b]'}`}>
+                                <div key={rev.id} className={`p-4 rounded-xl border ${rev.is_hidden ? 'border-red-900/50 bg-red-900/10 opacity-70' : 'border-gray-200 bg-gray-50'}`}>
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
-                                            <span className="text-sm font-bold text-amber-200 mr-2">{rev.author_name}</span>
-                                            <span className="text-amber-400 text-xs">★ {rev.rating}</span>
+                                            <span className="text-sm font-bold text-gray-700 mr-2">{rev.author_name}</span>
+                                            <span className="text-[#4A5568] text-xs">★ {rev.rating}</span>
                                         </div>
                                         <button
                                             onClick={() => handleToggleReview(rev.id)}
-                                            className={`text-xs px-2 py-1 rounded-md font-bold flex items-center gap-1 ${rev.is_hidden ? 'bg-[#d4af37] text-black' : 'bg-red-900/40 text-red-300'}`}
+                                            className={`text-xs px-2 py-1 rounded-md font-bold flex items-center gap-1 ${rev.is_hidden ? 'bg-[#4A5568] text-white' : 'bg-red-900/40 text-red-300'}`}
                                         >
                                             {rev.is_hidden ? <><Eye className="w-3 h-3" /> 보이기</> : <><EyeOff className="w-3 h-3" /> 숨기기</>}
                                         </button>
                                     </div>
-                                    <p className="text-white/80 text-sm whitespace-pre-wrap">{rev.content}</p>
+                                    <p className="text-gray-700 text-sm whitespace-pre-wrap">{rev.content}</p>
                                 </div>
                             ))}
                         </div>
@@ -277,12 +277,12 @@ export default function ExpertsManager() {
 
             {/* Settlements Tab */}
             {activeTab === 'settlements' && (
-                <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20">
-                    <h3 className="text-lg font-bold text-amber-200 mb-6">전체 정산 대기 및 내역</h3>
+                <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-200">
+                    <h3 className="text-lg font-bold text-gray-700 mb-6">전체 정산 대기 및 내역</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr className="border-b border-white/10 text-white/50">
+                                <tr className="border-b border-gray-200 text-gray-500">
                                     <th className="py-3 px-4 font-normal">상담사</th>
                                     <th className="py-3 px-4 font-normal">금액</th>
                                     <th className="py-3 px-4 font-normal">발생 일시</th>
@@ -292,10 +292,10 @@ export default function ExpertsManager() {
                             </thead>
                             <tbody>
                                 {settlements.map(set => (
-                                    <tr key={set.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                        <td className="py-3 px-4 font-bold text-amber-100">{set.expert_name}</td>
+                                    <tr key={set.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                        <td className="py-3 px-4 font-bold text-gray-800">{set.expert_name}</td>
                                         <td className="py-3 px-4 text-green-400 font-bold">{set.amount.toLocaleString()}원</td>
-                                        <td className="py-3 px-4 text-white/50">{new Date(set.created_at).toLocaleString()}</td>
+                                        <td className="py-3 px-4 text-gray-500">{new Date(set.created_at).toLocaleString()}</td>
                                         <td className="py-3 px-4">
                                             {set.status === 'PENDING' ? (
                                                 <span className="px-2 py-1 bg-orange-900/40 text-orange-400 rounded-md text-xs font-bold flex items-center gap-1 w-max">
@@ -309,7 +309,7 @@ export default function ExpertsManager() {
                                         </td>
                                         <td className="py-3 px-4 text-right">
                                             {set.status === 'PENDING' && (
-                                                <button onClick={() => handleCompleteSettlement(set.id)} className="px-3 py-1.5 bg-[#d4af37] hover:bg-amber-400 text-black font-bold rounded-lg text-xs transition-colors">
+                                                <button onClick={() => handleCompleteSettlement(set.id)} className="px-3 py-1.5 bg-[#4A5568] hover:bg-gray-600 text-black font-bold rounded-lg text-xs transition-colors">
                                                     지급 완료 처리
                                                 </button>
                                             )}
@@ -325,62 +325,62 @@ export default function ExpertsManager() {
             {/* Edit/Create Modal */}
             {isEditing && (
                 <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-                    <div className="bg-[#1a142d] border border-[#d4af37]/30 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+                    <div className="bg-white border border-gray-300 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
                         <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-bold text-amber-100 flex items-center gap-2">
-                                <Edit2 className="w-5 h-5 text-[#d4af37]" /> {formData.id ? '상담사 수정' : '신규 상담사 등록'}
+                            <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                                <Edit2 className="w-5 h-5 text-[#4A5568]" /> {formData.id ? '상담사 수정' : '신규 상담사 등록'}
                             </h3>
-                            <button onClick={() => setIsEditing(false)} className="text-white/50 hover:text-white"><EyeOff className="w-6 h-6" /></button>
+                            <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-[#2D3748]"><EyeOff className="w-6 h-6" /></button>
                         </div>
                         <form onSubmit={handleSaveExpert} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">카테고리</label>
-                                <select required value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]">
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">카테고리</label>
+                                <select required value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]">
                                     <option value="운세">운세</option>
                                     <option value="타로">타로</option>
                                     <option value="신점">신점 (히든)</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">이름</label>
-                                <input required type="text" value={formData.display_name} onChange={e => setFormData({ ...formData, display_name: e.target.value })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">이름</label>
+                                <input required type="text" value={formData.display_name} onChange={e => setFormData({ ...formData, display_name: e.target.value })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">고유 코드 (ex: 002)</label>
-                                <input required type="text" value={formData.code} onChange={e => setFormData({ ...formData, code: e.target.value })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">고유 코드 (ex: 002)</label>
+                                <input required type="text" value={formData.code} onChange={e => setFormData({ ...formData, code: e.target.value })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">태그 (콤마로 구분)</label>
-                                <input type="text" value={formData.tags} onChange={e => setFormData({ ...formData, tags: e.target.value })} placeholder="#재회, #어장" className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">태그 (콤마로 구분)</label>
+                                <input type="text" value={formData.tags} onChange={e => setFormData({ ...formData, tags: e.target.value })} placeholder="#재회, #어장" className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">평점</label>
-                                <input type="number" step="0.1" value={formData.rating} onChange={e => setFormData({ ...formData, rating: parseFloat(e.target.value) })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">평점</label>
+                                <input type="number" step="0.1" value={formData.rating} onChange={e => setFormData({ ...formData, rating: parseFloat(e.target.value) })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">평균 상담시간(분)</label>
-                                <input type="number" value={formData.avg_minutes} onChange={e => setFormData({ ...formData, avg_minutes: parseInt(e.target.value) })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">평균 상담시간(분)</label>
+                                <input type="number" value={formData.avg_minutes} onChange={e => setFormData({ ...formData, avg_minutes: parseInt(e.target.value) })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-white/70 mb-1 block">이미지 URL</label>
-                                <input type="text" value={formData.image_url} onChange={e => setFormData({ ...formData, image_url: e.target.value })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">이미지 URL</label>
+                                <input type="text" value={formData.image_url} onChange={e => setFormData({ ...formData, image_url: e.target.value })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-white/70 mb-1 block">상단 배너 텍스트 (예: 선착순 4명)</label>
-                                <input type="text" value={formData.banner_text} onChange={e => setFormData({ ...formData, banner_text: e.target.value })} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                <label className="text-sm font-bold text-gray-600 mb-1 block">상단 배너 텍스트 (예: 선착순 4명)</label>
+                                <input type="text" value={formData.banner_text} onChange={e => setFormData({ ...formData, banner_text: e.target.value })} className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                             </div>
-                            <div className="flex items-center gap-4 md:col-span-2 p-3 bg-[#110e1b] rounded-xl border border-[#d4af37]/10 mt-2">
-                                <label className="flex items-center gap-2 text-white font-bold cursor-pointer">
+                            <div className="flex items-center gap-4 md:col-span-2 p-3 bg-gray-50 rounded-xl border border-gray-100 mt-2">
+                                <label className="flex items-center gap-2 text-[#2D3748] font-bold cursor-pointer">
                                     <input type="checkbox" checked={formData.is_online} onChange={e => setFormData({ ...formData, is_online: e.target.checked })} className="w-5 h-5 accent-[#d4af37]" />
                                     현재 온라인(상담가능)
                                 </label>
-                                <label className="flex items-center gap-2 text-white font-bold cursor-pointer ml-4">
+                                <label className="flex items-center gap-2 text-[#2D3748] font-bold cursor-pointer ml-4">
                                     <input type="checkbox" checked={formData.is_free_available} onChange={e => setFormData({ ...formData, is_free_available: e.target.checked })} className="w-5 h-5 accent-[#d4af37]" />
                                     첫회 무료 여부
                                 </label>
                             </div>
 
-                            <button type="submit" className="md:col-span-2 mt-4 py-3.5 rounded-xl bg-[#d4af37] hover:bg-amber-400 text-black font-black text-lg transition-all shadow-lg">
+                            <button type="submit" className="md:col-span-2 mt-4 py-3.5 rounded-xl bg-[#4A5568] hover:bg-gray-600 text-black font-black text-lg transition-all shadow-lg">
                                 저장하기
                             </button>
                         </form>
