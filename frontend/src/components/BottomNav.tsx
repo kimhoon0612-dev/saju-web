@@ -12,6 +12,7 @@ export default function BottomNav() {
         { name: "타로", path: "/tarot", emoji: "🔮" },
         { name: "멘토", path: "/experts", emoji: "🦉" },
         { name: "마켓", path: "/store", emoji: "🛍️" },
+        { name: "관리자", path: "/admin", emoji: "⚙️" },
     ];
 
     return (
