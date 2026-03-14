@@ -125,7 +125,7 @@ def send_email_async(to_email: str, code: str):
         body = f"안녕하세요. 나의 운명코드에 가입해 주셔서 감사합니다.\n\n요청하신 인증 코드는 아래와 같습니다:\n\n인증코드: {code}\n\n이 코드는 10분 동안 유효합니다. 홈페이지로 돌아가 이 코드를 입력해 주세요."
         msg.attach(MIMEText(body, 'plain', 'utf-8'))
         
-        server = smtplib.SMTP(smtp_server, smtp_port)
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
         server.starttls()
         server.login(smtp_username, smtp_password)
         server.send_message(msg)
@@ -136,8 +136,10 @@ def send_email_async(to_email: str, code: str):
         # Even if sending fails, we let it pass for now so the app doesn't crash entirely.
         # In a robust production environment, we should handle this gracefully.
 
+from fastapi import BackgroundTasks
+
 @router.post("/send-verification-code", response_model=VerificationResponse)
-async def send_verification_code(request: SendVerificationRequest, db: AsyncSession = Depends(get_db)):
+async def send_verification_code(request: SendVerificationRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     # 1. Check if email is already registered
     existing_user_result = await db.execute(select(User).where(User.email == request.email))
     if existing_user_result.scalars().first():
@@ -160,8 +162,8 @@ async def send_verification_code(request: SendVerificationRequest, db: AsyncSess
     db.add(new_verification)
     await db.commit()
     
-    # 5. Send Email
-    send_email_async(request.email, code)
+    # 5. Send Email (in background to avoid blocking the API response)
+    background_tasks.add_task(send_email_async, request.email, code)
     
     return VerificationResponse(status="success", message="인증 코드가 이메일로 전송되었습니다.")
 

@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "fix: revert explicit API_BASE in BirthDataForm to let Next.js rewrites handle CORS to Render proxy", "--allow-empty"])
+    subprocess.run(["git", "commit", "-m", "fix: dispatch email sending as a BackgroundTask to prevent SMTP from blocking the FastAPI event loop and causing 500 timeouts", "--allow-empty"])
     
     # 3. Push
     subprocess.run(["git", "push"])
