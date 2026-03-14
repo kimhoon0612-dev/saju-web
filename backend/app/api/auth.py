@@ -105,14 +105,21 @@ async def register_user(request: RegisterRequest, db: AsyncSession = Depends(get
     )
 
 def send_email_async(to_email: str, code: str):
+    import logging
+    import traceback
+    
+    logger = logging.getLogger(__name__)
+    
     # Retrieve SMTP config from environment variables
     smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
     smtp_port = int(os.environ.get("SMTP_PORT", 587))
     smtp_username = os.environ.get("SMTP_USERNAME")
     smtp_password = os.environ.get("SMTP_PASSWORD")
     
+    print(f"[EMAIL_DEBUG] Starting email send to {to_email}. Server: {smtp_server}:{smtp_port}, User: {smtp_username}")
+    
     if not smtp_username or not smtp_password:
-        print(f"SMTP Configuration is missing! Cannot send real email to {to_email}.")
+        print(f"[EMAIL_DEBUG] SMTP Configuration is missing! Cannot send real email to {to_email}.")
         print(f"VIRTUAL INBOX -> {to_email} Verification Code: {code}")
         return
 
@@ -125,16 +132,20 @@ def send_email_async(to_email: str, code: str):
         body = f"안녕하세요. 나의 운명코드에 가입해 주셔서 감사합니다.\n\n요청하신 인증 코드는 아래와 같습니다:\n\n인증코드: {code}\n\n이 코드는 10분 동안 유효합니다. 홈페이지로 돌아가 이 코드를 입력해 주세요."
         msg.attach(MIMEText(body, 'plain', 'utf-8'))
         
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+        print("[EMAIL_DEBUG] Connecting to SMTP server...")
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=15)
+        print("[EMAIL_DEBUG] Starting TLS...")
         server.starttls()
+        print("[EMAIL_DEBUG] Logging in...")
         server.login(smtp_username, smtp_password)
+        print("[EMAIL_DEBUG] Sending message...")
         server.send_message(msg)
+        print("[EMAIL_DEBUG] Quitting server...")
         server.quit()
-        print(f"Successfully sent verification email to {to_email}")
+        print(f"[EMAIL_DEBUG] Successfully sent verification email to {to_email}")
     except Exception as e:
-        print(f"Failed to send email to {to_email}: {e}")
-        # Even if sending fails, we let it pass for now so the app doesn't crash entirely.
-        # In a robust production environment, we should handle this gracefully.
+        print(f"[EMAIL_ERROR] Failed to send email to {to_email}: {e}")
+        traceback.print_exc()
 
 from fastapi import BackgroundTasks
 
