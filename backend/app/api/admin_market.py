@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from datetime import datetime
+from typing import Optional
 
 from app.core.database import get_db
 from app.models.market_models import Reservation, PointTransaction, User, ExpertProfile, UserRole
@@ -15,6 +16,7 @@ class ExpertRegisterRequest(BaseModel):
     short_bio: str
     price_per_session: int
     share_ratio_percent: int = 70
+    image_url: Optional[str] = None
 
 class ShareRatioUpdateRequest(BaseModel):
     share_ratio_percent: int
@@ -63,7 +65,8 @@ async def register_expert(req: ExpertRegisterRequest, db: AsyncSession = Depends
         price_per_session=req.price_per_session,
         share_ratio_percent=req.share_ratio_percent,
         aura_element="wood", # Default
-        rating=5
+        rating=5,
+        image_url=req.image_url
     )
     db.add(new_profile)
     await db.commit()

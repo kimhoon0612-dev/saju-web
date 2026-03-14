@@ -52,6 +52,7 @@ class ExpertProfile(Base):
     rating = Column(Integer, default=5)
     price_per_session = Column(Integer, default=1000)
     share_ratio_percent = Column(Integer, default=70) # 상담사 수익 배분율 (기본 70%)
+    image_url = Column(String, nullable=True) # 프로필 썸네일/사진
 
     user = relationship("User", back_populates="expert_profile")
 

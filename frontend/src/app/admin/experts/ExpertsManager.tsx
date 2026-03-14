@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Edit2, Trash2, Plus, EyeOff, Eye, CheckCircle, Clock, Users } from 'lucide-react';
+import { Sparkles, Edit2, Trash2, Plus, EyeOff, Eye, CheckCircle, Clock, Users, UploadCloud } from 'lucide-react';
 
 export default function ExpertsManager() {
     const [experts, setExperts] = useState<any[]>([]);
@@ -24,6 +24,8 @@ export default function ExpertsManager() {
     const [expertBio, setExpertBio] = useState("");
     const [expertPrice, setExpertPrice] = useState<number>(10000);
     const [expertShareRatio, setExpertShareRatio] = useState<number>(70);
+    const [expertImageUrl, setExpertImageUrl] = useState<string>("");
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
 
     useEffect(() => {
@@ -72,6 +74,25 @@ export default function ExpertsManager() {
         fetchExperts();
     };
 
+    const handleImageUpload = async (file: File) => {
+        setIsUploadingImage(true);
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+            const res = await fetch('/api/admin/talisman/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            setExpertImageUrl(data.url);
+        } catch (e) {
+            console.error(e);
+            alert("이미지 업로드에 실패했습니다.");
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
+
     const handleExpertRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsRegistering(true);
@@ -84,11 +105,12 @@ export default function ExpertsManager() {
                     specialty: expertSpecialty,
                     short_bio: expertBio,
                     price_per_session: expertPrice,
-                    share_ratio_percent: expertShareRatio
+                    share_ratio_percent: expertShareRatio,
+                    image_url: expertImageUrl || null
                 })
             });
             alert('파트너 상담사 프로필이 성공적으로 등록되었습니다.');
-            setExpertName(""); setExpertBio(""); setExpertShareRatio(70);
+            setExpertName(""); setExpertBio(""); setExpertShareRatio(70); setExpertImageUrl("");
         } catch (e) {
             console.error(e);
         } finally {
@@ -218,14 +240,41 @@ export default function ExpertsManager() {
                                 <label className="text-xs font-bold text-[#4A5568] mb-1 block">수익 배분비 (상담사 %)</label>
                                 <input required type="number" min="0" max="100" value={expertShareRatio} onChange={e => setExpertShareRatio(Number(e.target.value))} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#4A5568] font-bold text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
-                            <div className="md:col-span-2 lg:col-span-5 grid grid-cols-1 lg:grid-cols-5 gap-6 items-end mt-2">
-                                <div className="lg:col-span-4">
-                                    <label className="text-xs font-bold text-gray-600 mb-1 block">한줄 소개 (Bio)</label>
-                                    <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
+                            <div className="md:col-span-2 lg:col-span-5 grid grid-cols-1 lg:grid-cols-2 gap-6 items-end mt-2">
+                                <div>
+                                    <label className="text-xs font-bold text-gray-600 mb-2 block">프로필 사진 첨부</label>
+                                    <div className="flex items-center gap-4 bg-gray-50 border border-gray-300 rounded-lg p-3 h-[72px]">
+                                        <div className="w-12 h-12 rounded-full bg-white border border-gray-200 flex justify-center items-center overflow-hidden shrink-0 relative">
+                                            {expertImageUrl ? (
+                                                <img src={expertImageUrl} alt="preview" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <UploadCloud className="w-5 h-5 text-gray-400" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                onChange={(e) => { 
+                                                    const file = e.target.files?.[0];
+                                                    if(file) handleImageUpload(file);
+                                                }}
+                                                className="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-[#4A5568] file:text-white hover:file:bg-gray-600 cursor-pointer" 
+                                                disabled={isUploadingImage}
+                                            />
+                                            {isUploadingImage && <p className="text-[10px] text-blue-500 mt-1 font-bold">사진 업로드 중...</p>}
+                                        </div>
+                                    </div>
                                 </div>
-                                <button type="submit" disabled={isRegistering} className="w-full py-3 bg-gradient-to-r from-[#4A5568] to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)] whitespace-nowrap">
-                                    {isRegistering ? "등록 중..." : "파트너 계정 생성"}
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <div>
+                                        <label className="text-xs font-bold text-gray-600 mb-1 block">한줄 소개 (Bio)</label>
+                                        <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-[#2D3748] text-sm focus:outline-none focus:border-[#4A5568] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
+                                    </div>
+                                    <button type="submit" disabled={isRegistering || isUploadingImage} className="w-full py-3 h-[48px] bg-gradient-to-r from-[#4A5568] to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-bold rounded-lg transition-colors shadow-sm whitespace-nowrap disabled:opacity-50 flex items-center justify-center">
+                                        {isRegistering ? "등록 중..." : "파트너 계정 생성"}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
