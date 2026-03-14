@@ -10,6 +10,55 @@ import ExpertsManager from './experts/ExpertsManager';
 
 type TabId = 'analytics' | 'goods' | 'market' | 'system' | 'experts' | 'users';
 
+const ShareRatioInput = ({ expertId, initialRatio, onUpdate }: { expertId: number; initialRatio: number; onUpdate: () => void }) => {
+    const [ratio, setRatio] = useState(initialRatio);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleBlur = async () => {
+        if (ratio === initialRatio) return;
+        if (ratio < 0 || ratio > 100) {
+            alert("0에서 100 사이의 값을 입력하세요.");
+            setRatio(initialRatio);
+            return;
+        }
+        setIsSaving(true);
+        try {
+            const res = await fetch(`/api/admin/marketplace/experts/${expertId}/share-ratio`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ share_ratio_percent: ratio }),
+            });
+            if (res.ok) {
+                onUpdate();
+            } else {
+                alert("비율 수정에 실패했습니다.");
+                setRatio(initialRatio);
+            }
+        } catch (e) {
+            console.error(e);
+            setRatio(initialRatio);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center gap-1">
+            <input
+                type="number"
+                min="0"
+                max="100"
+                value={ratio}
+                onChange={(e) => setRatio(Number(e.target.value))}
+                onBlur={handleBlur}
+                disabled={isSaving}
+                className="w-16 bg-[#1a142d] border border-[#d4af37]/30 rounded px-2 py-1 text-center text-white focus:outline-none focus:border-[#d4af37] disabled:opacity-50"
+            />
+            <span className="text-white/60">%</span>
+        </div>
+    );
+};
+
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<TabId>('analytics');
 
@@ -715,7 +764,9 @@ export default function AdminDashboard() {
                                             <td className="p-3 font-bold text-white">{s.expert_name}</td>
                                             <td className="p-3 text-right text-blue-400 font-medium">{s.total_sales_amount?.toLocaleString()}</td>
                                             <td className="p-3 text-right text-red-400 font-medium">-{s.fee_deducted?.toLocaleString()}</td>
-                                            <td className="p-3 text-center text-white/60 font-medium">{s.share_ratio_percent}%</td>
+                                            <td className="p-3 text-center font-medium">
+                                                <ShareRatioInput expertId={s.expert_id} initialRatio={s.share_ratio_percent} onUpdate={fetchMarket} />
+                                            </td>
                                             <td className="p-3 text-right text-[#d4af37] font-black">{s.final_settlement_amount.toLocaleString()}</td>
                                         </tr>
                                     ))}

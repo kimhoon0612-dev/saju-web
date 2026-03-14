@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "fix: Remove admin tab from mobile navigation bar", "--allow-empty"])
+    subprocess.run(["git", "commit", "-m", "feat: Make expert settlement ratio editable in admin dashboard", "--allow-empty"])
     
     # 3. Push
     subprocess.run(["git", "push"])

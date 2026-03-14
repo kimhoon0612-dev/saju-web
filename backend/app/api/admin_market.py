@@ -16,6 +16,29 @@ class ExpertRegisterRequest(BaseModel):
     price_per_session: int
     share_ratio_percent: int = 70
 
+class ShareRatioUpdateRequest(BaseModel):
+    share_ratio_percent: int
+
+@router.put("/experts/{expert_id}/share-ratio")
+async def update_expert_share_ratio(expert_id: int, req: ShareRatioUpdateRequest, db: AsyncSession = Depends(get_db)):
+    """
+    [Admin] 전문가별 상담 수익 배분율(%) 수정
+    """
+    stmt = select(ExpertProfile).where(ExpertProfile.user_id == expert_id)
+    result = await db.execute(stmt)
+    profile = result.scalars().first()
+    
+    if not profile:
+        # Create a basic profile if it somehow doesn't exist
+        profile = ExpertProfile(user_id=expert_id, display_name=f"Expert #{expert_id}", share_ratio_percent=req.share_ratio_percent)
+        db.add(profile)
+    else:
+        profile.share_ratio_percent = req.share_ratio_percent
+        
+    await db.commit()
+    
+    return {"status": "success", "message": "정산 비율이 갱신되었습니다."}
+
 @router.post("/register-expert")
 async def register_expert(req: ExpertRegisterRequest, db: AsyncSession = Depends(get_db)):
     """
