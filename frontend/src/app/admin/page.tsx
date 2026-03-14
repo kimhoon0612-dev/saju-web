@@ -866,6 +866,7 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th className="p-3 font-semibold">ID</th>
                                     <th className="p-3 font-semibold">가입 이메일</th>
+                                    <th className="p-3 font-semibold">전화번호</th>
                                     <th className="p-3 font-semibold">이름</th>
                                     <th className="p-3 font-semibold">성별</th>
                                     <th className="p-3 font-semibold">생년월일(ISO)</th>
@@ -879,6 +880,7 @@ export default function AdminDashboard() {
                                     <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-500 transition-colors">
                                         <td className="p-3 text-gray-500">#{user.id}</td>
                                         <td className="p-3 font-bold text-[#2D3748]">{user.email || '미연동'}</td>
+                                        <td className="p-3 text-blue-600 font-medium">{user.phone_number || '미기재'}</td>
                                         <td className="p-3 text-[#2D3748]/90">{user.name || '알 수 없음'}</td>
                                         <td className="p-3 text-gray-600">{user.gender === 'M' ? '남성' : (user.gender === 'F' ? '여성' : '-')}</td>
                                         <td className="p-3 text-gray-600">{user.birth_time_iso ? user.birth_time_iso.replace('T', ' ') : '-'}</td>
@@ -890,7 +892,7 @@ export default function AdminDashboard() {
                                     </tr>
                                 ))}
                                 {usersList.length === 0 && (
-                                    <tr><td colSpan={8} className="p-6 text-center text-gray-400">가입된 회원이 없습니다.</td></tr>
+                                    <tr><td colSpan={9} className="p-6 text-center text-gray-400">가입된 회원이 없습니다.</td></tr>
                                 )}
                             </tbody>
                         </table>

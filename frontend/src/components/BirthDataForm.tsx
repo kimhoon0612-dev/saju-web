@@ -26,6 +26,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
     
     // 회원가입 관련 상태 반환
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     
     // 이메일 인증 관련 상태
@@ -53,6 +54,8 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 if (parsed.isLunar !== undefined) setIsLunar(parsed.isLunar);
                 if (parsed.isLeapMonth !== undefined) setIsLeapMonth(parsed.isLeapMonth);
                 if (parsed.name) setName(parsed.name);
+                if (parsed.email) setEmail(parsed.email);
+                if (parsed.phone) setPhone(parsed.phone);
                 setIsRemembered(true);
             } catch (e) {
                 console.error("Failed to parse saved user info", e);
@@ -81,7 +84,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         if (isRemembered) {
             const dataToSave = {
                 year, month, day, ampm, hour, minute,
-                gender, isLunar, isLeapMonth, name, email
+                gender, isLunar, isLeapMonth, name, email, phone
             };
             localStorage.setItem('saju_saved_user_info', JSON.stringify(dataToSave));
         } else {
@@ -184,6 +187,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email,
+                    phone_number: phone,
                     password: "dummy_password_for_saju",
                     name: name.trim() || "회원",
                     gender: gender,
@@ -437,6 +441,21 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* 계정 연동 - 휴대전화 번호 입력 */}
+                <div className="flex flex-col gap-2">
+                    <label className="font-pretendard text-[14px] text-gray-800 flex items-center gap-1.5 font-extrabold px-1">
+                        휴대전화 번호 <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-sm ml-1 font-bold">필수</span>
+                    </label>
+                    <input
+                        type="tel"
+                        value={phone}
+                        required={email.length > 0} 
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="예: 01012345678 (- 없이 입력)"
+                        className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-[14px] px-4 font-pretendard text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
+                    />
                 </div>
 
                 {/* 내 정보 기억하기 Checkbox */}

@@ -21,6 +21,7 @@ class RegisterRequest(BaseModel):
     email: str
     password: Optional[str] = None # Optional for Kakao login
     name: str
+    phone_number: Optional[str] = None
     gender: Optional[str] = None
     birth_time_iso: Optional[str] = None
     is_lunar: Optional[bool] = False
@@ -84,6 +85,7 @@ async def register_user(request: RegisterRequest, db: AsyncSession = Depends(get
         username=request.email, # Use email as username for uniqueness
         email=request.email,
         name=request.name,
+        phone_number=request.phone_number,
         gender=request.gender,
         birth_time_iso=request.birth_time_iso,
         is_lunar=request.is_lunar,

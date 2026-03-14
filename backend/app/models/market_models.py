@@ -22,6 +22,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=True) # Will store email or kakao id
     password_hash = Column(String, nullable=True) # Password hash for email login
     name = Column(String, nullable=True)
+    phone_number = Column(String, nullable=True)
     
     # Birth data fields
     gender = Column(String, nullable=True)
