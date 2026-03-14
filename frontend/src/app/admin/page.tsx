@@ -606,7 +606,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <div>
                                         <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명 / 효능</label>
-                                        <textarea required value={directDescription} onChange={e => setDirectDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" placeholder="프리미엄 상품 설명..." />
+                                        <textarea required value={directDescription} onChange={e => setDirectDescription(e.target.value)} rows={12} className="w-full min-h-[200px] bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-y" placeholder="프리미엄 상품 설명..." />
                                     </div>
                                     <div>
                                         <label className="text-sm font-bold text-white/70 mb-1 block">대표 이미지 업로드</label>
@@ -1065,7 +1065,7 @@ export default function AdminDashboard() {
 
                             <div>
                                 <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명 / 부가 혜택 문구</label>
-                                <textarea required value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" />
+                                <textarea required value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={12} className="w-full min-h-[200px] bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-y" />
                             </div>
 
                             {editingProduct?.category !== 'coin' && (
