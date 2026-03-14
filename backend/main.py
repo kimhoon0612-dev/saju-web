@@ -49,6 +49,13 @@ async def lifespan(app: FastAPI):
         except Exception:
             pass # Already exists
 
+        try:
+            from sqlalchemy import text
+            await session.execute(text("ALTER TABLE expert_profiles ADD COLUMN image_url VARCHAR"))
+            await session.commit()
+        except Exception:
+            pass # Already exists
+
         result = await session.execute(select(VirtualExpert))
         experts = result.scalars().all()
         if not experts:

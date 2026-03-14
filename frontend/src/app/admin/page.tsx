@@ -730,7 +730,7 @@ export default function AdminDashboard() {
                             <button onClick={() => {
                                 // CSV Export Logic
                                 const headers = "전문가,매출 총액(원),플랫폼 수수료(원),정산 비율,최종 지급액(원)\n";
-                                const rows = settlements.settlements.map((s:any) => 
+                                const rows = (settlements?.settlements || []).map((s:any) => 
                                     `${s.expert_name},${s.total_sales_amount},${s.fee_deducted},${s.share_ratio_percent}%,${s.final_settlement_amount}`
                                 ).join("\n");
                                 const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + rows;
@@ -759,7 +759,7 @@ export default function AdminDashboard() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {settlements.settlements.map((s: any) => (
+                                    {(settlements?.settlements || []).map((s: any) => (
                                         <tr key={s.expert_id} className="border-b border-gray-100 hover:bg-gray-500 transition-colors">
                                             <td className="p-3 font-bold text-[#2D3748]">{s.expert_name}</td>
                                             <td className="p-3 text-right text-blue-400 font-medium">{s.total_sales_amount?.toLocaleString()}</td>
@@ -770,8 +770,8 @@ export default function AdminDashboard() {
                                             <td className="p-3 text-right text-[#4A5568] font-black">{s.final_settlement_amount.toLocaleString()}</td>
                                         </tr>
                                     ))}
-                                    {settlements.settlements.length === 0 && (
-                                        <tr><td colSpan={5} className="p-6 text-center text-gray-400">정산 내역이 없습니다.</td></tr>
+                                    {(settlements?.settlements || []).length === 0 && (
+                                        <tr><td colSpan={5} className="p-6 text-center text-gray-400">정산 내역이 없습니다. (API 호출 실패 또는 빈 데이터)</td></tr>
                                     )}
                                 </tbody>
                             </table>
