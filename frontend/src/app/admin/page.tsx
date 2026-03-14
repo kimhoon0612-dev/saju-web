@@ -57,12 +57,7 @@ export default function AdminDashboard() {
     const [editCoinAmount, setEditCoinAmount] = useState<number>(0);
     const [editBonusCoins, setEditBonusCoins] = useState<number>(0);
 
-    // Expert Registration State
-    const [expertName, setExpertName] = useState("");
-    const [expertSpecialty, setExpertSpecialty] = useState("사주/명리");
-    const [expertBio, setExpertBio] = useState("");
-    const [expertPrice, setExpertPrice] = useState<number>(10000);
-    const [isRegistering, setIsRegistering] = useState(false);
+    // Expert Registration State was moved to ExpertsManager.tsx
 
     // Fetch Logic
     useEffect(() => {
@@ -310,30 +305,6 @@ export default function AdminDashboard() {
             alert("수정 실패");
         } finally {
             setIsUploading(false);
-        }
-    };
-
-    const handleExpertRegister = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsRegistering(true);
-        try {
-            await fetch('/api/admin/marketplace/register-expert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    display_name: expertName,
-                    specialty: expertSpecialty,
-                    short_bio: expertBio,
-                    price_per_session: expertPrice
-                })
-            });
-            alert('전문가 프로필이 성공적으로 등록되었습니다.');
-            setExpertName(""); setExpertBio("");
-            fetchMarket();
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setIsRegistering(false);
         }
     };
 
