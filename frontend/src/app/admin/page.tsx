@@ -856,25 +856,19 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('analytics')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'analytics' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <Activity className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">핵심 지표 모니터링</span>
+                        <Activity className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">종합 대시보드</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('goods')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'goods' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <ShoppingBag className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">부적 인벤토리 (AI)</span>
+                        <ShoppingBag className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">마켓관리</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('market')}
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'market' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
-                        <DollarSign className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">스토어 매출/결제 관리</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('system')}
-                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'system' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
-                    >
-                        <ShieldAlert className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">시스템 설정 (프롬프트)</span>
+                        <DollarSign className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">상담사 정산</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('experts')}
@@ -887,6 +881,12 @@ export default function AdminDashboard() {
                         className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'users' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
                     >
                         <Users className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">회원/멤버십</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('system')}
+                        className={`flex items-center gap-3 px-4 py-3 min-w-[140px] rounded-xl font-bold text-sm transition-all ${activeTab === 'system' ? 'bg-[#d4af37]/10 text-[#d4af37] border-l-4 border-[#d4af37]' : 'text-white/60 hover:text-amber-100 hover:bg-[#1a142d] border-l-4 border-transparent'}`}
+                    >
+                        <ShieldAlert className="w-5 h-5 shrink-0" /> <span className="hidden md:inline">보안 및 설정</span>
                     </button>
                 </nav>
 
