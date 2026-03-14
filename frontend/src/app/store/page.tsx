@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import ProductModal from "@/components/Store/ProductModal";
 import { Sparkles, Heart, BadgeDollarSign, Briefcase, Dumbbell, Clover, Star, ChevronRight } from "lucide-react";
 
-// Types for store products
 export interface Product {
     id: string;
     name: string;
@@ -15,74 +14,12 @@ export interface Product {
     imageUrl: string;
     original_price?: number;
     sales_tags?: string;
+    coin_amount?: number;
+    bonus_coins?: number;
 }
 
 // Mock Products Database
-export const storeProducts: Product[] = [
-    {
-        id: "elm_wood_01",
-        name: "생명력의 나무 (목 기운)",
-        description: "사주에 부족한 목(木) 기운을 채워주는 성장과 생명력의 오브제.",
-        price: 9900,
-        category: "elemental",
-        elementTheme: "wood",
-        imageUrl: "/talismans/health.png"
-    },
-    {
-        id: "elm_fire_01",
-        name: "불타는 열정 (화 기운)",
-        description: "강력한 화(火)의 에너지로 추진력을 극대화하는 맞춤형 오브제.",
-        price: 9900,
-        category: "elemental",
-        elementTheme: "fire",
-        imageUrl: "/talismans/love.png"
-    },
-    {
-        id: "wish_wealth_01",
-        name: "금전운 시크릿 오브제",
-        description: "오프라인 재물운의 파동을 그대로 담은 디지털 굿즈.",
-        price: 15000,
-        category: "wish",
-        elementTheme: "wealth",
-        imageUrl: "/talismans/wealth.png"
-    },
-    {
-        id: "wish_love_01",
-        name: "인연의 붉은 실 (도화)",
-        description: "매력을 극대화하고 새로운 인연을 끌어당기는 사랑의 템플릿.",
-        price: 15000,
-        category: "wish",
-        elementTheme: "love",
-        imageUrl: "/talismans/love.png"
-    },
-    {
-        id: "persona_dragon_01",
-        name: "청룡의 페르소나",
-        description: "강력한 리더십을 상징하는 청룡 아바타 디자인.",
-        price: 25000,
-        category: "persona",
-        elementTheme: "wood",
-        imageUrl: "/talismans/health.png"
-    },
-    {
-        id: "nft_lucky_01",
-        name: "한정판 디지털 럭키참",
-        description: "영구 보존 가능한 나만의 유일무이한 프리미엄 럭키참.",
-        price: 50000,
-        category: "wish",
-        elementTheme: "wealth",
-        imageUrl: "/talismans/wealth.png"
-    },
-    {
-        id: "wallpaper_char_01",
-        name: "일주 캐릭터 프리미엄 배경화면",
-        description: "나의 태어난 일주(日柱)를 형상화한 하이엔드 3D 캐릭터 스마트폰 배경화면.",
-        price: 5500,
-        category: "persona",
-        elementTheme: "wood",
-        imageUrl: "/talismans/love.png"
-    }
-];
+export const storeProducts: Product[] = [];
 
 export default function DirectStorePage() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -119,8 +56,11 @@ export default function DirectStorePage() {
     };
 
     // Filter products based on active category
+    const nonCoinProducts = useMemo(() => products.filter(p => p.category !== 'coin'), [products]);
+    const coinProducts = useMemo(() => products.filter(p => p.category === 'coin').sort((a,b) => a.price - b.price), [products]);
+
     const filteredProducts = useMemo(() => {
-        return products.filter(p => {
+        return nonCoinProducts.filter(p => {
             if (!activeCategory || activeCategory === "전체보기") return true;
             if (activeCategory === "재물/사업") return p.elementTheme === "wealth" || p.elementTheme === "metal";
             if (activeCategory === "애정/인연") return p.elementTheme === "love" || p.elementTheme === "fire";
@@ -128,22 +68,22 @@ export default function DirectStorePage() {
             if (activeCategory === "소원/기타") return p.elementTheme === "wood" || p.elementTheme === "earth";
             return true;
         });
-    }, [products, activeCategory]);
+    }, [nonCoinProducts, activeCategory]);
 
     // 맞춤 추천 잇템 - 테마별로 1개씩 선정
     const mzPicks = useMemo(() => {
         const picks: Product[] = [];
         const themes = ["wealth", "love", "health", "wood"];
         themes.forEach(theme => {
-            const items = products.filter(p => p.elementTheme === theme);
+            const items = nonCoinProducts.filter(p => p.elementTheme === theme);
             if (items.length > 0) {
                 // 당일 날짜 기반 슈도 랜덤
                 picks.push(items[new Date().getDate() % items.length]);
             }
         });
-        if (picks.length < 4) return [...picks, ...products].slice(0, 4);
+        if (picks.length < 4) return [...picks, ...nonCoinProducts].slice(0, 4);
         return picks;
-    }, [products]);
+    }, [nonCoinProducts]);
 
     useEffect(() => {
         const fetchStoreDB = async () => {
@@ -164,7 +104,9 @@ export default function DirectStorePage() {
                             elementTheme: p.theme,
                             imageUrl: p.image_url || '/talismans/health.png',
                             original_price: p.original_price,
-                            sales_tags: p.sales_tags
+                            sales_tags: p.sales_tags,
+                            coin_amount: p.coin_amount,
+                            bonus_coins: p.bonus_coins
                         }));
                         const allProducts = [...storeProducts, ...dbProducts];
                         const uniqueProducts = Array.from(new Map(allProducts.map(item => [item.name, item])).values());
@@ -379,7 +321,7 @@ export default function DirectStorePage() {
                             <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-6">실시간 BEST 탑 10</h3>
 
                             <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                                {products.sort((a, b) => b.price - a.price).slice(0, 10).map((product, idx) => {
+                                {nonCoinProducts.sort((a, b) => b.price - a.price).slice(0, 10).map((product, idx) => {
                                     const originalPrice = Math.floor(product.price * 1.3);
                                     return (
                                         <div
@@ -447,41 +389,45 @@ export default function DirectStorePage() {
 
                         <h3 className="text-[18px] font-black tracking-tight text-gray-900 mb-4 px-1">충전 가능한 패키지 🎁</h3>
                         <div className="flex flex-col gap-3">
-                            {[
-                                { amount: 100, bonus: 0, price: 1000 },
-                                { amount: 500, bonus: 50, price: 5000, tag: "인기" },
-                                { amount: 1000, bonus: 150, price: 10000 },
-                                { amount: 3000, bonus: 500, price: 30000, tag: "베스트셀러" },
-                                { amount: 5000, bonus: 1000, price: 50000, highlight: true },
-                            ].map((pkg, idx) => (
+                            {coinProducts.map((pkg, idx) => {
+                                const highlight = Boolean(pkg.sales_tags && pkg.sales_tags.includes('인기'));
+                                const amount = pkg.coin_amount || 0;
+                                const bonus = pkg.bonus_coins || 0;
+                                
+                                return (
                                 <button
                                     key={idx}
-                                    onClick={() => handleChargeRequest(pkg.amount, pkg.bonus, pkg.price)}
-                                    className={`w-full bg-white rounded-2xl p-4 flex items-center justify-between transition-all group ${pkg.highlight ? 'border-2 border-yellow-400 shadow-[0_4px_15px_rgba(250,204,21,0.2)]' : 'border border-gray-100 shadow-sm hover:border-gray-300'}`}
+                                    onClick={() => handleChargeRequest(amount, bonus, pkg.price)}
+                                    className={`w-full bg-white rounded-2xl p-4 flex items-center justify-between transition-all group ${highlight ? 'border-2 border-yellow-400 shadow-[0_4px_15px_rgba(250,204,21,0.2)]' : 'border border-gray-100 shadow-sm hover:border-gray-300'}`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${pkg.highlight ? 'bg-yellow-50' : 'bg-gray-50'}`}>
-                                            <span className={`text-2xl ${pkg.highlight ? 'text-yellow-500' : ''}`}>⚡</span>
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${highlight ? 'bg-yellow-50' : 'bg-gray-50'}`}>
+                                            <span className={`text-2xl ${highlight ? 'text-yellow-500' : ''}`}>⚡</span>
                                         </div>
                                         <div className="text-left flex flex-col justify-center">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[16px] font-black text-gray-900 group-hover:scale-105 transition-transform">{pkg.amount} 코인</span>
-                                                {pkg.tag && (
-                                                    <span className="bg-red-50 text-red-500 text-[10px] font-black px-1.5 py-0.5 rounded-sm">{pkg.tag}</span>
+                                                <span className="text-[16px] font-black text-gray-900 group-hover:scale-105 transition-transform">{pkg.name}</span>
+                                                {pkg.sales_tags && (
+                                                    <span className="bg-red-50 text-red-500 text-[10px] font-black px-1.5 py-0.5 rounded-sm">{pkg.sales_tags.split(',')[0]}</span>
                                                 )}
                                             </div>
-                                            {pkg.bonus > 0 ? (
-                                                <span className="text-[12px] font-bold text-yellow-600 mt-0.5">+ {pkg.bonus} 보너스 지급!</span>
+                                            {bonus > 0 ? (
+                                                <span className="text-[12px] font-bold text-yellow-600 mt-0.5">+ {bonus} 보너스 지급!</span>
                                             ) : (
-                                                <span className="text-[12px] font-medium text-gray-400 mt-0.5">베이직 패키지</span>
+                                                <span className="text-[12px] font-medium text-gray-400 mt-0.5">{pkg.description || "베이직 패키지"}</span>
                                             )}
                                         </div>
                                     </div>
-                                    <div className={`px-4 py-2 rounded-xl text-[14px] font-bold transition-colors ${pkg.highlight ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-950' : 'bg-gray-900 text-white group-hover:bg-gray-800'}`}>
+                                    <div className={`px-4 py-2 rounded-xl text-[14px] font-bold transition-colors ${highlight ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-950' : 'bg-gray-900 text-white group-hover:bg-gray-800'}`}>
                                         {pkg.price.toLocaleString()}원
                                     </div>
                                 </button>
-                            ))}
+                            )})}
+                            {coinProducts.length === 0 && (
+                                <div className="text-center text-gray-400 py-10 font-bold border border-gray-200 border-dashed rounded-xl bg-white">
+                                    판매 중인 코인 상품이 없습니다. 관리자 화면에서 등해해주세요.
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

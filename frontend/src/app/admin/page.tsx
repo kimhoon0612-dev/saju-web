@@ -40,6 +40,9 @@ export default function AdminDashboard() {
     const [directOriginalPrice, setDirectOriginalPrice] = useState<number>(0);
     const [directSalesTags, setDirectSalesTags] = useState("");
     const [directImageFile, setDirectImageFile] = useState<File | null>(null);
+    const [directCategory, setDirectCategory] = useState("amulet");
+    const [directCoinAmount, setDirectCoinAmount] = useState<number>(0);
+    const [directBonusCoins, setDirectBonusCoins] = useState<number>(0);
     const [isUploading, setIsUploading] = useState(false);
 
     // Edit Modal State
@@ -51,6 +54,8 @@ export default function AdminDashboard() {
     const [editOriginalPrice, setEditOriginalPrice] = useState<number>(0);
     const [editSalesTags, setEditSalesTags] = useState("");
     const [editImageFile, setEditImageFile] = useState<File | null>(null);
+    const [editCoinAmount, setEditCoinAmount] = useState<number>(0);
+    const [editBonusCoins, setEditBonusCoins] = useState<number>(0);
 
     // Expert Registration State
     const [expertName, setExpertName] = useState("");
@@ -218,21 +223,27 @@ export default function AdminDashboard() {
 
     const handleDirectSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!directName || !directImageFile) return alert("상품명과 부적 이미지를 등록해주세요");
+        if (!directName || (!directImageFile && directCategory !== 'coin')) return alert("상품명과 대표 이미지를 등록해주세요");
         setIsUploading(true);
         try {
-            const imageUrl = await handleDirectUploadImage(directImageFile);
+            let imageUrl = "/talismans/wealth.png";
+            if (directImageFile) {
+                imageUrl = await handleDirectUploadImage(directImageFile);
+            }
 
             await fetch('/api/admin/talisman/inventory', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: directName,
-                    theme: directTheme,
+                    theme: directCategory === 'coin' ? 'coin' : directTheme,
                     price_points: directPrice,
                     original_price: directOriginalPrice > 0 ? directOriginalPrice : null,
                     sales_tags: directSalesTags || null,
                     prompt_template: directDescription || "관리자 직접 업로드 상품",
+                    category: directCategory,
+                    coin_amount: directCategory === 'coin' ? directCoinAmount : 0,
+                    bonus_coins: directCategory === 'coin' ? directBonusCoins : 0,
                     is_active: true,
                     image_url: imageUrl
                 })
@@ -241,6 +252,8 @@ export default function AdminDashboard() {
             setDirectName("");
             setDirectDescription("");
             setDirectImageFile(null);
+            setDirectCoinAmount(0);
+            setDirectBonusCoins(0);
             fetchInventory();
         } catch (e) {
             console.error(e);
@@ -259,6 +272,8 @@ export default function AdminDashboard() {
         setEditOriginalPrice(product.original_price || 0);
         setEditSalesTags(product.sales_tags || "");
         setEditImageFile(null);
+        setEditCoinAmount(product.coin_amount || 0);
+        setEditBonusCoins(product.bonus_coins || 0);
     };
 
     const handleEditSubmit = async (e: React.FormEvent) => {
@@ -280,6 +295,9 @@ export default function AdminDashboard() {
                     original_price: editOriginalPrice > 0 ? editOriginalPrice : null,
                     sales_tags: editSalesTags || null,
                     prompt_template: editDescription || "수정된 상품",
+                    category: editingProduct.category,
+                    coin_amount: editingProduct.category === 'coin' ? editCoinAmount : 0,
+                    bonus_coins: editingProduct.category === 'coin' ? editBonusCoins : 0,
                     is_active: true,
                     image_url: imageUrl
                 })
@@ -529,30 +547,74 @@ export default function AdminDashboard() {
                     ) : (
                         <form onSubmit={handleDirectSubmit} className="flex flex-col gap-4">
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">상품명</label>
-                                <input required type="text" value={directName} onChange={e => setDirectName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 무병장수부" />
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상품 유형</label>
+                                <div className="flex gap-2">
+                                    <button type="button" onClick={() => setDirectCategory('amulet')} className={`flex-1 py-2 rounded-lg font-bold text-sm ${directCategory === 'amulet' ? 'bg-[#d4af37] text-black shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-[#110e1b] text-white/50 border border-[#d4af37]/30 hover:bg-[#d4af37]/10'} transition-all`}>부적 (디지털)</button>
+                                    <button type="button" onClick={() => setDirectCategory('goods')} className={`flex-1 py-2 rounded-lg font-bold text-sm ${directCategory === 'goods' ? 'bg-[#d4af37] text-black shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-[#110e1b] text-white/50 border border-[#d4af37]/30 hover:bg-[#d4af37]/10'} transition-all`}>실물 굿즈</button>
+                                    <button type="button" onClick={() => setDirectCategory('coin')} className={`flex-1 py-2 rounded-lg font-bold text-sm ${directCategory === 'coin' ? 'bg-[#d4af37] text-black shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-[#110e1b] text-white/50 border border-[#d4af37]/30 hover:bg-[#d4af37]/10'} transition-all`}>코인 패키지</button>
+                                </div>
                             </div>
+                            
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
-                                <select value={directTheme} onChange={e => setDirectTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
-                                    <option value="wealth">재물/사업 (Wealth)</option>
-                                    <option value="love">애정/인연 (Love)</option>
-                                    <option value="health">건강/수호 (Health)</option>
-                                    <option value="wood">기타 소원 (Wish)</option>
-                                </select>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">{directCategory === 'coin' ? '패키지 명' : '상품명'}</label>
+                                <input required type="text" value={directName} onChange={e => setDirectName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder={directCategory === 'coin' ? "예: 1000 코인 패키지" : "예: 무병장수부 또는 금전운 팔찌"} />
                             </div>
+                            
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">판매 설정액 (원)</label>
                                 <input required type="number" value={directPrice} onChange={e => setDirectPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
-                            <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명</label>
-                                <textarea required value={directDescription} onChange={e => setDirectDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" placeholder="부적의 효능과 설명" />
-                            </div>
-                            <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">이미지 업로드</label>
-                                <input required type="file" accept="image/*" onChange={e => setDirectImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
-                            </div>
+
+                            {/* Conditional Rendering Default vs Coin */}
+                            {directCategory === 'coin' ? (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">지급 코인 (기본)</label>
+                                            <input required type="number" value={directCoinAmount} onChange={e => setDirectCoinAmount(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">추가 보너스 코인</label>
+                                            <input required type="number" value={directBonusCoins} onChange={e => setDirectBonusCoins(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">커머스 태그 (Sales Tags)</label>
+                                        <input type="text" value={directSalesTags} onChange={e => setDirectSalesTags(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" placeholder="예: BEST, 인기상품" />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">상품 테마 속성</label>
+                                        <select value={directTheme} onChange={e => setDirectTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                            <option value="wealth">재물/사업 (Wealth)</option>
+                                            <option value="love">애정/인연 (Love)</option>
+                                            <option value="health">건강/수호 (Health)</option>
+                                            <option value="wood">기타 소원 (Wish)</option>
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">이커머스 정가 (원)</label>
+                                            <input type="number" value={directOriginalPrice} onChange={e => setDirectOriginalPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" placeholder="예: 25000" />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">커머스 태그 (Sales Tags)</label>
+                                            <input type="text" value={directSalesTags} onChange={e => setDirectSalesTags(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" placeholder="예: 첫결제할인,무료배송" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명 / 효능</label>
+                                        <textarea required value={directDescription} onChange={e => setDirectDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" placeholder="프리미엄 상품 설명..." />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">대표 이미지 업로드</label>
+                                        <input required={directCategory !== 'coin'} type="file" accept="image/*" onChange={e => setDirectImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
+                                    </div>
+                                </>
+                            )}
+                            
                             <button type="submit" disabled={isUploading} className="mt-2 w-full py-3 rounded-xl bg-gradient-to-r from-[#2AC1BC] to-[#1F9B96] hover:from-[#1F9B96] hover:to-[#177874] text-white font-bold transition-all disabled:opacity-50">
                                 {isUploading ? "업로드 중..." : "직접 업로드하여 정식 배포"}
                             </button>
@@ -569,6 +631,7 @@ export default function AdminDashboard() {
                         <table className="w-full text-left text-sm text-white/80">
                             <thead className="bg-[#d4af37]/10 text-amber-200 border-b border-[#d4af37]/20">
                                 <tr>
+                                    <th className="p-3 font-semibold">유형</th>
                                     <th className="p-3 font-semibold">상품명</th>
                                     <th className="p-3 font-semibold">테마</th>
                                     <th className="p-3 font-semibold">판매가</th>
@@ -579,6 +642,11 @@ export default function AdminDashboard() {
                             <tbody>
                                 {inventoryData.map((item: any) => (
                                     <tr key={item.id} className="border-b border-[#d4af37]/10 hover:bg-[#1a142d]/50 transition-colors">
+                                        <td className="p-3">
+                                            {item.category === 'coin' && <span className="bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-500/30">코인</span>}
+                                            {item.category === 'goods' && <span className="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-500/30">굿즈</span>}
+                                            {item.category === 'amulet' && <span className="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded text-[10px] font-bold border border-purple-500/30">부적</span>}
+                                        </td>
                                         <td className="p-3 font-bold text-white">{item.name}</td>
                                         <td className="p-3 text-white/70">{item.theme}</td>
                                         <td className="p-3 font-bold text-amber-400">{item.price.toLocaleString()} 원</td>
@@ -946,30 +1014,66 @@ export default function AdminDashboard() {
                         </div>
                         <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">상품명</label>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">{editingProduct?.category === 'coin' ? '패키지 명' : '상품명'}</label>
                                 <input required type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
+                            
+                            {editingProduct?.category === 'coin' && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">지급 코인 (기본)</label>
+                                        <input required type="number" value={editCoinAmount} onChange={e => setEditCoinAmount(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-white/70 mb-1 block">추가 보너스 코인</label>
+                                        <input required type="number" value={editBonusCoins} onChange={e => setEditBonusCoins(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 테마 설정</label>
-                                <select value={editTheme} onChange={e => setEditTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
-                                    <option value="wealth">재물/사업 (Wealth)</option>
-                                    <option value="love">애정/인연 (Love)</option>
-                                    <option value="health">건강/수호 (Health)</option>
-                                    <option value="wood">기타 소원 (Wish)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">부적 설정액 (원)</label>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">설정액/판매가 (원)</label>
                                 <input required type="number" value={editPrice} onChange={e => setEditPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
                             </div>
+
+                            {editingProduct?.category !== 'coin' && (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">테마 속성</label>
+                                            <select value={editTheme} onChange={e => setEditTheme(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                                <option value="wealth">재물/사업 (Wealth)</option>
+                                                <option value="love">애정/인연 (Love)</option>
+                                                <option value="health">건강/수호 (Health)</option>
+                                                <option value="wood">기타 소원 (Wish)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-bold text-white/70 mb-1 block">이커머스 정가 (원)</label>
+                                            <input type="number" value={editOriginalPrice} onChange={e => setEditOriginalPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" placeholder="25000" />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="col-span-2">
+                                    <label className="text-sm font-bold text-white/70 mb-1 block">판매 태그 (CSV)</label>
+                                    <input type="text" value={editSalesTags} onChange={e => setEditSalesTags(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37]" placeholder="BEST,인기상품" />
+                                </div>
+                            </div>
+
                             <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명</label>
+                                <label className="text-sm font-bold text-white/70 mb-1 block">상세 설명 / 부가 혜택 문구</label>
                                 <textarea required value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] resize-none" />
                             </div>
-                            <div>
-                                <label className="text-sm font-bold text-white/70 mb-1 block">이미지 업로드 (선택, 기존 이미지 유지됨)</label>
-                                <input type="file" accept="image/*" onChange={e => setEditImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
-                            </div>
+
+                            {editingProduct?.category !== 'coin' && (
+                                <div>
+                                    <label className="text-sm font-bold text-white/70 mb-1 block">이미지 업로드 (선택, 기존 이미지 유지됨)</label>
+                                    <input type="file" accept="image/*" onChange={e => setEditImageFile(e.target.files?.[0] || null)} className="w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#d4af37]/20 file:text-[#d4af37] hover:file:bg-[#d4af37]/30" />
+                                </div>
+                            )}
                             <button type="submit" disabled={isUploading} className="mt-4 w-full py-3 rounded-xl bg-[#d4af37] hover:bg-amber-400 text-black font-bold transition-all disabled:opacity-50">
                                 {isUploading ? "수정 중..." : "상품 수정 완료"}
                             </button>

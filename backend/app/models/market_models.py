@@ -87,9 +87,11 @@ class Product(Base):
     price = Column(Integer, nullable=False)
     original_price = Column(Integer, nullable=True) # E-commerce 정가
     sales_tags = Column(String, nullable=True) # CSV of tags like 'BEST,무료배송'
-    category = Column(String, default="wish") # 'elemental', 'wish', 'persona'
-    theme = Column(String, nullable=True) # 'wood', 'wealth', 'love', etc.
+    category = Column(String, default="wish") # 'elemental', 'wish', 'persona', 'amulet', 'goods', 'coin'
+    theme = Column(String, nullable=True)     # 'wood', 'wealth', 'love', etc.
     image_url = Column(String, nullable=True)
+    coin_amount = Column(Integer, default=0)
+    bonus_coins = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

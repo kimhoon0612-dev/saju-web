@@ -28,12 +28,27 @@ from fastapi.responses import PlainTextResponse, StreamingResponse
 async def lifespan(app: FastAPI):
     from sqlalchemy.future import select
     from app.core.database import AsyncSessionLocal
-    from app.models.market_models import VirtualExpert
+    from app.models.market_models import VirtualExpert, Product
     
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
     async with AsyncSessionLocal() as session:
+        # Schema migration trick for new columns
+        try:
+            from sqlalchemy import text
+            await session.execute(text("ALTER TABLE products ADD COLUMN coin_amount INTEGER DEFAULT 0"))
+            await session.commit()
+        except Exception:
+            pass # Already exists
+
+        try:
+            from sqlalchemy import text
+            await session.execute(text("ALTER TABLE products ADD COLUMN bonus_coins INTEGER DEFAULT 0"))
+            await session.commit()
+        except Exception:
+            pass # Already exists
+
         result = await session.execute(select(VirtualExpert))
         experts = result.scalars().all()
         if not experts:
@@ -83,6 +98,19 @@ async def lifespan(app: FastAPI):
                 introduction_text="답답한 마음을 풀어드리는 선녀의 맑은 기운을 경험하세요."
             )
             session.add_all([expert1, expert2, expert3])
+            await session.commit()
+            
+        prod_result = await session.execute(select(Product))
+        products = prod_result.scalars().all()
+        if not products:
+            p1 = Product(name="생명력의 나무 (목 기운)", description="사주에 부족한 목(木) 기운을 채워주는 성장과 생명력의 오브제.", price=9900, category="elemental", theme="wood", image_url="/talismans/health.png")
+            p2 = Product(name="불타는 열정 (화 기운)", description="강력한 화(火)의 에너지로 추진력을 극대화하는 맞춤형 오브제.", price=9900, category="elemental", theme="fire", image_url="/talismans/love.png")
+            p3 = Product(name="금전운 시크릿 오브제", description="오프라인 재물운의 파동을 그대로 담은 디지털 굿즈.", price=15000, category="wish", theme="wealth", image_url="/talismans/wealth.png")
+            p4 = Product(name="인연의 붉은 실 (도화)", description="매력을 극대화하고 새로운 인연을 끌어당기는 사랑의 템플릿.", price=15000, category="wish", theme="love", image_url="/talismans/love.png")
+            p5 = Product(name="청룡의 페르소나", description="강력한 리더십을 상징하는 청룡 아바타 디자인.", price=25000, category="persona", theme="wood", image_url="/talismans/health.png")
+            p6 = Product(name="한정판 디지털 럭키참", description="영구 보존 가능한 나만의 유일무이한 프리미엄 럭키참.", price=50000, category="wish", theme="wealth", image_url="/talismans/wealth.png")
+            p7 = Product(name="일주 캐릭터 프리미엄 배경화면", description="나의 태어난 일주(日柱)를 형상화한 하이엔드 3D 캐릭터 스마트폰 배경화면.", price=5500, category="persona", theme="wood", image_url="/talismans/love.png")
+            session.add_all([p1, p2, p3, p4, p5, p6, p7])
             await session.commit()
             
     yield
