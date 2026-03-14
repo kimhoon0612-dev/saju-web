@@ -113,8 +113,6 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         });
     };
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
-
     const handleSendVerificationCode = async () => {
         if (!email) {
             alert("이메일 주소를 입력해주세요.");
@@ -122,7 +120,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         }
         setIsSendingCode(true);
         try {
-            const res = await fetch(`${API_BASE}/api/auth/send-verification-code`, {
+            const res = await fetch('/api/auth/send-verification-code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -149,7 +147,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
         }
         setIsVerifyingCode(true);
         try {
-            const res = await fetch(`${API_BASE}/api/auth/verify-code`, {
+            const res = await fetch('/api/auth/verify-code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, code: verificationCode })
@@ -171,7 +169,7 @@ export default function BirthDataForm({ onCalculate, isLoading, buttonText }: Bi
 
     const handleRegister = async (isoString: string) => {
         try {
-            const res = await fetch(`${API_BASE}/api/auth/register`, {
+            const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
