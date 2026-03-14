@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "chore: add detailed traceback and debug logging to send_email_async to capture silent background task failures", "--allow-empty"])
+    subprocess.run(["git", "commit", "-m", "chore: add /api/auth/test-email endpoint to surface hidden SMTP tracebacks to the browser", "--allow-empty"])
     
     # 3. Push
     subprocess.run(["git", "push"])

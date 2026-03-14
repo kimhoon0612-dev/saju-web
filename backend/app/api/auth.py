@@ -147,6 +147,42 @@ def send_email_async(to_email: str, code: str):
         print(f"[EMAIL_ERROR] Failed to send email to {to_email}: {e}")
         traceback.print_exc()
 
+@router.get("/test-email")
+def test_email_sync(email: str):
+    import logging
+    import traceback
+    
+    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_username = os.environ.get("SMTP_USERNAME")
+    smtp_password = os.environ.get("SMTP_PASSWORD")
+    
+    if not smtp_username or not smtp_password:
+        return {"status": "error", "reason": "No credentials in Render ENVs"}
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = smtp_username
+        msg['To'] = email
+        msg['Subject'] = "[나의운명코드] 회원가입 이메일 발송 디버그 테스트"
+        
+        body = "이메일 디버그 테스트입니다."
+        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+        
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=15)
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(msg)
+        server.quit()
+        return {"status": "success", "message": f"Test email sent to {email}"}
+    except Exception as e:
+        return {
+            "status": "error",
+            "error_type": type(e).__name__,
+            "error_msg": str(e),
+            "traceback": traceback.format_exc()
+        }
+
 from fastapi import BackgroundTasks
 
 @router.post("/send-verification-code", response_model=VerificationResponse)
