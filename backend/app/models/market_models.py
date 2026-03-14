@@ -51,6 +51,7 @@ class ExpertProfile(Base):
     aura_element = Column(String, nullable=True)
     rating = Column(Integer, default=5)
     price_per_session = Column(Integer, default=1000)
+    share_ratio_percent = Column(Integer, default=70) # 상담사 수익 배분율 (기본 70%)
 
     user = relationship("User", back_populates="expert_profile")
 
@@ -111,6 +112,7 @@ class VirtualExpert(Base):
     banner_text = Column(String, nullable=True)
     is_free_available = Column(Boolean, default=False)
     introduction_text = Column(Text, nullable=True)
+    share_ratio_percent = Column(Integer, default=70) # 상담사 수익 배분율 (e.g. 70 for 70%)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class ExpertReview(Base):

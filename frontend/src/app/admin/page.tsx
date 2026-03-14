@@ -703,9 +703,28 @@ export default function AdminDashboard() {
 
                     {/* Settlements Table */}
                     <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20 hover:border-[#d4af37]/40 transition-colors flex flex-col h-[400px] xl:col-span-2">
-                        <h3 className="text-lg font-bold text-amber-100 mb-1 flex items-center gap-2">
-                            <DollarSign className="w-5 h-5 text-green-400" /> 월별 정산 리포트 산출
-                        </h3>
+                        <div className="flex justify-between items-center mb-1">
+                            <h3 className="text-lg font-bold text-amber-100 flex items-center gap-2">
+                                <DollarSign className="w-5 h-5 text-green-400" /> 월별 정산 리포트 산출
+                            </h3>
+                            <button onClick={() => {
+                                // CSV Export Logic
+                                const headers = "전문가,매출 총액(원),플랫폼 수수료(원),정산 비율,최종 지급액(원)\n";
+                                const rows = settlements.settlements.map((s:any) => 
+                                    `${s.expert_name},${s.total_sales_amount},${s.fee_deducted},${s.share_ratio_percent}%,${s.final_settlement_amount}`
+                                ).join("\n");
+                                const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + rows;
+                                const encodedUri = encodeURI(csvContent);
+                                const link = document.createElement("a");
+                                link.setAttribute("href", encodedUri);
+                                link.setAttribute("download", `expert_settlements_${settlements.period}.csv`);
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }} className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-colors">
+                                다운로드 (Excel)
+                            </button>
+                        </div>
                         <p className="text-xs text-white/50 mb-4">대상 기간: <span className="text-white">{settlements.period}</span> (에스크로 거래 완료 기준)</p>
 
                         <div className="flex-1 border border-[#d4af37]/20 rounded-xl overflow-hidden bg-[#110e1b] w-full overflow-x-auto">
@@ -713,9 +732,9 @@ export default function AdminDashboard() {
                                 <thead className="bg-[#d4af37]/10 text-amber-200 border-b border-[#d4af37]/20">
                                     <tr>
                                         <th className="p-3 font-semibold">전문가</th>
-                                        <th className="p-3 font-semibold text-right">코인 매출(원)</th>
-                                        <th className="p-3 font-semibold text-right">060 매출(원)</th>
-                                        <th className="p-3 font-semibold text-right">플랫폼 수수료(10~40%)</th>
+                                        <th className="p-3 font-semibold text-right">총 매출액(원)</th>
+                                        <th className="p-3 font-semibold text-right">플랫폼 수수료</th>
+                                        <th className="p-3 font-semibold text-center">정산 비율</th>
                                         <th className="p-3 font-semibold text-right">최종 지급액(원)</th>
                                     </tr>
                                 </thead>
@@ -723,9 +742,9 @@ export default function AdminDashboard() {
                                     {settlements.settlements.map((s: any) => (
                                         <tr key={s.expert_id} className="border-b border-[#d4af37]/10 hover:bg-[#1a142d]/50 transition-colors">
                                             <td className="p-3 font-bold text-white">{s.expert_name}</td>
-                                            <td className="p-3 text-right text-yellow-400 font-medium">{Math.floor(s.final_settlement_amount * 0.4).toLocaleString()}</td>
-                                            <td className="p-3 text-right text-blue-400 font-medium">{Math.floor(s.final_settlement_amount * 0.6).toLocaleString()}</td>
-                                            <td className="p-3 text-right text-red-400 font-medium">-{s.fee_deducted.toLocaleString()}</td>
+                                            <td className="p-3 text-right text-blue-400 font-medium">{s.total_sales_amount?.toLocaleString()}</td>
+                                            <td className="p-3 text-right text-red-400 font-medium">-{s.fee_deducted?.toLocaleString()}</td>
+                                            <td className="p-3 text-center text-white/60 font-medium">{s.share_ratio_percent}%</td>
                                             <td className="p-3 text-right text-[#d4af37] font-black">{s.final_settlement_amount.toLocaleString()}</td>
                                         </tr>
                                     ))}
@@ -739,41 +758,6 @@ export default function AdminDashboard() {
                         <button className="mt-4 w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all shadow-md shadow-indigo-500/20">
                             이번 달 정산 일괄 승인 및 송출
                         </button>
-                    </div>
-
-                    {/* Expert Registration Form */}
-                    <div className="bg-[#1a142d]/80 rounded-3xl p-6 shadow-xl border border-[#d4af37]/20 hover:border-[#d4af37]/40 transition-colors flex flex-col lg:col-span-3">
-                        <h3 className="text-lg font-bold text-amber-100 mb-4 flex items-center gap-2">
-                            <Users className="w-5 h-5 text-indigo-400" /> 신규 전문가 섭외 / 등록
-                        </h3>
-                        <form onSubmit={handleExpertRegister} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                            <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">활동명 (닉네임)</label>
-                                <input required type="text" value={expertName} onChange={e => setExpertName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 도원선사" />
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">전문 분야</label>
-                                <select value={expertSpecialty} onChange={e => setExpertSpecialty(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
-                                    <option value="사주/명리">사주/명리</option>
-                                    <option value="타로/점성술">타로/점성술</option>
-                                    <option value="신점/무속">신점/무속</option>
-                                    <option value="심리/명상">심리/명상</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-white/70 mb-1 block">세션당 상담액 (원)</label>
-                                <input required type="number" value={expertPrice} onChange={e => setExpertPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
-                            </div>
-                            <div className="md:col-span-2 lg:col-span-4 grid grid-cols-1 lg:grid-cols-4 gap-4 items-end">
-                                <div className="lg:col-span-3">
-                                    <label className="text-xs font-bold text-white/70 mb-1 block">한줄 소개 (Bio)</label>
-                                    <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
-                                </div>
-                                <button type="submit" disabled={isRegistering} className="w-full py-2.5 bg-gradient-to-r from-[#d4af37] to-amber-500 hover:from-amber-400 hover:to-amber-300 text-[#111] font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)] whitespace-nowrap">
-                                    {isRegistering ? "등록 중..." : "시스템에 파트너 등록"}
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

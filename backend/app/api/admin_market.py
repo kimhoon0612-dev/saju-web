@@ -14,6 +14,7 @@ class ExpertRegisterRequest(BaseModel):
     specialty: str
     short_bio: str
     price_per_session: int
+    share_ratio_percent: int = 70
 
 @router.post("/register-expert")
 async def register_expert(req: ExpertRegisterRequest, db: AsyncSession = Depends(get_db)):
@@ -37,6 +38,7 @@ async def register_expert(req: ExpertRegisterRequest, db: AsyncSession = Depends
         specialty=req.specialty,
         short_bio=req.short_bio,
         price_per_session=req.price_per_session,
+        share_ratio_percent=req.share_ratio_percent,
         aura_element="wood", # Default
         rating=5
     )
@@ -82,8 +84,9 @@ async def get_monthly_settlements(db: AsyncSession = Depends(get_db)):
     [Admin] 전문가별 월간 정산 집계 리포트 (에스크로 트랜잭션 기반)
     """
     # MVP: Find recent expert settlement transactions
-    stmt = select(PointTransaction, User)\
+    stmt = select(PointTransaction, User, ExpertProfile)\
         .join(User, PointTransaction.user_id == User.id)\
+        .outerjoin(ExpertProfile, User.id == ExpertProfile.user_id)\
         .where(PointTransaction.description.like("%상담 수익금%"))\
         .order_by(desc(PointTransaction.created_at))\
         .limit(100)
@@ -93,20 +96,43 @@ async def get_monthly_settlements(db: AsyncSession = Depends(get_db)):
     
     # Manually grouping for simple return
     summary = {}
-    for tx, expert in records:
-        if expert.id not in summary:
-            summary[expert.id] = {
-                "expert_id": expert.id,
-                "expert_name": f"Expert #{expert.id}", # Placeholder if no specific display_name column
+    for tx, expert_user, profile in records:
+        if expert_user.id not in summary:
+            # 기본값
+            display_name = f"등록 미완료 (#{expert_user.id})"
+            ratio = 70
+            
+            if profile:
+                display_name = profile.display_name
+                ratio = profile.share_ratio_percent if profile.share_ratio_percent else 70
+                
+            summary[expert_user.id] = {
+                "expert_id": expert_user.id,
+                "expert_name": display_name,
+                "share_ratio_percent": ratio,
                 "total_sessions": 0,
                 "fee_deducted": 0,
-                "final_settlement_amount": 0
+                "final_settlement_amount": 0,
+                "total_sales_amount": 0
             }
-        summary[expert.id]["total_sessions"] += 1
-        summary[expert.id]["final_settlement_amount"] += tx.amount
-        # reverse calculated the 10% fee
-        fee = int((tx.amount / 0.9) * 0.1)
-        summary[expert.id]["fee_deducted"] += fee
+        
+        # 현재 tx.amount는 상담사에게 지급된 수익금이라고 가정 (예: 총액의 share_ratio_percent 만큼)
+        # 역산하여 총 매출(total_sales_amount)과 플랫폼 수수료(fee_deducted) 재계산 지원
+        ratio = summary[expert_user.id]["share_ratio_percent"]
+        expert_share = tx.amount
+        
+        # 역산 시뮬레이션 (tx.amount가 70%라면, 총매출은 tx.amount / 0.7)
+        if ratio > 0:
+            total_sales = int(expert_share / (ratio / 100))
+        else:
+            total_sales = expert_share
+            
+        fee = total_sales - expert_share
+        
+        summary[expert_user.id]["total_sessions"] += 1
+        summary[expert_user.id]["final_settlement_amount"] += expert_share
+        summary[expert_user.id]["fee_deducted"] += fee
+        summary[expert_user.id]["total_sales_amount"] += total_sales
         
     return {
         "period": datetime.now().strftime("%Y-%m"),

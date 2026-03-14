@@ -5,7 +5,7 @@ def run_git():
     subprocess.run(["git", "add", "."])
     
     # 2. Commit safely without string quoting hell
-    subprocess.run(["git", "commit", "-m", "style: rename and reorder admin sidebar navigation links", "--allow-empty"])
+    subprocess.run(["git", "commit", "-m", "feat: Add revenue sharing and Excel export to Expert Management & Settlement", "--allow-empty"])
     
     # 3. Push
     subprocess.run(["git", "push"])

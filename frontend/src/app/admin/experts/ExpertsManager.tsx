@@ -1,22 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Edit2, Trash2, Plus, EyeOff, Eye, CheckCircle, Clock } from 'lucide-react';
+import { Sparkles, Edit2, Trash2, Plus, EyeOff, Eye, CheckCircle, Clock, Users } from 'lucide-react';
 
 export default function ExpertsManager() {
     const [experts, setExperts] = useState<any[]>([]);
     const [reviews, setReviews] = useState<any[]>([]);
     const [settlements, setSettlements] = useState<any[]>([]);
-    const [activeTab, setActiveTab] = useState<'list' | 'reviews' | 'settlements'>('list');
+    const [activeTab, setActiveTab] = useState<'list' | 'reviews' | 'settlements' | 'partner'>('list');
 
     const [selectedExpert, setSelectedExpert] = useState<number | null>(null);
 
-    // Form states
+    // Form states (Virtual Expert)
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         id: 0, category: '운세', display_name: '', code: '', tags: '', rating: 5.0,
         avg_minutes: 10, image_url: '', is_online: true, is_free_available: false, banner_text: ''
     });
+
+    // Real Expert (Partner) Registration states
+    const [expertName, setExpertName] = useState("");
+    const [expertSpecialty, setExpertSpecialty] = useState("사주/명리");
+    const [expertBio, setExpertBio] = useState("");
+    const [expertPrice, setExpertPrice] = useState<number>(10000);
+    const [expertShareRatio, setExpertShareRatio] = useState<number>(70);
+    const [isRegistering, setIsRegistering] = useState(false);
 
     useEffect(() => {
         if (activeTab === 'list') fetchExperts();
@@ -64,6 +72,30 @@ export default function ExpertsManager() {
         fetchExperts();
     };
 
+    const handleExpertRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsRegistering(true);
+        try {
+            await fetch('/api/admin/marketplace/register-expert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    display_name: expertName,
+                    specialty: expertSpecialty,
+                    short_bio: expertBio,
+                    price_per_session: expertPrice,
+                    share_ratio_percent: expertShareRatio
+                })
+            });
+            alert('파트너 상담사 프로필이 성공적으로 등록되었습니다.');
+            setExpertName(""); setExpertBio(""); setExpertShareRatio(70);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsRegistering(false);
+        }
+    };
+
     const handleToggleReview = async (id: number) => {
         await fetch(`/api/admin/experts/reviews/${id}`, { method: 'DELETE' });
         if (selectedExpert) fetchReviews(selectedExpert);
@@ -96,9 +128,52 @@ export default function ExpertsManager() {
                 <div className="flex bg-[#110e1b] rounded-lg p-1 border border-[#d4af37]/20">
                     <button onClick={() => setActiveTab('list')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'list' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>전문가 목록</button>
                     <button onClick={() => setActiveTab('reviews')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'reviews' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>리뷰 관리</button>
-                    <button onClick={() => setActiveTab('settlements')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'settlements' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>정산 현황</button>
+                    <button onClick={() => setActiveTab('settlements')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'settlements' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>정산 현황 (가상)</button>
+                    <button onClick={() => setActiveTab('partner')} className={`px-4 py-2 text-sm font-bold rounded-md transition-colors ${activeTab === 'partner' ? 'bg-[#d4af37] text-black' : 'text-white/50 hover:text-white'}`}>신규 파트너 섭외</button>
                 </div>
             </div>
+
+            {/* Partner Registration Tab */}
+            {activeTab === 'partner' && (
+                <div className="bg-[#1a142d]/80 rounded-3xl p-8 shadow-xl border border-[#d4af37]/20">
+                    <h3 className="text-xl font-bold text-amber-100 mb-6 flex items-center gap-2">
+                        <Users className="w-6 h-6 text-indigo-400" /> 신규 파트너 상담사 계정 섭외 / 등록
+                    </h3>
+                    <p className="text-sm text-white/60 mb-8 border-b border-white/10 pb-4">이곳에서 등록된 상담사는 실제 결제 및 월간 정산이 연동되는 공식 파트너 계정입니다.</p>
+                    <form onSubmit={handleExpertRegister} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
+                        <div>
+                            <label className="text-xs font-bold text-white/70 mb-1 block">활동명 (닉네임)</label>
+                            <input required type="text" value={expertName} onChange={e => setExpertName(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="예: 도원선사" />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/70 mb-1 block">전문 분야</label>
+                            <select value={expertSpecialty} onChange={e => setExpertSpecialty(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]">
+                                <option value="사주/명리">사주/명리</option>
+                                <option value="타로/점성술">타로/점성술</option>
+                                <option value="신점/무속">신점/무속</option>
+                                <option value="심리/명상">심리/명상</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/70 mb-1 block">세션당 상담액 (원)</label>
+                            <input required type="number" value={expertPrice} onChange={e => setExpertPrice(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-[#d4af37] mb-1 block">수익 배분비 (상담사 %)</label>
+                            <input required type="number" min="0" max="100" value={expertShareRatio} onChange={e => setExpertShareRatio(Number(e.target.value))} className="w-full bg-[#110e1b] border border-[#d4af37]/60 rounded-lg p-3 text-[#d4af37] font-bold text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+                        </div>
+                        <div className="md:col-span-2 lg:col-span-5 grid grid-cols-1 lg:grid-cols-5 gap-6 items-end mt-2">
+                            <div className="lg:col-span-4">
+                                <label className="text-xs font-bold text-white/70 mb-1 block">한줄 소개 (Bio)</label>
+                                <input required type="text" value={expertBio} onChange={e => setExpertBio(e.target.value)} className="w-full bg-[#110e1b] border border-[#d4af37]/30 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" placeholder="짧고 강렬한 캐치프레이즈" />
+                            </div>
+                            <button type="submit" disabled={isRegistering} className="w-full py-3 bg-gradient-to-r from-[#d4af37] to-amber-500 hover:from-amber-400 hover:to-amber-300 text-[#111] font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(212,175,55,0.3)] whitespace-nowrap">
+                                {isRegistering ? "등록 중..." : "파트너 계정 생성"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
 
             {/* List Tab */}
             {activeTab === 'list' && (
