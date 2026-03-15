@@ -929,6 +929,100 @@ export default function Home() {
         )
       }
 
+      {/* Lotto Modal */}
+      {showLotto && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowLotto(false)}>
+          <div className="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center flex flex-col items-center animate-scale-in" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowLotto(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors"><X size={24} /></button>
+            <div className="w-16 h-16 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mb-4">
+              <span className="text-[32px]">🐷</span>
+            </div>
+            <h3 className="text-[22px] font-black text-gray-900 mb-2">오늘의 행운 번호</h3>
+            <p className="text-[14px] text-gray-500 font-medium mb-6">나의 사주 기운과 어울리는 행운의 조합</p>
+            <div className="flex justify-center gap-2 mb-8 w-full flex-wrap">
+              {lottoNumbers.map((num, idx) => (
+                <div key={idx} className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 text-white font-black text-lg flex items-center justify-center shadow-md">
+                  {num}
+                </div>
+              ))}
+            </div>
+            <button onClick={handleLotto} className="w-full bg-pink-50 text-pink-600 font-bold text-[16px] h-[52px] rounded-2xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2 mb-2">
+              <RefreshCw size={18} /> 다시 뽑기
+            </button>
+            <button onClick={() => setShowLotto(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
+              확인 완료
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Talisman Modal */}
+      {showTalisman && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowTalisman(false)}>
+          <div className="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center flex flex-col items-center animate-scale-in max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowTalisman(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors"><X size={24} /></button>
+            <div className="w-16 h-16 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mb-4 shrink-0">
+              <span className="text-[32px]">🐢</span>
+            </div>
+            <h3 className="text-[22px] font-black text-gray-900 mb-2">나만의 에너지 부스터</h3>
+            <p className="text-[14px] text-gray-500 font-medium mb-6">현재 나에게 가장 필요한 기운</p>
+            <div className="w-full flex flex-col gap-4 text-left mb-6">
+              {talismanResults.map((t, idx) => (
+                <div key={idx} className="bg-orange-50/50 border border-orange-100 rounded-2xl p-4 flex gap-4 overflow-hidden relative">
+                  <div className="text-[32px] drop-shadow-sm shrink-0 relative z-10">
+                    {t.type === 'wealth' ? '💰' : t.type === 'love' ? '💕' : t.type === 'health' ? '🌿' : '👔'}
+                  </div>
+                  <div className="relative z-10">
+                    <h4 className="text-[15px] font-black text-orange-800 mb-1">{t.title}</h4>
+                    <p className="text-[13px] text-orange-600/80 font-medium leading-relaxed break-keep">{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link href="/store" className="w-full bg-orange-100 text-orange-700 font-bold text-[16px] h-[52px] rounded-2xl hover:bg-orange-200 transition-colors flex items-center justify-center mb-2">
+              부적/코인 마켓 구경가기
+            </Link>
+            <button onClick={() => setShowTalisman(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Moving / Calendar Modal */}
+      {showMoving && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowMoving(false)}>
+          <div className="bg-white rounded-[32px] p-6 w-full max-w-sm shadow-2xl relative text-center flex flex-col items-center animate-scale-in" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowMoving(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors"><X size={24} /></button>
+            <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-4">
+              <span className="text-[32px]">🐌</span>
+            </div>
+            <h3 className="text-[22px] font-black text-gray-900 mb-2">이달의 길일 찾기</h3>
+            <p className="text-[14px] text-gray-500 font-medium mb-6">손 없는 날 (이사, 개업, 중요 행사)</p>
+            <div className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-4 px-2">
+                <button onClick={() => { if (movingMonth > 1) setMovingMonth(movingMonth - 1); else { setMovingMonth(12); setMovingYear(movingYear - 1) } }} className="p-1 hover:bg-gray-200 rounded-lg transition-colors"><ChevronRight className="w-5 h-5 opacity-50 rotate-180" /></button>
+                <span className="text-[16px] font-bold text-gray-800">{movingYear}년 {movingMonth}월</span>
+                <button onClick={() => { if (movingMonth < 12) setMovingMonth(movingMonth + 1); else { setMovingMonth(1); setMovingYear(movingYear + 1) } }} className="p-1 hover:bg-gray-200 rounded-lg transition-colors"><ChevronRight className="w-5 h-5 opacity-50" /></button>
+              </div>
+              <div className="flex flex-col gap-2 max-h-[30vh] overflow-y-auto hidden-scrollbar">
+                {getMovingDates().length > 0 ? getMovingDates().map((dateStr, i) => (
+                  <div key={i} className="bg-white border border-gray-100 rounded-xl p-3 text-[15px] font-bold text-gray-700 flex justify-between items-center shadow-sm">
+                    {dateStr}
+                    <span className="text-[11px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">손없는날</span>
+                  </div>
+                )) : (
+                  <div className="text-[13px] text-gray-400 py-4">해당 월에 길일이 없습니다.</div>
+                )}
+              </div>
+            </div>
+            <button onClick={() => setShowMoving(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
+              확인 완료
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Face Reading Modal */}
       {showFace && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowFace(false)}>
