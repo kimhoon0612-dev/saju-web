@@ -496,18 +496,16 @@ export default function Home() {
           ].map((item, i) => (
             <motion.div
               key={`emblem-${i}`}
-              initial={{ opacity: 0, y: 100, scale: 0.8 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={{
-                opacity: [0, 1, 1, 0],
-                y: [100, item.yBounce, 0, -100],
-                scale: [0.8, 1, 1, 0.9],
-                rotate: [0, (i % 2 === 0 ? 5 : -5), 0, (i % 2 === 0 ? -5 : 5)]
+                opacity: [0, 1],
+                y: [30, item.yBounce, 30],
+                rotate: [0, (i % 2 === 0 ? 5 : -5), 0]
               }}
               transition={{
-                duration: 9 + (i % 3),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: item.delay
+                opacity: { duration: 1.5, delay: item.delay },
+                y: { duration: 6 + (i % 3), repeat: Infinity, ease: "easeInOut" },
+                rotate: { duration: 8 + (i % 3), repeat: Infinity, ease: "easeInOut" }
               }}
               className="absolute drop-shadow-sm pointer-events-none z-0"
               style={{
@@ -586,7 +584,11 @@ export default function Home() {
             transition={{ delay: 2.2, duration: 1, ease: "easeOut" }}
             className="mt-6 px-5 py-2.5 bg-white/70 backdrop-blur-md rounded-full text-[#4A5568] font-bold text-[14px] shadow-sm ring-1 ring-black/5 flex items-center gap-2"
           >
-            <span className="w-2 h-2 rounded-full bg-[#81C784] animate-pulse"></span>
+            <motion.span 
+              animate={{ opacity: [1, 0.5, 1] }} 
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-2 h-2 rounded-full bg-[#81C784]"
+            ></motion.span>
             당신의 사주를 연구하고 있습니다
           </motion.div>
         </div>
