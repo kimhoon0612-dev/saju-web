@@ -469,9 +469,11 @@ export default function FortuneHubPage() {
         <div className="min-h-screen bg-[#F8F9FA] text-gray-900 pb-24 font-pretendard">
 
             {/* Header */}
-            <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 h-14 max-w-md mx-auto flex items-center px-5 justify-between border-b border-gray-100">
-                <h1 className="text-xl font-extrabold text-[#4A5568] tracking-tight">나의 흐름</h1>
+            <header className="px-5 pt-8 pb-4 max-w-md mx-auto">
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-black text-gray-900 tracking-tight">나의 흐름</h1>
                 <UserBadge />
+              </div>
             </header>
 
             <main className="max-w-md mx-auto flex flex-col gap-3 px-4 pt-3">

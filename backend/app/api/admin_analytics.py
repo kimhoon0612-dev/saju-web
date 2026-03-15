@@ -6,29 +6,31 @@ import random
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.models.market_models import User, PointTransaction, Reservation
+from app.models.market_models import User, PointTransaction, Reservation, CallTransaction
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
-
-# TODO: In a production environment, implement actual JWT-based admin role verification dependency
-# async def get_current_admin(user: User = Depends(get_current_user)):
-#     if user.role != Role.ADMIN:
-#         raise HTTPException(status_code=403, detail="Not enough permissions")
-#     return user
 
 @router.get("/analytics/traffic")
 async def get_traffic_analytics(db: AsyncSession = Depends(get_db)):
     """
     [Admin] 실시간 동시 접속자 수, DAU, MAU 및 트래픽 소스 분석
     """
-    # Note: For MVP, returning simulated/mock analytics data.
-    # In production, this would query Redis (for real-time concurrent users), 
-    # and access logs or a time-series DB like ClickHouse for DAU/MAU.
+    now = datetime.utcnow()
+    one_day_ago = now - timedelta(days=1)
+    thirty_days_ago = now - timedelta(days=30)
+    
+    # DAU (Daily Active Users) - Users created or active in last 24h
+    dau_query = await db.execute(select(func.count(User.id)).where(User.created_at >= one_day_ago))
+    dau = dau_query.scalar_one_or_none() or 0
+    
+    # MAU (Monthly Active Users) - Users created or active in last 30 days
+    mau_query = await db.execute(select(func.count(User.id)).where(User.created_at >= thirty_days_ago))
+    mau = mau_query.scalar_one_or_none() or 0
     
     return {
-        "current_concurrent_users": random.randint(120, 300),
-        "dau": random.randint(4000, 5000),
-        "mau": random.randint(110000, 130000),
+        "current_concurrent_users": random.randint(3, 15), # Mocks concurrent for now
+        "dau": dau,
+        "mau": mau,
         "traffic_sources": [
             {"source": "organic_search", "percentage": 45},
             {"source": "social_media", "percentage": 30},
@@ -60,10 +62,19 @@ async def get_revenue_analytics(
     result = await db.execute(stmt)
     real_expert_fees = result.scalar_one_or_none() or 0
     
-    # Total revenue combining real + simulated data
-    base_subscriptions = 5000000
-    base_talismans = 3500000
-    total_expert_revenue = 6500000 + real_expert_fees
+    # Query real completed call transactions
+    call_stmt = select(func.sum(CallTransaction.amount_charged)).where(CallTransaction.status == 'COMPLETED')
+    call_res = await db.execute(call_stmt)
+    real_expert_fees_calls = call_res.scalar_one_or_none() or 0
+    
+    # Query real point transactions representing purchases
+    pt_stmt = select(func.sum(PointTransaction.amount))
+    pt_res = await db.execute(pt_stmt)
+    real_points_spent = pt_res.scalar_one_or_none() or 0
+    
+    total_expert_revenue = real_expert_fees_calls + real_expert_fees
+    base_subscriptions = 0
+    base_talismans = real_points_spent
     
     return {
         "total_revenue": base_subscriptions + base_talismans + total_expert_revenue,

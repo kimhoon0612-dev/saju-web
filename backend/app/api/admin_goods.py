@@ -36,18 +36,40 @@ class InventoryRequest(BaseModel):
     coin_amount: int = 0
     bonus_coins: int = 0
 
+from sqlalchemy import func
+from app.models.market_models import Product, PointTransaction
+from datetime import datetime, timedelta
+
 @router.get("/stats")
-async def get_talisman_stats():
+async def get_talisman_stats(db: AsyncSession = Depends(get_db)):
     """
-    [Admin] 디지털 상점 매출 통계 요약 (MVP: 뷰용 데이터 제공)
+    [Admin] 디지털 상점 매출 통계 요약
     """
-    import datetime
+    now = datetime.utcnow()
+    one_day_ago = now - timedelta(days=1)
+    thirty_days_ago = now - timedelta(days=30)
+    
+    # "구매" 관련 매출을 집계 (예: description에 특정 키워드가 있거나, 양수/음수 amount 기준 - 여기서는 양수 결제라 가정하고 단순히 모든 상점 거래를 합산)
+    # MVP 레벨이므로 PointTransaction 전체를 상품/코인 결제로 간주
+    
+    # Total Revenue
+    total_q = await db.execute(select(func.sum(PointTransaction.amount)))
+    total_rev = total_q.scalar_one_or_none() or 0
+    
+    # Monthly Revenue
+    monthly_q = await db.execute(select(func.sum(PointTransaction.amount)).where(PointTransaction.created_at >= thirty_days_ago))
+    monthly_rev = monthly_q.scalar_one_or_none() or 0
+    
+    # Daily Revenue
+    daily_q = await db.execute(select(func.sum(PointTransaction.amount)).where(PointTransaction.created_at >= one_day_ago))
+    daily_rev = daily_q.scalar_one_or_none() or 0
+    
     return {
         "status": "success",
         "data": {
-            "total_revenue": 3450000,
-            "monthly_revenue": 950000,
-            "daily_revenue": 125000
+            "total_revenue": total_rev,
+            "monthly_revenue": monthly_rev,
+            "daily_revenue": daily_rev
         }
     }
 

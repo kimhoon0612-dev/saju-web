@@ -466,9 +466,11 @@ export default function Home() {
           >
 
             {/* Header */}
-            <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 h-14 max-w-md mx-auto flex items-center px-5 justify-between border-b border-gray-50">
-              <h1 className="text-xl font-extrabold text-[#4A5568]">투데이</h1>
-              <UserBadge onClick={clearMatrix} />
+            <header className="px-5 pt-8 pb-4 max-w-md mx-auto">
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-black text-gray-900 tracking-tight">투데이</h1>
+                <UserBadge onClick={clearMatrix} />
+              </div>
             </header>
 
             <div className="px-4 pt-3 pb-4">

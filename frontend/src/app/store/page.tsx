@@ -124,8 +124,8 @@ export default function DirectStorePage() {
     return (
         <div className="font-pretendard bg-[#F8F9FA] min-h-screen pb-24">
             {/* Store Header Navigation */}
-            <div className="bg-white sticky top-0 z-30 px-4 py-3 flex items-center justify-between border-b border-gray-100">
-                <h1 className="text-xl font-black text-gray-900 tracking-tight">마켓</h1>
+            <div className="px-5 pt-8 pb-4 max-w-md mx-auto flex items-center justify-between">
+                <h1 className="text-2xl font-black text-gray-900 tracking-tight">마켓</h1>
                 <div className="flex items-center gap-3">
                     <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>

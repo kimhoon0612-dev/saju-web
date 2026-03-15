@@ -86,6 +86,16 @@ async def get_matching_logs(db: AsyncSession = Depends(get_db)):
     result = await db.execute(stmt)
     reservations = result.scalars().all()
     
+    # Get total counts for analytics
+    from app.models.market_models import ReservationStatus
+    total_q = await db.execute(select(func.count(Reservation.id)))
+    total_triggers = total_q.scalar_one_or_none() or 0
+    
+    success_q = await db.execute(select(func.count(Reservation.id)).where(Reservation.status == ReservationStatus.COMPLETED))
+    success_matches = success_q.scalar_one_or_none() or 0
+    
+    conversion = round((success_matches / total_triggers * 100), 1) if total_triggers > 0 else 0.0
+    
     logs = []
     for r in reservations:
         logs.append({
@@ -98,9 +108,9 @@ async def get_matching_logs(db: AsyncSession = Depends(get_db)):
         })
         
     return {
-        "total_ai_triggers": len(logs) + 1200, # Mock total for analytics
-        "successful_matches": len(logs) + 350,
-        "conversion_rate": 29.1,
+        "total_ai_triggers": total_triggers,
+        "successful_matches": success_matches,
+        "conversion_rate": conversion,
         "recent_logs": logs
     }
 
