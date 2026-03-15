@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import ProductModal from "@/components/Store/ProductModal";
 import { Sparkles, Heart, BadgeDollarSign, Briefcase, Dumbbell, Clover, Star, ChevronRight } from "lucide-react";
+import UserBadge from "@/components/UserBadge";
 
 export interface Product {
     id: string;
@@ -126,14 +127,7 @@ export default function DirectStorePage() {
             {/* Store Header Navigation */}
             <div className="px-5 pt-8 pb-4 max-w-md mx-auto flex items-center justify-between">
                 <h1 className="text-2xl font-black text-gray-900 tracking-tight">마켓</h1>
-                <div className="flex items-center gap-3">
-                    <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
-                    </button>
-                    <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                    </button>
-                </div>
+                <UserBadge />
             </div>
 
             <main className="w-full">

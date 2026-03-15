@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Sparkles, Heart, Star, Moon } from "lucide-react";
+import UserBadge from "@/components/UserBadge";
 
 export default function TarotPage() {
     // Current Active Tab
@@ -98,6 +99,7 @@ export default function TarotPage() {
                         <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-amber-200">
                             마인드 타로
                         </h1>
+                        <UserBadge />
                     </div>
 
                     <div className="mb-2">

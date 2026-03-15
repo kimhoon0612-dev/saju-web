@@ -39,12 +39,7 @@ export default function ExpertsPage() {
 
             <div className="px-5 pt-8 pb-4 max-w-md mx-auto flex items-center justify-between">
                 <h1 className="text-2xl font-black text-gray-900 tracking-tight">멘토링</h1>
-                <div className="flex items-center gap-2">
-                    <UserBadge />
-                    <div className="p-1.5 border border-gray-200 rounded-lg bg-gray-50 shadow-sm cursor-pointer hover:bg-gray-100 transition-colors">
-                        <TicketPercent className="w-4 h-4 text-gray-600" />
-                    </div>
-                </div>
+                <UserBadge />
             </div>
 
             {/* Premium Hero Section */}
