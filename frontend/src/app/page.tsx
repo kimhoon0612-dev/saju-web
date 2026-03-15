@@ -534,7 +534,7 @@ export default function Home() {
             }}
             className="text-[34px] md:text-[44px] font-black tracking-widest text-gray-900 text-center leading-[1.3] font-pretendard px-6 flex flex-wrap justify-center gap-x-1.5"
           >
-            {['당', '신', '이', ' ', '주', '인', '공', '인', ' ', '우', '주'].map((char, index) => {
+            {['당', '신', '의', ' ', '운', '세'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-4"></span>;
               return (
                 <motion.span
@@ -586,7 +586,7 @@ export default function Home() {
             <div className="relative bg-white border border-gray-100/50 px-8 py-4 rounded-full font-bold text-[16px] flex items-center justify-center gap-2 h-full w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden">
                {/* Soft shimmer effect */}
                <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
-              <span className="tracking-wide text-gray-800 font-pretendard">결과 확인하기</span>
+              <span className="tracking-wide text-gray-800 font-pretendard">명리박사로 입장</span>
               <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-800 transition-colors" />
             </div>
           </motion.div>
