@@ -241,19 +241,21 @@ function ConfirmContent() {
             <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
 
                 {/* 1. User Profile Box */}
-                <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
-                    <div className="flex flex-col gap-1.5">
-                        <h2 className="text-[18px] font-extrabold text-gray-900 mb-1 flex items-baseline gap-1.5">
-                            {userInfo.name.replace(/님$/, '')} <span className="text-[13px] font-medium text-gray-500 font-normal">(본인)</span>
-                        </h2>
-                        <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedDate}</p>
-                        <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedTime}</p>
-                        <p className="text-[15px] text-gray-700 font-medium tracking-tight">{genderKr}</p>
-                    </div>
-                    <Link href="/" className="absolute right-6 top-6 bg-[#fbff3a] text-gray-900 text-[13px] font-bold px-4 py-1.5 rounded-full hover:bg-yellow-300 transition-colors shadow-sm">
-                        변경
-                    </Link>
-                </section>
+                {!isAstrology && (
+                    <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
+                        <div className="flex flex-col gap-1.5">
+                            <h2 className="text-[18px] font-extrabold text-gray-900 mb-1 flex items-baseline gap-1.5">
+                                {userInfo.name.replace(/님$/, '')} <span className="text-[13px] font-medium text-gray-500 font-normal">(본인)</span>
+                            </h2>
+                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedDate}</p>
+                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedTime}</p>
+                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{genderKr}</p>
+                        </div>
+                        <Link href="/" className="absolute right-6 top-6 bg-[#fbff3a] text-gray-900 text-[13px] font-bold px-4 py-1.5 rounded-full hover:bg-yellow-300 transition-colors shadow-sm">
+                            변경
+                        </Link>
+                    </section>
+                )}
 
                 {/* 2. Three Info Summary Badges */}
                 {!isAstrology && (
