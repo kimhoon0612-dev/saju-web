@@ -39,10 +39,11 @@ function TarotPlayContent() {
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        if (isFetching && progress < 100) {
+        // With streaming, we get real progress. Only do faux progress up to 20% to avoid stalling.
+        if (isFetching && progress < 20) {
             timer = setTimeout(() => {
-                setProgress(prev => Math.min(prev + Math.floor(Math.random() * 10) + 2, 99));
-            }, 250);
+                setProgress(prev => Math.min(prev + 2, 20));
+            }, 300);
         }
         return () => clearTimeout(timer);
     }, [isFetching, progress]);
@@ -63,10 +64,17 @@ function TarotPlayContent() {
     const submitSelections = async () => {
         setIsFetching(true);
         setProgress(5);
+        setReadings([]); // Clear any previous readings
 
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
-            const response = await fetch(`${apiUrl}/api/tarot/draw-multiple`, {
+            
+            // Use local API for testing if we are in development, otherwise use the env var
+            const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+                ? 'http://localhost:8000' 
+                : apiUrl;
+
+            const response = await fetch(`${baseUrl}/api/tarot/draw-multiple-stream`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -76,16 +84,56 @@ function TarotPlayContent() {
             });
 
             if (!response.ok) throw new Error("Failed to draw cards");
+            if (!response.body) throw new Error("No response body");
 
-            const data = await response.json();
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let buffer = "";
+            let completedCount = 0;
+            const tempReadings: any[] = [];
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split("\n");
+                
+                // The last element is either an empty string (if buffer ends with \n) or an incomplete line
+                buffer = lines.pop() || "";
+
+                for (const line of lines) {
+                    if (line.trim() === "") continue;
+                    try {
+                        const reading = JSON.parse(line);
+                        tempReadings.push(reading);
+                        completedCount++;
+                        
+                        // Update progress dynamically based on completed chunks
+                        const newProgress = Math.min(
+                            20 + Math.floor((completedCount / targetCount) * 75), 
+                            95
+                        );
+                        setProgress(newProgress);
+                    } catch (e) {
+                        console.error("Failed to parse JSON chunk:", line, e);
+                    }
+                }
+            }
 
             setProgress(100);
+            
             setTimeout(() => {
-                setReadings(data);
+                // Ensure readings are ordered exactly as categories were requested
+                const sortedReadings = targetCategories.map(cat => 
+                    tempReadings.find(r => r.category === cat) || tempReadings[0]
+                ).filter(Boolean);
+
+                setReadings(sortedReadings);
                 setStep(2);
                 setIsFetching(false);
                 setProgress(0);
-            }, 700); // Very small delay at 100%
+            }, 700);
 
         } catch (error) {
             console.error("Tarot reading error:", error);
@@ -115,9 +163,23 @@ function TarotPlayContent() {
     };
 
     return (
-        <div className="min-h-screen bg-[#110e1b] text-white font-pretendard pb-24 relative overflow-hidden">
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#110e1b] via-[#1a142d] to-[#2c224f] opacity-100 z-0 pointer-events-none"></div>
+        <div className="min-h-screen bg-gradient-to-br from-[#0a0f25] via-[#1a142d] to-[#2c1b4d] text-white font-pretendard pb-24 relative overflow-hidden">
+            {/* Background Gradient & Effects */}
+            <div className="absolute inset-0 pointer-events-none z-0">
+                <div className="absolute top-0 inset-x-0 h-[500px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent"></div>
+                {Array.from({ length: 30 }).map((_, i) => (
+                    <Star
+                        key={i}
+                        className="absolute text-yellow-100/30 fill-yellow-100/30"
+                        size={Math.random() * 6 + 2}
+                        style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animation: `pulse ${Math.random() * 4 + 2}s infinite`
+                        }}
+                    />
+                ))}
+            </div>
 
             <header className="relative z-50 h-14 max-w-md mx-auto flex items-center px-4 justify-between pt-2">
                 <button onClick={() => router.back()} className="p-2 -ml-2 text-white/80 hover:text-white transition-colors rounded-full">
@@ -134,32 +196,46 @@ function TarotPlayContent() {
             <main className="relative z-10 max-w-md mx-auto px-5 pt-4">
                 {step === 1 && !isFetching && (
                     <div className="animate-in fade-in duration-500 flex flex-col items-center">
-                        <div className="text-center mb-8">
-                            <h2 className="text-[22px] font-bold leading-[1.3] tracking-tight text-white/90">
-                                오늘의 기운을 생각하며<br />
-                                카드 {targetCount}장을 선택해주세요.
+                        <div className="text-center mb-12">
+                            <p className="text-purple-300 font-bold text-[13px] mb-2 drop-shadow-sm flex items-center justify-center gap-1">
+                                <Sparkles size={14} className="text-amber-300"/> 마인드 타로
+                            </p>
+                            <h2 className="text-[24px] font-black leading-[1.3] text-transparent bg-clip-text bg-gradient-to-r from-purple-100 to-white">
+                                오늘의 기운을 담아<br />
+                                카드 {targetCount}장을 선택해주세요
                             </h2>
                         </div>
 
                         {renderPlaceholders()}
 
-                        {/* Deck layout - 22 cards */}
-                        <div className="flex flex-wrap justify-center gap-[6px] w-full max-w-[360px] mx-auto mb-10">
+                        {/* Deck layout - Fanning Arc layout */}
+                        <div className="relative w-full max-w-[360px] mx-auto h-[220px] mb-12 flex justify-center items-end pb-8">
                             {Array.from({ length: deckSize }).map((_, i) => {
                                 const isSelected = selectedIndices.includes(i);
+                                
+                                // Calculate position for the fanning effect
+                                const angle = -60 + (i * (120 / (deckSize - 1)));
+                                const radius = 240; 
+                                const x = Math.sin(angle * (Math.PI / 180)) * radius;
+                                const y = Math.cos(angle * (Math.PI / 180)) * radius - radius;
+                                
                                 return (
                                     <div
                                         key={i}
                                         onClick={() => handleCardClick(i)}
-                                        className={`relative w-[14.5%] aspect-[0.68] rounded flex-shrink-0 cursor-pointer transition-all duration-500 transform ${isSelected ? 'opacity-0 scale-50 pointer-events-none translate-y-[-50px]' : 'hover:-translate-y-1 hover:brightness-125 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] shadow-sm'
-                                            }`}
+                                        className={`absolute w-[50px] aspect-[0.57] rounded-lg cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)] transform ${isSelected ? 'opacity-0 scale-[0.3] pointer-events-none translate-y-[-150px]' : 'hover:-translate-y-8 hover:scale-110 shadow-lg z-10 hover:z-20'}`}
+                                        style={{
+                                            transform: isSelected ? undefined : `translateX(${x}px) translateY(${y}px) rotate(${angle}deg)`,
+                                            transformOrigin: 'bottom center',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
+                                        }}
                                     >
-                                        <div className="w-full h-full bg-[#1e1030] border border-[#d4af37]/40 rounded overflow-hidden flex items-center justify-center p-1.5 relative">
-                                            <div className="absolute inset-1 border-[0.5px] border-[#d4af37]/30 rounded-[2px]"></div>
+                                        <div className="w-full h-full bg-[#160f24] border border-purple-500/40 rounded-lg overflow-hidden flex items-center justify-center p-1 relative shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:border-purple-400 group">
+                                            <div className="absolute inset-[3px] border-[0.5px] border-amber-500/30 rounded-md"></div>
                                             {/* Abstract card back symbol */}
-                                            <div className="w-full h-full flex flex-col items-center justify-center opacity-80 gap-0.5">
-                                                <Star className="text-[#d4af37] w-3 h-3 fill-[#d4af37]" />
-                                                <Moon className="text-[#d4af37] w-2 h-2 fill-[#d4af37] rotate-[130deg]" />
+                                            <div className="w-full h-full flex flex-col items-center justify-center opacity-80 gap-[1px]">
+                                                <Star className="text-amber-500/70 w-3 h-3 fill-amber-500/70 group-hover:fill-amber-300 group-hover:text-amber-300 transition-colors" />
+                                                <Moon className="text-purple-400/70 w-2.5 h-2.5 fill-purple-400/70 rotate-[130deg] group-hover:fill-purple-300 group-hover:text-purple-300 transition-colors" />
                                             </div>
                                         </div>
                                     </div>
@@ -171,9 +247,9 @@ function TarotPlayContent() {
 
                 {/* Fixed Bottom Action Area for Step 1 */}
                 {step === 1 && !isFetching && (
-                    <div className="fixed bottom-0 left-0 right-0 bg-[#f5f6fa] text-black h-[72px] flex items-center justify-center shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-50">
-                        <p className="text-[#999999] font-medium text-[16px]">
-                            {selectedIndices.length < targetCount ? "카드를 선택해 주세요." : "잠시만 기다려주세요..."}
+                    <div className="fixed bottom-0 left-0 right-0 bg-[#0a0f25]/80 backdrop-blur-md border-t border-purple-900/50 text-white h-[76px] flex items-center justify-center z-50">
+                        <p className={`font-bold text-[16px] transition-colors ${selectedIndices.length < targetCount ? 'text-white/60' : 'text-purple-300'}`}>
+                            {selectedIndices.length < targetCount ? `신중하게 카드를 선택해 주세요 (${selectedIndices.length}/${targetCount})` : "운명의 카드를 해석하고 있습니다..."}
                         </p>
                     </div>
                 )}
@@ -247,45 +323,49 @@ function TarotPlayContent() {
                 {
                     step === 2 && readings.length > 0 && (
                         <div className="animate-in slide-in-from-bottom-8 duration-700 flex flex-col gap-5 pt-2">
-                            <div className="text-center mb-4">
-                                <h2 className="text-2xl font-bold text-amber-200">
-                                    {titleInfo} 풀이 결과
+                            <div className="text-center mb-8">
+                                <p className="text-purple-300 font-bold text-[13px] mb-1 flex items-center justify-center gap-1">
+                                    <Sparkles size={14} className="text-amber-300"/> 마인드 타로 풀이
+                                </p>
+                                <h2 className="text-[24px] font-black text-white/95">
+                                    {titleInfo} 결과
                                 </h2>
-                                <p className="text-white/60 text-sm mt-1">우주의 기운이 담긴 메시지입니다</p>
                             </div>
 
                             {readings.map((reading, idx) => (
-                                <div key={idx} className="bg-[#241c3a]/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-[#d4af37]/20 relative overflow-hidden">
-                                    <div className="flex items-start gap-4 mb-4">
-                                        <div className="w-[72px] h-[110px] bg-[#100c19] rounded-lg border border-[#d4af37]/40 shadow-inner flex flex-col items-center justify-center shrink-0 relative overflow-hidden">
-                                            <span className="text-4xl mb-1 relative z-10">{reading.emoji}</span>
+                                <div key={idx} className="bg-[#1e1533]/80 backdrop-blur-xl rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.4)] border border-purple-500/20 relative overflow-hidden group">
+                                    <div className="absolute inset-x-0 -top-px h-px w-full bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="flex items-start gap-5 mb-5">
+                                        <div className="w-[80px] aspect-[0.57] bg-[#0a0f25] rounded-xl border border-purple-500/30 flex flex-col items-center justify-center shrink-0 relative overflow-hidden shadow-inner">
+                                            <div className="absolute inset-1 border-[0.5px] border-amber-500/20 rounded-lg"></div>
+                                            <span className="text-5xl mb-1 relative z-10 drop-shadow-md">{reading.emoji}</span>
                                         </div>
                                         <div className="pt-2">
-                                            <span className="text-[11px] font-bold text-amber-200 bg-amber-900/40 border border-amber-500/30 px-2.5 py-1 rounded">
+                                            <span className="text-[12px] font-bold text-amber-200 bg-amber-500/20 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
                                                 {reading.category}
                                             </span>
-                                            <h3 className="text-[19px] font-bold mt-2.5 text-white leading-tight">
+                                            <h3 className="text-[20px] font-black mt-3 text-white leading-tight">
                                                 {reading.card_name_kr}
                                             </h3>
-                                            <p className="text-[11px] text-white/40 uppercase mt-0.5">{reading.card_name}</p>
+                                            <p className="text-[12px] text-purple-300/70 font-medium uppercase mt-1 opacity-80">{reading.card_name}</p>
                                         </div>
                                     </div>
 
-                                    <div className="text-left text-[14px] leading-relaxed text-white/80 bg-black/20 p-4 rounded-xl whitespace-pre-wrap border border-white/5">
+                                    <div className="text-left text-[15px] leading-[1.7] text-white/90 bg-[#160f24]/50 p-5 rounded-2xl whitespace-pre-wrap border border-white/5 font-medium">
                                         {reading.interpretation}
                                     </div>
                                 </div>
                             ))}
 
                             {/* Expert Consultation CTA */}
-                            <div className="bg-[#1e152e] rounded-2xl p-5 border border-purple-500/20 mt-2 mb-4 text-center">
-                                <h3 className="text-white/90 font-bold mb-1">더 깊은 해답이 필요하신가요?</h3>
-                                <p className="text-white/50 text-[13px] mb-4">
-                                    카드의 직관적인 메시지를 넘어,<br />전문가와 1:1로 구체적인 고민을 나누어보세요.
+                            <div className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-md rounded-3xl p-6 border border-purple-500/30 mt-6 mb-4 text-center">
+                                <h3 className="text-white font-bold mb-2 text-[17px]">더 깊은 방향성이 필요하신가요?</h3>
+                                <p className="text-white/60 text-[14px] leading-relaxed mb-5">
+                                    카드의 직관적인 메시지를 넘어,<br />전문가와 1:1로 구체적인 고민을 해소해보세요.
                                 </p>
                                 <button
                                     onClick={() => router.push('/experts')}
-                                    className="w-full bg-purple-600/20 text-purple-300 border border-purple-500/30 py-3 rounded-xl font-bold text-[15px] hover:bg-purple-600/30 transition-colors"
+                                    className="w-full bg-purple-600/30 text-purple-200 border border-purple-500/50 py-3.5 rounded-2xl font-bold text-[15px] hover:bg-purple-600/50 hover:text-white transition-all shadow-[0_4px_15px_rgba(168,85,247,0.2)]"
                                 >
                                     전문가에게 깊이 있는 상담받기
                                 </button>
@@ -293,7 +373,7 @@ function TarotPlayContent() {
 
                             <button
                                 onClick={() => router.push('/tarot')}
-                                className="w-full bg-amber-500 text-[#111] py-4 rounded-2xl font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] mb-8"
+                                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4.5 rounded-2xl font-bold text-[17px] hover:from-purple-500 hover:to-indigo-500 transition-all shadow-[0_4px_20px_rgba(147,51,234,0.4)] mb-8"
                             >
                                 확인 완료
                             </button>
