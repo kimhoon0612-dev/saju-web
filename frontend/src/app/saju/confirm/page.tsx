@@ -86,6 +86,9 @@ function ConfirmContent() {
     const isSpecificDate = type === "지정일 운세";
     const isCompatibility = type === "타인과의 궁합" || type === "짝궁합" || type === "정통궁합";
     const isAstrology = ["별자리표", "퍼스널 젬잼", "나침반 흐름", "과거의 나", "계절 에너지", "띠 해석"].includes(type);
+    const isComprehensiveFortune = ["정통 명리", "신년 흐름", "토정비결", "타고난 잠재력"].includes(type);
+
+    const hideTopUserInfo = isAstrology || isComprehensiveFortune;
 
     const [matrix, setMatrix] = useState<any>(null);
     const [userInfo, setUserInfo] = useState<SajuUserInfo | null>(null);
@@ -241,7 +244,7 @@ function ConfirmContent() {
             <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
 
                 {/* 1. User Profile Box */}
-                {!isAstrology && (
+                {!hideTopUserInfo && (
                     <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
                         <div className="flex flex-col gap-1.5">
                             <h2 className="text-[18px] font-extrabold text-gray-900 mb-1 flex items-baseline gap-1.5">
@@ -258,7 +261,7 @@ function ConfirmContent() {
                 )}
 
                 {/* 2. Three Info Summary Badges */}
-                {!isAstrology && (
+                {!hideTopUserInfo && (
                     <section className="flex gap-3 justify-between">
                         <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
                             <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center text-[22px] font-bold shadow-sm mb-3 ${ELEMENT_COLORS[dayElement]}`}>
