@@ -240,7 +240,7 @@ export default function Home() {
           const data = await res.json();
           setFaceResult(data.result);
         } else {
-          setFaceResult("AI 분석 서버와 연결이 원활하지 않습니다. 다시 시도해 주세요.");
+          setFaceResult("분석 서버와 연결이 원활하지 않습니다. 다시 시도해 주세요.");
         }
       } catch (err) {
         setFaceResult("분석 중 오류가 발생했습니다.");
@@ -664,7 +664,7 @@ export default function Home() {
                   <div onClick={() => fileInputRef.current?.click()} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">나의 관상</h3>
-                        <p className="text-[12px] text-gray-500 font-medium">AI가 분석하는 첫인상과 이미지</p>
+                        <p className="text-[12px] text-gray-500 font-medium">사진으로 분석하는 첫인상과 이미지</p>
                     </div>
                     <div className="w-[52px] h-[52px] bg-white rounded-xl border border-gray-100 flex items-center justify-center text-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] shrink-0 group-hover:scale-110 transition-transform">
                         🦊
@@ -1033,12 +1033,12 @@ export default function Home() {
               <span className="text-[32px]">🦊</span>
             </div>
             
-            <h3 className="text-[22px] font-black text-gray-900 mb-2">AI 관상 분석</h3>
+            <h3 className="text-[22px] font-black text-gray-900 mb-2">관상 분석</h3>
             
             {isAnalyzing ? (
               <div className="flex flex-col items-center py-8">
                 <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
-                <p className="text-[15px] font-bold text-gray-600">명리학 기반으로<br/>얼굴에 담긴 기운을 분석하는 중입니다...</p>
+                <p className="text-[15px] font-bold text-gray-600">명리학 기반으로<br/>관상을 분석중입니다...</p>
               </div>
             ) : (
               <div className="w-full flex flex-col gap-4">
@@ -1064,12 +1064,12 @@ export default function Home() {
               <span className="text-[32px]">🖐️</span>
             </div>
             
-            <h3 className="text-[22px] font-black text-gray-900 mb-2">AI 손금 분석</h3>
+            <h3 className="text-[22px] font-black text-gray-900 mb-2">손금 분석</h3>
             
             {isAnalyzingPalm ? (
               <div className="flex flex-col items-center py-8">
                 <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
-                <p className="text-[15px] font-bold text-gray-600">수상학 기반으로<br/>손바닥에 새겨진 길흉을 분석하는 중입니다...</p>
+                <p className="text-[15px] font-bold text-gray-600">수상학 기반으로<br/>손금을 분석중입니다...</p>
               </div>
             ) : (
               <div className="w-full flex flex-col gap-4">
