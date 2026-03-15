@@ -634,20 +634,20 @@ export default function FortuneHubPage() {
                             <div>
                                 <h3 className="text-[15px] font-black text-gray-800 mb-5 flex items-center gap-2"><span className="w-1.5 h-4 bg-[#FFB199] rounded-full block"></span>종합 운세</h3>
                                 <div className="grid grid-cols-4 gap-y-8 gap-x-2">
-                                    <Link href="/saju/confirm?type=정통사주" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🐯" />
+                                    <Link href="/saju/confirm?type=정통 명리" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="📜" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">정통 명리</span>
                                     </Link>
                                     <Link href="/saju/confirm?type=신년 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🐍" />
+                                        <SpotIcon emoji="🌅" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">신년 흐름</span>
                                     </Link>
                                     <Link href="/saju/confirm?type=토정비결" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🐉" />
+                                        <SpotIcon emoji="🏮" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">토정비결</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=천생복덕운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🐨" />
+                                    <Link href="/saju/confirm?type=타고난 잠재력" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="🌱" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">타고난 잠재력</span>
                                     </Link>
                                 </div>
@@ -657,21 +657,21 @@ export default function FortuneHubPage() {
                             <div className="pt-8 border-t border-gray-100/60 mt-2">
                                 <h3 className="text-[15px] font-black text-gray-800 mb-5 flex items-center gap-2"><span className="w-1.5 h-4 bg-blue-300 rounded-full block"></span>포텐셜 및 커리어</h3>
                                 <div className="grid grid-cols-3 gap-x-2 gap-y-8">
-                                    <Link href="/saju/result?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=커리어 운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full bottom-1 right-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">💼</span>
                                         </div>
                                         <span className="text-[13px] font-bold text-gray-700">커리어 운</span>
                                     </Link>
-                                    <Link href="/saju/result?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=역량 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full top-2 right-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">📈</span>
                                         </div>
                                         <span className="text-[13px] font-bold text-gray-700">역량 평가</span>
                                     </Link>
-                                    <Link href="/saju/result?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=자아 탐구" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full bottom-2 left-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">🦋</span>
@@ -685,20 +685,20 @@ export default function FortuneHubPage() {
                             <div className="pt-8 border-t border-gray-100/60 mt-2">
                                 <h3 className="text-[15px] font-black text-gray-800 mb-5 flex items-center gap-2"><span className="w-1.5 h-4 bg-[#A8D5BA] rounded-full block"></span>나의 선천적 디자인</h3>
                                 <div className="grid grid-cols-4 gap-y-9 gap-x-2">
-                                    <Link href="/saju/confirm?type=띠 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🐵" />
+                                    <Link href="/saju/confirm?type=띠 해석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="🎭" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">띠 해석</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=별자리 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="✨" />
+                                    <Link href="/saju/confirm?type=별자리표" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="🌌" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">별자리표</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=태어난 계절운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🌸" />
+                                    <Link href="/saju/confirm?type=계절 에너지" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="🌿" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">계절 에너지</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=생년월일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🎂" />
+                                    <Link href="/saju/confirm?type=나침반 흐름" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="🧭" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">나침반 흐름</span>
                                     </Link>
                                     <div onClick={() => palmInputRef.current?.click()} className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
@@ -706,11 +706,11 @@ export default function FortuneHubPage() {
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">나의 손금</span>
                                         <input type="file" accept="image/*" ref={palmInputRef} className="hidden" onChange={handlePalmUpload} />
                                     </div>
-                                    <Link href="/saju/confirm?type=전생운" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
-                                        <SpotIcon emoji="🔮" />
+                                    <Link href="/saju/confirm?type=과거의 나" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                        <SpotIcon emoji="⏳" />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">과거의 나</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=탄생석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/confirm?type=퍼스널 젬잼" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <SpotIcon emoji="💎" hasBadge />
                                         <span className="text-[13px] font-bold text-gray-700 tracking-tight">퍼스널 젬잼</span>
                                     </Link>

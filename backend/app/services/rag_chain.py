@@ -205,6 +205,23 @@ class SajuRAGChain:
         사용자의 사주 매트릭스를 기반으로 특정 운세 (신년운세, 토정비결 등)에 대한 맞춤형 해석을 생성합니다.
         파트너 매트릭스가 주어지면 궁합 분석을 수행합니다.
         """
+        
+        # UI 이름과 내부 프롬프트명 매핑
+        ui_to_internal_map = {
+            "정통 명리": "정통사주",
+            "타고난 잠재력": "천생복덕운",
+            "커리어 운": "취업 운세",
+            "역량 평가": "능력 평가",
+            "자아 탐구": "심리 분석",
+            "띠 해석": "띠 운세",
+            "별자리표": "별자리 운세",
+            "계절 에너지": "태어난 계절운",
+            "나침반 흐름": "생년월일 운세",
+            "과거의 나": "전생운",
+            "퍼스널 젬잼": "탄생석"
+        }
+        reading_type = ui_to_internal_map.get(reading_type, reading_type)
+        
         gemini_api_key = os.environ.get("GEMINI_API_KEY")
         openai_api_key = os.environ.get("OPENAI_API_KEY")
         
@@ -573,6 +590,22 @@ class SajuRAGChain:
         """
         사용자의 사주 매트릭스를 기반으로 특정 운세에 대한 맞춤형 해석을 스트리밍으로 생성합니다.
         """
+        # UI 이름과 내부 프롬프트명 매핑
+        ui_to_internal_map = {
+            "정통 명리": "정통사주",
+            "타고난 잠재력": "천생복덕운",
+            "커리어 운": "취업 운세",
+            "역량 평가": "능력 평가",
+            "자아 탐구": "심리 분석",
+            "띠 해석": "띠 운세",
+            "별자리표": "별자리 운세",
+            "계절 에너지": "태어난 계절운",
+            "나침반 흐름": "생년월일 운세",
+            "과거의 나": "전생운",
+            "퍼스널 젬잼": "탄생석"
+        }
+        reading_type = ui_to_internal_map.get(reading_type, reading_type)
+
         gemini_api_key = os.environ.get("GEMINI_API_KEY")
         openai_api_key = os.environ.get("OPENAI_API_KEY")
         
