@@ -114,8 +114,9 @@ export default function ExpertsPage() {
                         {/* Premium Card Header / Image */}
                         <div className="w-full aspect-[4/5] bg-gray-50 relative overflow-hidden">
                             <img 
-                                src={expert.image_url} 
+                                src={expert.image_url || `https://api.dicebear.com/7.x/notionists/svg?seed=${expert.code}&backgroundColor=fdfbfa`} 
                                 alt={expert.display_name} 
+                                onError={(e) => { e.currentTarget.src = `https://api.dicebear.com/7.x/notionists/svg?seed=${expert.code}&backgroundColor=fdfbfa`; }}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                             />
                             

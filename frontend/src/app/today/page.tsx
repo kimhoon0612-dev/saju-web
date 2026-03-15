@@ -569,11 +569,11 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Daily/Fun Hub injected from saju/page.tsx */}
-              <section className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-6">
-                <div>
-                  <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">매일매일 가볍게!</div>
-                  <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-6">데일리 운세 & 즐길거리</h2>
+              {/* Daily/Fun Hub injected from saju/page.tsx - Now outside the card */}
+              <section className="flex flex-col gap-6 mt-4">
+                <div className="px-2">
+                  <div className="text-[13px] text-gray-500 font-bold mb-1 tracking-wide">매일매일 가볍게!</div>
+                  <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-2">데일리 운세 & 즐길거리</h2>
                 </div>
 
                 {/* 데일리 기운 & 행운 팁 (Tarot-style List) */}
