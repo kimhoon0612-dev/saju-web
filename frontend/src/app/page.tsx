@@ -451,99 +451,15 @@ export default function Home() {
         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#F8F9FA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
-        {/* Refined Cute & Premium Animation Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#FDFBFA]">
-          {/* Soft, minimal gradient overlays */}
-          <div className="absolute top-0 right-0 w-full h-[60vh] bg-gradient-to-b from-[#FFF2ED]/60 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-[#E8F5E9]/40 to-transparent"></div>
-
-          {/* Animated Glowing Orbs (Subtle, Premium) */}
-          <motion.div
-            animate={{
-              y: [0, -20, 0],
-              scale: [1, 1.05, 1],
-              opacity: [0.3, 0.5, 0.3]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[15%] right-[15%] w-[40vw] h-[40vw] bg-[#FFB199]/20 rounded-full blur-[80px]"
-          />
-          <motion.div
-            animate={{
-              y: [0, 30, 0],
-              scale: [1, 1.1, 1],
-              opacity: [0.2, 0.4, 0.2]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-[20%] left-[10%] w-[50vw] h-[50vw] bg-[#81C784]/20 rounded-full blur-[80px]"
-          />
-          <motion.div
-            animate={{
-              x: [0, 20, 0],
-              scale: [0.9, 1, 0.9],
-              opacity: [0.1, 0.3, 0.1]
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-[40%] left-[30%] w-[60vw] h-[60vw] bg-blue-100/30 rounded-full blur-[100px]"
-          />
-
-          {/* Elegant Floating Scholarly Emblems */}
-          {[
-            { tag: '🎓', size: 40, delay: 0.2, pos: { top: '25%', left: '20%' }, yBounce: -15 },
-            { tag: '📖', size: 44, delay: 0.8, pos: { top: '15%', right: '25%' }, yBounce: -25 },
-            { tag: '✨', size: 28, delay: 1.5, pos: { bottom: '35%', left: '15%' }, yBounce: -10 },
-            { tag: '📜', size: 48, delay: 2.2, pos: { bottom: '25%', right: '20%' }, yBounce: -30 },
-            { tag: '🔍', size: 36, delay: 3.1, pos: { top: '45%', right: '10%' }, yBounce: -20 },
-          ].map((item, i) => (
-            <motion.div
-              key={`emblem-${i}`}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={{
-                opacity: [0, 1],
-                y: [30, item.yBounce, 30],
-                rotate: [0, (i % 2 === 0 ? 5 : -5), 0]
-              }}
-              transition={{
-                opacity: { duration: 1.5, delay: item.delay },
-                y: { duration: 6 + (i % 3), repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 8 + (i % 3), repeat: Infinity, ease: "easeInOut" }
-              }}
-              className="absolute drop-shadow-sm pointer-events-none z-0"
-              style={{
-                fontSize: `${item.size}px`,
-                ...item.pos
-              }}
-            >
-              {item.tag}
-            </motion.div>
-          ))}
+        {/* Minimalist Authentic Oriental Background */}
+        <div className="absolute inset-0 bg-[#FDFBF7] flex justify-center items-center overflow-hidden pointer-events-none">
+          {/* Subtle paper texture overlay could go here, for now just a clean warm off-white */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FFFFFF] to-[#FDFBF7] opacity-80"></div>
         </div>
 
-        {/* Refined Typography Reveal */}
+        {/* Minimalist Typography Reveal (Brush-like) */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
-          {/* Cute Scholar Owl Motif */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
-            className="mb-5 z-10 relative"
-          >
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="text-[72px] md:text-[84px] drop-shadow-md flex items-center justify-center relative"
-            >
-              🦉
-              <motion.div 
-                initial={{ opacity: 0, rotate: -20 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                transition={{ delay: 0.8, type: "spring" }}
-                className="absolute -top-4 -right-3 text-[36px]"
-              >
-                🎓
-              </motion.div>
-            </motion.div>
-          </motion.div>
-
+          
           <motion.div
             initial="hidden"
             animate="visible"
@@ -551,10 +467,10 @@ export default function Home() {
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.12, delayChildren: 0.8 }
+                transition: { staggerChildren: 0.6, delayChildren: 0.8 }
               }
             }}
-            className="text-[44px] md:text-[56px] tracking-[0.15em] text-gray-900 text-center leading-[1.3] font-serif px-6 flex flex-wrap justify-center gap-x-3 mb-2"
+            className="text-[48px] md:text-[64px] tracking-[0.2em] text-[#1A1A1A] text-center leading-[1.3] font-serif px-6 flex flex-wrap justify-center gap-x-2 mb-10"
           >
             {['명', '리', '박', '사'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-4"></span>;
@@ -562,15 +478,16 @@ export default function Home() {
                 <motion.span
                   key={index}
                   variants={{
-                    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+                    hidden: { opacity: 0, y: 15, filter: "blur(10px)", scale: 0.95 },
                     visible: {
                       opacity: 1,
                       y: 0,
                       filter: "blur(0px)",
-                      transition: { duration: 0.8, ease: "easeOut" }
+                      scale: 1,
+                      transition: { duration: 1.2, ease: [0.25, 1, 0.5, 1] } // Smooth, lingering easing
                     }
                   }}
-                  className="inline-block drop-shadow-sm"
+                  className="inline-block"
                 >
                   {char}
                 </motion.span>
@@ -578,45 +495,25 @@ export default function Home() {
             })}
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.2, duration: 1, ease: "easeOut" }}
-            className="mt-6 px-5 py-2.5 bg-white/70 backdrop-blur-md rounded-full text-[#4A5568] font-bold text-[14px] shadow-sm ring-1 ring-black/5 flex items-center gap-2"
-          >
-            <motion.span 
-              animate={{ opacity: [1, 0.5, 1] }} 
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-2 h-2 rounded-full bg-[#81C784]"
-            ></motion.span>
-            당신의 사주를 연구하고 있습니다
-          </motion.div>
         </div>
 
-        {/* Premium Soft Jelly Button */}
+        {/* Minimalist Apple-like Entry Button */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 3, duration: 0.5, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3.5, duration: 1, ease: [0.25, 1, 0.5, 1] }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="relative cursor-pointer group w-[220px]"
+            className="relative cursor-pointer group w-[200px]"
           >
-            {/* Elegant shadow glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#FFB199]/40 to-[#81C784]/40 rounded-full blur opacity-70 group-hover:opacity-100 transition duration-500"></div>
-
-            {/* Inner Button Content */}
-            <div className="relative bg-white border border-gray-100/50 px-8 py-4 rounded-full font-bold text-[16px] flex items-center justify-center gap-2 h-full w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden">
-               {/* Soft shimmer effect */}
-               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
-              <span className="tracking-wide text-gray-800 font-pretendard">명리박사로 입장</span>
-              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-800 transition-colors" />
+            <div className="relative bg-[#1A1A1A] px-8 py-4 rounded-full font-medium text-[15px] flex items-center justify-center gap-3 h-full w-full shadow-lg overflow-hidden transition-colors hover:bg-black">
+              <span className="tracking-widest text-white font-pretendard">입장하기</span>
+              <ChevronRight className="w-4 h-4 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" />
             </div>
-          </motion.div>
-        </motion.div>
+          </motion.div>        </motion.div>
       </motion.div>
 
       {
