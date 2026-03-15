@@ -65,7 +65,7 @@ export default function ExpertsPage() {
             </div>
 
             {/* Expert List Section - Tabs */}
-            <div className="bg-white sticky top-[56px] z-40 border-b border-gray-100 mt-2 rounded-t-[24px] overflow-hidden">
+            <div className="bg-white border-b border-gray-100 mt-2 rounded-t-[24px] overflow-hidden">
                 {/* Search banner */}
                 <div className="px-4 py-3 border-b border-gray-100">
                     <div className="w-full bg-gray-50 rounded-full py-2 px-4 flex items-center gap-2 border border-gray-100 focus-within:border-gray-400 focus-within:bg-white transition-colors">

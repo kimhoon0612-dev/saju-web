@@ -578,7 +578,7 @@ export default function Home() {
 
                 {/* 데일리 기운 & 행운 팁 (Tarot-style List) */}
                 <div className="flex flex-col gap-3">
-                  <Link href="/saju/confirm?type=오늘의운세" className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <Link href="/saju/confirm?type=오늘의운세" className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">오늘의 기운</h3>
                         <p className="text-[12px] text-gray-500 font-medium">오늘 하루를 안내할 명리 일진</p>
@@ -588,7 +588,7 @@ export default function Home() {
                     </div>
                   </Link>
 
-                  <Link href="/saju/confirm?type=내일의운세" className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <Link href="/saju/confirm?type=내일의운세" className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">내일의 기운</h3>
                         <p className="text-[12px] text-gray-500 font-medium">미리 대비하는 내일의 흐름</p>
@@ -598,7 +598,7 @@ export default function Home() {
                     </div>
                   </Link>
 
-                  <Link href="/saju/confirm?type=지정일 운세" className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <Link href="/saju/confirm?type=지정일 운세" className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">지정일 기운</h3>
                         <p className="text-[12px] text-gray-500 font-medium">특별한 날, 나와의 기운 궁합</p>
@@ -608,7 +608,7 @@ export default function Home() {
                     </div>
                   </Link>
 
-                  <Link href="/saju/confirm?type=타인과의 궁합" className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <Link href="/saju/confirm?type=타인과의 궁합" className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">궁합</h3>
                         <p className="text-[12px] text-gray-500 font-medium">나와 그 사람의 인연 분석</p>
@@ -619,9 +619,9 @@ export default function Home() {
                   </Link>
 
                   {/* 행운 팁 & 퍼스널 서비스 구분선 역할 (시각적 여유) */}
-                  <div className="h-4"></div>
+                  <div className="w-full h-[1px] bg-gray-100 my-1"></div>
 
-                  <div onClick={handleLotto} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={handleLotto} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">퍼스널 행운 번호</h3>
                         <p className="text-[12px] text-gray-500 font-medium">나만의 시그니처 넘버 6개</p>
@@ -631,7 +631,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div onClick={handleTalisman} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={handleTalisman} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">에너지 부스터</h3>
                         <p className="text-[12px] text-gray-500 font-medium">지금 내게 필요한 맞춤형 부적 추천</p>
@@ -641,7 +641,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div onClick={() => setShowMoving(true)} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={() => setShowMoving(true)} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">캘린더 매니징</h3>
                         <p className="text-[12px] text-gray-500 font-medium">이사/중요 일정 등 길일 찾기</p>
@@ -651,7 +651,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div onClick={() => setIsOutfitModalOpen(true)} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={() => setIsOutfitModalOpen(true)} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">럭키 컬러</h3>
                         <p className="text-[12px] text-gray-500 font-medium">나만의 행운의 아이템 매칭</p>
@@ -661,7 +661,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div onClick={() => fileInputRef.current?.click()} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={() => fileInputRef.current?.click()} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">나의 관상</h3>
                         <p className="text-[12px] text-gray-500 font-medium">AI가 분석하는 첫인상과 이미지</p>
@@ -672,7 +672,7 @@ export default function Home() {
                     <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handlePhotoUpload} />
                   </div>
 
-                  <div onClick={() => palmInputRef.current?.click()} className="flex justify-between items-center p-3.5 rounded-2xl bg-[#FDFBFA] border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group cursor-pointer">
+                  <div onClick={() => palmInputRef.current?.click()} className="flex justify-between items-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer">
                     <div className="flex flex-col flex-1 pr-4">
                         <h3 className="text-[15px] font-bold mb-1 text-gray-800 group-hover:text-[#2AC1BC] transition-colors leading-snug">나의 손금</h3>
                         <p className="text-[12px] text-gray-500 font-medium">손바닥에 그려진 나의 길흉화복</p>

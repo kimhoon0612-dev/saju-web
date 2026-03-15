@@ -19,8 +19,20 @@ export interface Product {
     bonus_coins?: number;
 }
 
-// Mock Products Database
-export const storeProducts: Product[] = [];
+// Mock Products Database (Restored amulets + New Coin packages)
+export const storeProducts: Product[] = [
+    // Amulets
+    { id: "am_1", name: "재물 대박 부적", description: "막힌 재물운을 뚫어주는 강력한 에너지가 깃듭니다.", price: 25000, category: "amulet", elementTheme: "wealth", imageUrl: "/talismans/wealth.png", sales_tags: "BEST,인기", original_price: 35000 },
+    { id: "am_2", name: "사랑 성취 부적", description: "짝사랑, 재회, 새로운 인연을 강하게 끌어당깁니다.", price: 29000, category: "amulet", elementTheme: "love", imageUrl: "/talismans/love.png", sales_tags: "주문폭주", original_price: 45000 },
+    { id: "am_3", name: "건강 기원 영부", description: "질병을 예방하고 몸의 기운을 맑게 호신합니다.", price: 19000, category: "amulet", elementTheme: "health", imageUrl: "/talismans/health.png", original_price: 25000 },
+    { id: "am_4", name: "합격 기원 부적", description: "수능, 임용, 취업 등 중요한 시험에서 운을 더합니다.", price: 32000, category: "amulet", elementTheme: "wood", imageUrl: "/talismans/love.png", original_price: 40000 },
+    // Coins
+    { id: "c_5k", name: "스타터 코인팩", description: "5,000 코인 가볍게 충전", price: 5000, category: "coin", imageUrl: "/coins/coin_5k.png", coin_amount: 5000, bonus_coins: 0 },
+    { id: "c_10k", name: "베이직 코인팩", description: "10,000 코인 충전", price: 10000, category: "coin", imageUrl: "/coins/coin_10k.png", coin_amount: 10000, bonus_coins: 500 },
+    { id: "c_30k", name: "인기 코인팩", description: "30,000 코인 넉넉하게 충전", price: 30000, category: "coin", imageUrl: "/coins/coin_30k.png", coin_amount: 30000, bonus_coins: 2000, sales_tags: "인기" },
+    { id: "c_50k", name: "프로 상담팩", description: "50,000 코인 충전 완료", price: 50000, category: "coin", imageUrl: "/coins/coin_50k.png", coin_amount: 50000, bonus_coins: 5000, sales_tags: "BEST" },
+    { id: "c_100k", name: "VIP 마스터팩", description: "100,000 코인 대용량 충전", price: 100000, category: "coin", imageUrl: "/coins/coin_100k.png", coin_amount: 100000, bonus_coins: 15000, sales_tags: "혜택최대" },
+];
 
 export default function DirectStorePage() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -395,8 +407,8 @@ export default function DirectStorePage() {
                                     className={`w-full bg-white rounded-2xl p-4 flex items-center justify-between transition-all group ${highlight ? 'border-2 border-yellow-400 shadow-[0_4px_15px_rgba(250,204,21,0.2)]' : 'border border-gray-100 shadow-sm hover:border-gray-300'}`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${highlight ? 'bg-yellow-50' : 'bg-gray-50'}`}>
-                                            <span className={`text-2xl ${highlight ? 'text-yellow-500' : ''}`}>⚡</span>
+                                        <div className={`w-12 min-w-[3rem] h-12 rounded-xl flex items-center justify-center p-1 overflow-hidden shrink-0 ${highlight ? 'bg-yellow-50/50 border border-yellow-200 shadow-sm' : 'bg-gray-50 border border-gray-100'}`}>
+                                            <img src={pkg.imageUrl} alt={pkg.name} className="w-full h-full object-contain" />
                                         </div>
                                         <div className="text-left flex flex-col justify-center">
                                             <div className="flex items-center gap-2">
