@@ -451,121 +451,143 @@ export default function Home() {
         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#F8F9FA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
-        {/* Phase 0: Base Midnight Navy Background */}
-        <div className="absolute inset-0 bg-[#001F3F] flex justify-center items-center overflow-hidden pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,160,33,0.05)_0%,rgba(0,31,63,1)_100%)]"></div>
+        {/* Phase 0: High-Tech Midnight Blue Background */}
+        <div className="absolute inset-0 bg-[#001730] flex justify-center items-center overflow-hidden pointer-events-none">
+          {/* Deep immersive dark background */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.03)_0%,rgba(0,23,48,1)_100%)]"></div>
         </div>
 
         {/* Animation Container */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full mt-[-10vh]">
           
           <div className="relative w-[160px] h-[160px] flex items-center justify-center">
-            {/* Phase 1: Particle In (Swirl) */}
-            <motion.div 
-              initial={{ rotate: -180 }}
-              animate={{ rotate: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              {[
-                { x: -120, y: -150, delay: 0 }, { x: 140, y: -130, delay: 0.1 },
-                { x: -160, y: 80, delay: 0.2 }, { x: 150, y: 110, delay: 0.3 },
-                { x: -80, y: -180, delay: 0.15 }, { x: 90, y: -170, delay: 0.05 },
-                { x: -190, y: 20, delay: 0.25 }, { x: 180, y: -40, delay: 0.08 },
-                { x: -50, y: 200, delay: 0.12 }, { x: 60, y: 190, delay: 0.22 },
-                { x: -130, y: 140, delay: 0.02 }, { x: 110, y: 160, delay: 0.18 },
-                { x: -200, y: -70, delay: 0.28 }, { x: 210, y: 60, delay: 0.04 },
-                { x: 0, y: -220, delay: 0.14 }, { x: 0, y: 220, delay: 0.26 },
-              ].map((p, i) => (
-                <motion.div
-                  key={`particle-${i}`}
-                  initial={{ x: p.x, y: p.y, opacity: 0, scale: 0 }}
-                  animate={{ x: 0, y: 0, opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
-                  transition={{ duration: 1.0, delay: p.delay, ease: "easeInOut" }}
-                  className="absolute w-1.5 h-1.5 bg-[#C5A021] rounded-full shadow-[0_0_8px_#C5A021]"
-                />
-              ))}
-            </motion.div>
-
-            {/* Phase 2: Logo Formation (Scholar Hat & Orbit) */}
-            <svg className="absolute w-[120px] h-[120px]" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Orbit */}
-              <motion.circle cx="60" cy="60" r="50" stroke="#C5A021" strokeWidth="1.5" strokeDasharray="4 6"
-                initial={{ pathLength: 0, rotate: -90, opacity: 0 }}
-                animate={{ pathLength: 1, rotate: 0, opacity: 0.6 }}
-                transition={{ delay: 1.0, duration: 1.0, ease: "easeInOut" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-              <motion.circle cx="60" cy="60" r="40" stroke="#C5A021" strokeWidth="1" opacity="0.3"
-                initial={{ pathLength: 0, rotate: 90, opacity: 0 }}
-                animate={{ pathLength: 1, rotate: 0, opacity: 0.3 }}
-                transition={{ delay: 1.2, duration: 1.0, ease: "easeInOut" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-              {/* Scholar Hat Top Diamond */}
-              <motion.path d="M60 30 L90 48 L60 66 L30 48 Z" stroke="#C5A021" strokeWidth="2" fill="none"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1, fill: "rgba(197, 160, 33, 0.1)" }}
-                transition={{ delay: 1.2, duration: 0.8, ease: "easeInOut" }}
-              />
-              {/* Hat Tassels / Base */}
-              <motion.path d="M90 48 V75 L60 90 L30 75 V48" stroke="#C5A021" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ delay: 1.5, duration: 0.6, ease: "easeInOut" }}
-              />
-              {/* Core Dot (Origin) */}
-              <motion.circle cx="60" cy="60" r="3" fill="#C5A021"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.8, duration: 0.3 }}
-              />
-            </svg>
-
-            {/* Phase 3: Golden Bloom */}
+            
+            {/* Phase 01: Singularity (0.0s ~ 1.0s) */}
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [0, 15], opacity: [0, 0.8, 0] }}
-              transition={{ delay: 2.0, duration: 0.8, ease: "easeOut" }}
-              className="absolute inset-0 bg-[radial-gradient(circle,rgba(197,160,33,0.8)_0%,rgba(197,160,33,0)_70%)] rounded-full pointer-events-none"
+              animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 1] }}
+              transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute w-2 h-2 bg-[#D4AF37] rounded-full shadow-[0_0_15px_#D4AF37,0_0_30px_#D4AF37]"
+            />
+
+            {/* Particle Pull Effect (Optional, ~50 particles for performance) */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="absolute inset-0"
+            >
+              {[...Array(40)].map((_, i) => {
+                const angle = (i * 360) / 40;
+                const distance = 80 + Math.random() * 40;
+                return (
+                  <motion.div
+                    key={`pull-${i}`}
+                    initial={{ x: Math.cos(angle * Math.PI / 180) * distance, y: Math.sin(angle * Math.PI / 180) * distance, opacity: 0 }}
+                    animate={{ x: 0, y: 0, opacity: [0, 0.5, 0] }}
+                    transition={{ duration: 0.8, delay: Math.random() * 0.5, ease: "easeIn" }}
+                    className="absolute w-[1px] h-[1px] bg-[#D4AF37] blur-[0.5px] rounded-full top-1/2 left-1/2"
+                  />
+                )
+              })}
+            </motion.div>
+
+            {/* Phase 02: Data Flow & Form Symbol (1.0s ~ 2.0s) */}
+            <svg className="absolute w-[160px] h-[160px] overflow-visible" viewBox="-80 -80 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* 8 Lines intersecting at 127.5 degrees (approx 8 point star/flower geometry) */}
+              {[...Array(8)].map((_, i) => (
+                <motion.line
+                  key={`line-${i}`}
+                  x1={Math.cos((i * 45) * Math.PI / 180) * 120}
+                  y1={Math.sin((i * 45) * Math.PI / 180) * 120}
+                  x2={Math.cos((i * 45 + 127.5) * Math.PI / 180) * 20}
+                  y2={Math.sin((i * 45 + 127.5) * Math.PI / 180) * 20}
+                  stroke="url(#goldGradient)"
+                  strokeWidth="0.8"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 0.6 }}
+                  transition={{ delay: 1.0, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                />
+              ))}
+              
+              {/* Core Geometric Symbol (Abstract Crystal) */}
+              <motion.path
+                d="M 0 -40 L 20 0 L 0 40 L -20 0 Z"
+                stroke="#D4AF37"
+                strokeWidth="1.2"
+                fill="none"
+                initial={{ pathLength: 0, opacity: 0, rotate: -45 }}
+                animate={{ pathLength: 1, opacity: 1, rotate: 0 }}
+                transition={{ delay: 1.4, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+              />
+              <motion.path
+                d="M 0 -40 L 20 0 L 0 40 L -20 0 Z"
+                stroke="#D4AF37"
+                strokeWidth="1.2"
+                fill="none"
+                initial={{ pathLength: 0, opacity: 0, rotate: 45 }}
+                animate={{ pathLength: 1, opacity: 1, rotate: 90 }}
+                transition={{ delay: 1.4, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+              />
+              
+              <defs>
+                <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#D4AF37" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#D4AF37" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Phase 03: Radiant Bloom (2.0s ~ 3.0s) */}
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: [0, 8], opacity: [0, 0.6, 0] }}
+              transition={{ delay: 2.0, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute inset-0 bg-[#D4AF37] rounded-full pointer-events-none mix-blend-screen blur-[20px]"
+            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.2, 0.1] }}
+              transition={{ delay: 2.2, duration: 2.0, ease: "easeOut" }}
+              className="absolute w-[100vw] h-[100vw] bg-[radial-gradient(circle,rgba(212,175,55,0.4)_0%,rgba(0,23,48,0)_60%)] pointer-events-none"
             />
           </div>
           
-          {/* Phase 4: Text Reveal (Typography) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.5, duration: 0.8, ease: "easeOut" }}
-            className="mt-8 flex flex-col items-center gap-1"
-          >
-            <div className="text-[44px] md:text-[56px] tracking-[0.2em] text-[#C5A021] font-serif font-black drop-shadow-[0_0_10px_rgba(197,160,33,0.4)]">
-              명리박사
-            </div>
-            <div className="text-[#C5A021]/70 tracking-[0.3em] text-sm font-light mt-1 uppercase">
-              Dr. Myeongri
-            </div>
-          </motion.div>
+          {/* Phase 04: Final Branding - Text Reveal via Masking (3.0s ~ 4.0s) */}
+          <div className="mt-8 overflow-hidden h-28 flex flex-col justify-center">
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 3.0, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+              className="flex flex-col items-center gap-1"
+            >
+              <div className="text-[44px] md:text-[56px] tracking-[0.25em] text-[#D4AF37] font-serif font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]">
+                명리박사
+              </div>
+              <div className="text-[#D4AF37]/50 tracking-[0.3em] text-sm font-light uppercase">
+                Dr. Myeongri
+              </div>
+            </motion.div>
+          </div>
           
         </div>
 
-        {/* Minimalist Gold-Accented Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.2, duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
-          className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
-        >
+        {/* Sync Transition Fallback (For Testing) */}
+        {!matrixData && (
           <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="relative cursor-pointer group w-[220px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 4.5, duration: 1.0 }}
+            className="absolute bottom-12 z-20"
           >
-            <div className="absolute inset-0 bg-[#C5A021] rounded-full blur-[12px] opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-            <div className="relative bg-[#001F3F] border border-[#C5A021]/40 px-8 py-4 rounded-full font-medium text-[16px] flex items-center justify-center gap-3 h-full w-full shadow-lg overflow-hidden transition-colors hover:bg-[#00152B]">
-              <span className="tracking-widest text-[#C5A021] font-pretendard">명리박사 입장</span>
-              <ChevronRight className="w-5 h-5 text-[#C5A021] group-hover:translate-x-1 transition-transform" />
-            </div>
-          </motion.div>        </motion.div>
+            <button 
+              className="text-[#D4AF37]/60 text-xs tracking-widest hover:text-[#D4AF37] transition-colors border-b border-transparent hover:border-[#D4AF37]/50 py-1 uppercase"
+            >
+              Skip Intro
+            </button>
+          </motion.div>
+        )}
       </motion.div>
 
       {
