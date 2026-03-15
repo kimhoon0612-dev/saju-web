@@ -657,21 +657,21 @@ export default function FortuneHubPage() {
                             <div className="pt-8 border-t border-gray-100/60 mt-2">
                                 <h3 className="text-[15px] font-black text-gray-800 mb-5 flex items-center gap-2"><span className="w-1.5 h-4 bg-blue-300 rounded-full block"></span>포텐셜 및 커리어</h3>
                                 <div className="grid grid-cols-3 gap-x-2 gap-y-8">
-                                    <Link href="/saju/confirm?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=취업 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full bottom-1 right-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">💼</span>
                                         </div>
                                         <span className="text-[13px] font-bold text-gray-700">커리어 운</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=능력 평가" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full top-2 right-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">📈</span>
                                         </div>
                                         <span className="text-[13px] font-bold text-gray-700">역량 평가</span>
                                     </Link>
-                                    <Link href="/saju/confirm?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
+                                    <Link href="/saju/result?type=심리 분석" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                                         <div className="w-[64px] h-[64px] bg-white border border-gray-100/80 rounded-[20px] shadow-sm flex items-center justify-center relative mb-1 ring-1 ring-black/5">
                                             <div className="absolute w-[24px] h-[24px] bg-[#E2E8F0] rounded-full bottom-2 left-1 opacity-80"></div>
                                             <span className="relative z-10 text-[30px] group-hover:-translate-y-1 transition-transform drop-shadow-sm">🦋</span>
