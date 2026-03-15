@@ -7,7 +7,7 @@ import DaewunTimeline, { DaewunPillar } from "@/components/DaewunTimeline";
 import FortuneCycleDashboard from "@/components/FortuneCycleDashboard";
 import DailyGuideCard, { DailyFortuneData } from "@/components/DailyGuideCard";
 import MonthlyReportTemplate from "@/components/MonthlyReportTemplate";
-import ElementalRadarChart from "@/components/ElementalRadarChart";
+import ElementalBarChart from "@/components/ElementalBarChart";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -322,8 +322,8 @@ function SajuContent() {
     }, [router, searchParams]);
 
     return (
-        <div className="font-pretendard bg-[#F5F6F8] min-h-screen pb-24 text-[#111111]">
-            <div className="bg-white px-4 py-3 flex items-center border-b border-gray-100 sticky top-0 z-50">
+        <div className="font-pretendard bg-[#F8F9FA] min-h-screen pb-24 text-gray-900">
+            <div className="bg-white px-4 py-3 flex items-center border-b border-gray-100/60 sticky top-0 z-50">
                 <Link href="/" className="p-2 -ml-2 text-gray-800">
                     <ArrowLeft size={24} />
                 </Link>
@@ -342,9 +342,9 @@ function SajuContent() {
                                     const astData = getAstrologyData(readingType, new Date(userInfo.birth_time_iso));
                                     return astData ? <AstrologyHeroCard data={astData} /> : null;
                                 })()}
-                                <h2 className="text-xl font-black text-gray-900 mb-4">{readingType} 상세 풀이</h2>
+                                <h2 className="text-[22px] font-black tracking-tight text-gray-900 mb-5">{readingType} 상세 풀이</h2>
                                 {specificReading ? (
-                                    <div className="max-w-none text-gray-800 leading-relaxed font-medium text-[15px] space-y-3">
+                                    <div className="max-w-none text-gray-800 leading-[1.8] font-medium text-[15.5px] space-y-4">
                                         {specificReading.split('\n').map((line, i) => {
                                             if (!line.trim()) return null;
 
@@ -402,34 +402,34 @@ function SajuContent() {
                                 </div>
 
                                 {/* Category Tabs (MZ Style Segmented Control) */}
-                                <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 w-full overflow-x-auto hide-scrollbar snap-x shadow-sm h-14 items-center">
+                                <div className="flex bg-white p-[5px] rounded-[18px] border border-gray-100/80 w-full overflow-x-auto hide-scrollbar snap-x shadow-sm h-[52px] items-center mt-2 ring-1 ring-black/5">
                                     <button
                                         onClick={() => handleTabClick("daewun")}
-                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daewun' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                        className={`flex-1 min-w-[90px] text-[14px] font-bold py-2 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daewun' ? 'bg-[#2D3748] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                     >
                                         10년 대운
                                     </button>
                                     <button
                                         onClick={() => handleTabClick("life_stages")}
-                                        className={`flex-1 min-w-[120px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'life_stages' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                        className={`flex-1 min-w-[120px] text-[14px] font-bold py-2 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'life_stages' ? 'bg-[#2D3748] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                     >
                                         평생 총운
                                     </button>
                                     <button
                                         onClick={() => handleTabClick("yearly")}
-                                        className={`flex-1 min-w-[100px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'yearly' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                        className={`flex-1 min-w-[100px] text-[14px] font-bold py-2 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'yearly' ? 'bg-[#2D3748] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                     >
                                         올해 운세
                                     </button>
                                     <button
                                         onClick={() => handleTabClick("daily")}
-                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daily' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                        className={`flex-1 min-w-[90px] text-[14px] font-bold py-2 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'daily' ? 'bg-[#2D3748] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                     >
                                         오늘 일진
                                     </button>
                                     <button
                                         onClick={() => handleTabClick("elemental")}
-                                        className={`flex-1 min-w-[90px] text-[13px] font-bold py-2.5 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'elemental' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
+                                        className={`flex-1 min-w-[90px] text-[14px] font-bold py-2 px-3 rounded-xl transition-all snap-center whitespace-nowrap ${activeTab === 'elemental' ? 'bg-[#2D3748] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}
                                     >
                                         오행 분석
                                     </button>
@@ -464,12 +464,12 @@ function SajuContent() {
                                                     <div key={i} className="rounded-2xl bg-white border border-gray-100 p-5 relative overflow-hidden group hover:bg-gray-50 transition-colors shadow-sm">
                                                         <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-400 to-indigo-500 opacity-70" />
                                                         <div className="flex items-center gap-3 mb-2">
-                                                            <h4 className="text-lg font-bold text-gray-900 tracking-tight">{stage.name}</h4>
-                                                            <span className="text-[11px] font-outfit text-gray-500 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                                                            <h4 className="text-[17px] font-black text-gray-900 tracking-tight">{stage.name}</h4>
+                                                            <span className="text-[11px] font-outfit font-black text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded border border-gray-200 uppercase tracking-wide">
                                                                 {stage.pillar}
                                                             </span>
                                                         </div>
-                                                        <p className="text-[13px] text-gray-600 leading-relaxed font-medium">
+                                                        <p className="text-[14px] text-gray-600 leading-relaxed font-medium break-keep">
                                                             {stage.description}
                                                         </p>
                                                     </div>
@@ -505,8 +505,12 @@ function SajuContent() {
 
                                     {/* Tab 4: Elemental Analysis */}
                                     {activeTab === "elemental" && (
-                                        <div className="h-[350px] bg-white rounded-3xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
-                                            <ElementalRadarChart matrix={matrix} />
+                                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 pt-5 relative overflow-hidden">
+                                            <div className="mb-4">
+                                                <h3 className="text-[18px] font-black text-gray-900 tracking-tight">선천적 기운 분포</h3>
+                                                <p className="text-[13px] font-medium text-gray-500 mt-1">내가 타고난 5가지 에너지의 비율입니다.</p>
+                                            </div>
+                                            <ElementalBarChart matrix={matrix} />
                                         </div>
                                     )}
 
@@ -522,7 +526,7 @@ function SajuContent() {
 
 export default function SajuPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#F5F6F8]"><div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]"><div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>}>
             <SajuContent />
         </Suspense>
     );

@@ -446,9 +446,9 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-[#FDFBFA]">
+    <div className="w-full flex flex-col min-h-screen bg-[#F8F9FA]">
       <motion.div
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#FDFBFA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#F8F9FA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
         {/* MZ Cute Zodiac Animation Background */}
@@ -600,7 +600,7 @@ export default function Home() {
       {
         !matrixData && (
           <motion.div
-            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#FDFBFA] overflow-hidden"
+            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#F8F9FA] overflow-hidden"
           >
             {/* Subtle minimal background decoration */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -691,10 +691,10 @@ export default function Home() {
             </div>
 
             {/* Today's Summary Card and Daily Hub */}
-            <div className="px-4 flex flex-col gap-4 pb-12">
-              <div className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 overflow-hidden relative">
-                <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">오늘의 운세</div>
-                <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-8">{matrixData.user_name || "방문자"}님의 하루 요약</h2>
+            <div className="px-4 flex flex-col gap-5 pb-12 mt-2">
+              <div className="bg-white rounded-[32px] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 overflow-hidden relative">
+                <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wider uppercase">오늘의 운세</div>
+                <h2 className="text-[26px] font-black tracking-tight text-gray-900 mb-8">{matrixData.user_name || "방문자"}님의 하루 요약</h2>
 
                 {/* Wave Graph Area */}
                 <div className="w-[calc(100%+48px)] -ml-6 h-28 relative mb-6">
@@ -748,75 +748,75 @@ export default function Home() {
               </div>
 
               {/* Daily/Fun Hub injected from saju/page.tsx */}
-              <section className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col gap-6">
+              <section className="bg-white rounded-[32px] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 flex flex-col gap-6">
                 <div>
-                  <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">매일매일 가볍게!</div>
-                  <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-6">데일리 운세 & 즐길거리</h2>
+                  <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wider uppercase">매일매일 가볍게!</div>
+                  <h2 className="text-[26px] font-black tracking-tight text-gray-900 mb-6">데일리 운세 & 즐길거리</h2>
                 </div>
 
                 {/* 데일리 기운 (Grid) */}
-                <div className="grid grid-cols-4 gap-y-7 gap-x-2">
-                  <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="grid grid-cols-4 gap-y-8 gap-x-2">
+                  <Link href="/saju/confirm?type=오늘의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity active:scale-95">
                     <SpotIcon emoji="🐣" />
                     <span className="text-[13px] font-bold text-gray-700 tracking-tight">오늘의 기운</span>
                   </Link>
-                  <Link href="/saju/confirm?type=내일의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <Link href="/saju/confirm?type=내일의운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity active:scale-95">
                     <SpotIcon emoji="🦉" />
                     <span className="text-[13px] font-bold text-gray-700 tracking-tight">내일의 기운</span>
                   </Link>
-                  <Link href="/saju/confirm?type=지정일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <Link href="/saju/confirm?type=지정일 운세" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity active:scale-95">
                     <SpotIcon emoji="🦄" />
                     <span className="text-[13px] font-bold text-gray-700 tracking-tight">지정일 기운</span>
                   </Link>
-                  <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <Link href="/saju/confirm?type=타인과의 궁합" className="flex flex-col items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity active:scale-95">
                     <SpotIcon emoji="🐰" />
                     <span className="text-[13px] font-bold text-gray-700 tracking-tight">궁합</span>
                   </Link>
                 </div>
 
                 {/* 행운 팁 (List) */}
-                <div className="flex flex-col gap-6 pt-4 border-t border-gray-50">
-                  <div onClick={handleLotto} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="flex flex-col gap-7 pt-5 border-t border-gray-100/60">
+                  <div onClick={handleLotto} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="🐷" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">퍼스널 행운 번호</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 시그니처 넘버 6개</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">퍼스널 행운 번호</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">나만의 시그니처 넘버 6개</p>
                     </div>
                   </div>
-                  <div onClick={handleTalisman} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <div onClick={handleTalisman} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="🐢" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">에너지 부스터</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">지금 내게 필요한 맞춤형 부적 추천</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">에너지 부스터</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">지금 내게 필요한 맞춤형 부적 추천</p>
                     </div>
                   </div>
-                  <div onClick={() => setShowMoving(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <div onClick={() => setShowMoving(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="🐌" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">캘린더 매니징</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">이사/중요 일정 등 길일 찾기</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">캘린더 매니징</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">이사/중요 일정 등 길일 찾기</p>
                     </div>
                   </div>
-                  <div onClick={() => setIsOutfitModalOpen(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <div onClick={() => setIsOutfitModalOpen(true)} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="👗" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">럭키 컬러</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">나만의 행운의 아이템 매칭</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">럭키 컬러</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">나만의 행운의 아이템 매칭</p>
                     </div>
                   </div>
-                  <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <div onClick={() => fileInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="🦊" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">나의 관상</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">AI가 분석하는 첫인상과 이미지</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">나의 관상</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">AI가 분석하는 첫인상과 이미지</p>
                     </div>
                     <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handlePhotoUpload} />
                   </div>
-                  <div onClick={() => palmInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-opacity">
+                  <div onClick={() => palmInputRef.current?.click()} className="flex items-center gap-4 group cursor-pointer hover:opacity-80 transition-transform active:scale-95">
                     <CircleIcon emoji="🖐️" />
                     <div className="flex flex-col">
-                      <h3 className="text-[16px] font-black text-[#4A5568]">나의 손금</h3>
-                      <p className="text-[13px] text-gray-400 mt-0.5 font-medium">손바닥에 그려진 나의 길흉화복</p>
+                      <h3 className="text-[17px] font-black text-gray-900 tracking-tight">나의 손금</h3>
+                      <p className="text-[13px] text-gray-500 mt-0.5 font-medium">손바닥에 그려진 나의 길흉화복</p>
                     </div>
                     <input type="file" accept="image/*" ref={palmInputRef} className="hidden" onChange={handlePalmUpload} />
                   </div>
