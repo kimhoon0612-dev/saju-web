@@ -451,13 +451,20 @@ export default function Home() {
         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#F8F9FA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
-        {/* Minimalist Authentic Oriental Background */}
-        <div className="absolute inset-0 bg-[#FDFBF7] flex justify-center items-center overflow-hidden pointer-events-none">
-          {/* Subtle paper texture overlay could go here, for now just a clean warm off-white */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FFFFFF] to-[#FDFBF7] opacity-80"></div>
+        {/* Luxurious Dark Background */}
+        <div className="absolute inset-0 bg-[#0F0F11] flex justify-center items-center overflow-hidden pointer-events-none">
+          {/* Subtle noise or dark radial gradient for depth */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(40,35,30,0.5)_0%,rgba(15,15,17,1)_100%)]"></div>
+          {/* Faint golden glow in the center */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            transition={{ duration: 3, ease: "easeInOut" }}
+            className="absolute w-[50vw] h-[50vw] bg-[#D4AF37] blur-[120px] rounded-full"
+          />
         </div>
 
-        {/* Minimalist Typography Reveal (Brush-like) */}
+        {/* Minimalist Typography Reveal (Gold Brush-like) */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
           
           <motion.div
@@ -467,10 +474,10 @@ export default function Home() {
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.6, delayChildren: 0.8 }
+                transition: { staggerChildren: 0.8, delayChildren: 0.5 } // Even slower, dramatic reveal
               }
             }}
-            className="text-[48px] md:text-[64px] tracking-[0.2em] text-[#1A1A1A] text-center leading-[1.3] font-serif px-6 flex flex-wrap justify-center gap-x-2 mb-10"
+            className="text-[54px] md:text-[72px] tracking-[0.25em] text-center leading-[1.3] font-serif px-6 flex flex-wrap justify-center gap-x-2 mb-10"
           >
             {['명', '리', '박', '사'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-4"></span>;
@@ -478,16 +485,16 @@ export default function Home() {
                 <motion.span
                   key={index}
                   variants={{
-                    hidden: { opacity: 0, y: 15, filter: "blur(10px)", scale: 0.95 },
+                    hidden: { opacity: 0, y: 15, filter: "blur(12px)", scale: 0.95 },
                     visible: {
                       opacity: 1,
                       y: 0,
                       filter: "blur(0px)",
                       scale: 1,
-                      transition: { duration: 1.2, ease: [0.25, 1, 0.5, 1] } // Smooth, lingering easing
+                      transition: { duration: 1.5, ease: [0.25, 1, 0.5, 1] } 
                     }
                   }}
-                  className="inline-block"
+                  className="inline-block bg-gradient-to-b from-[#FFF2CC] via-[#D4AF37] to-[#AA7C11] text-transparent bg-clip-text drop-shadow-[0_2px_15px_rgba(212,175,55,0.2)]"
                 >
                   {char}
                 </motion.span>
@@ -497,11 +504,11 @@ export default function Home() {
           
         </div>
 
-        {/* Minimalist Apple-like Entry Button */}
+        {/* Minimalist Gold-Accented Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.5, duration: 1, ease: [0.25, 1, 0.5, 1] }}
+          transition={{ delay: 3.8, duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
           <motion.div
@@ -509,9 +516,10 @@ export default function Home() {
             whileTap={{ scale: 0.98 }}
             className="relative cursor-pointer group w-[200px]"
           >
-            <div className="relative bg-[#1A1A1A] px-8 py-4 rounded-full font-medium text-[15px] flex items-center justify-center gap-3 h-full w-full shadow-lg overflow-hidden transition-colors hover:bg-black">
-              <span className="tracking-widest text-white font-pretendard">입장하기</span>
-              <ChevronRight className="w-4 h-4 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" />
+            <div className="absolute inset-0 bg-[#D4AF37] rounded-full blur-[10px] opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+            <div className="relative bg-[#1A1A1A] border border-[#D4AF37]/30 px-8 py-4 rounded-full font-medium text-[15px] flex items-center justify-center gap-3 h-full w-full shadow-lg overflow-hidden transition-colors hover:bg-black">
+              <span className="tracking-widest text-[#FFF2CC] font-pretendard">입장하기</span>
+              <ChevronRight className="w-4 h-4 text-[#D4AF37] group-hover:translate-x-1 transition-transform" />
             </div>
           </motion.div>        </motion.div>
       </motion.div>
