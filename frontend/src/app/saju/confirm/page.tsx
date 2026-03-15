@@ -88,8 +88,6 @@ function ConfirmContent() {
     const isAstrology = ["별자리표", "퍼스널 젬잼", "나침반 흐름", "과거의 나", "계절 에너지", "띠 해석"].includes(type);
     const isComprehensiveFortune = ["정통 명리", "신년 흐름", "토정비결", "타고난 잠재력"].includes(type);
 
-    const hideTopUserInfo = isAstrology || isComprehensiveFortune;
-
     const [matrix, setMatrix] = useState<any>(null);
     const [userInfo, setUserInfo] = useState<SajuUserInfo | null>(null);
 
@@ -243,56 +241,7 @@ function ConfirmContent() {
 
             <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
 
-                {/* 1. User Profile Box */}
-                {!hideTopUserInfo && (
-                    <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 flex justify-between items-start relative">
-                        <div className="flex flex-col gap-1.5">
-                            <h2 className="text-[18px] font-extrabold text-gray-900 mb-1 flex items-baseline gap-1.5">
-                                {userInfo.name.replace(/님$/, '')} <span className="text-[13px] font-medium text-gray-500 font-normal">(본인)</span>
-                            </h2>
-                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedDate}</p>
-                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{formattedTime}</p>
-                            <p className="text-[15px] text-gray-700 font-medium tracking-tight">{genderKr}</p>
-                        </div>
-                        <Link href="/" className="absolute right-6 top-6 bg-[#fbff3a] text-gray-900 text-[13px] font-bold px-4 py-1.5 rounded-full hover:bg-yellow-300 transition-colors shadow-sm">
-                            변경
-                        </Link>
-                    </section>
-                )}
-
-                {/* 2. Three Info Summary Badges */}
-                {!hideTopUserInfo && (
-                    <section className="flex gap-3 justify-between">
-                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
-                            <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center text-[22px] font-bold shadow-sm mb-3 ${ELEMENT_COLORS[dayElement]}`}>
-                                {ELEMENT_KOR[dayElement]}
-                            </div>
-                            <span className="text-[15px] font-extrabold text-gray-900">{ELEMENT_KOR[dayElement] || "미상"}</span>
-                            <span className="text-[12px] text-gray-400 mt-0.5">오행</span>
-                        </div>
-
-                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px] relative">
-                            <div className="absolute top-3 right-3 w-5 h-5 bg-gray-800 text-white rounded-full text-[10px] flex items-center justify-center font-bold">?</div>
-                            <div className="w-[52px] h-[52px] rounded-full bg-gray-50 flex items-center justify-center text-[30px] shadow-sm mb-3 border border-gray-100">
-                                {ANIMAL_EMOJI[dayBranchHangul] || "🐾"}
-                            </div>
-                            <span className="text-[15px] font-extrabold text-gray-900">{dayBranchHanja} 동물</span>
-                            <span className="text-[12px] text-gray-400 mt-0.5">일주 동물</span>
-                        </div>
-
-                        <div className="flex-1 bg-white rounded-[24px] p-4 flex flex-col items-center justify-center shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50 h-[130px]">
-                            <div className="w-[52px] h-[52px] rounded-full bg-gray-600 text-white flex items-center justify-center text-[15px] font-bold shadow-sm mb-3 shadow-[0_2px_10px_rgba(0,0,0,0.15)] leading-tight tracking-tighter">
-                                {TRAIT_MAP[dominantTenGod]?.short || dominantTenGod.substring(0, 2)}
-                            </div>
-                            <span className="text-[13px] font-extrabold text-gray-900 text-center leading-tight whitespace-pre-line">
-                                {TRAIT_MAP[dominantTenGod]?.desc || dominantTenGod}
-                            </span>
-                            <span className="text-[11px] text-gray-400 mt-1">타고난 성향</span>
-                        </div>
-                    </section>
-                )}
-
-                {/* 3. Bazi Grid (8 Pillars) */}
+                {/* 1. Bazi Grid (8 Pillars) */}
                 {!isAstrology && (
                     <section className="bg-white rounded-[24px] p-6 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-50">
                         <div className="flex justify-between w-full h-full max-w-[340px] mx-auto gap-2">
