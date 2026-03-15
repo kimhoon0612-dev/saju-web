@@ -486,13 +486,13 @@ export default function Home() {
             className="absolute top-[40%] left-[30%] w-[60vw] h-[60vw] bg-blue-100/30 rounded-full blur-[100px]"
           />
 
-          {/* Elegant Floating Emblems (Fewer, softer movements) */}
+          {/* Elegant Floating Scholarly Emblems */}
           {[
-            { tag: '🌿', size: 36, delay: 0.2, pos: { top: '25%', left: '20%' }, yBounce: -15 },
-            { tag: '🐯', size: 48, delay: 0.8, pos: { top: '15%', right: '25%' }, yBounce: -25 },
+            { tag: '🎓', size: 40, delay: 0.2, pos: { top: '25%', left: '20%' }, yBounce: -15 },
+            { tag: '📖', size: 44, delay: 0.8, pos: { top: '15%', right: '25%' }, yBounce: -25 },
             { tag: '✨', size: 28, delay: 1.5, pos: { bottom: '35%', left: '15%' }, yBounce: -10 },
-            { tag: '🐰', size: 54, delay: 2.2, pos: { bottom: '25%', right: '20%' }, yBounce: -30 },
-            { tag: '🌸', size: 32, delay: 3.1, pos: { top: '45%', right: '10%' }, yBounce: -20 },
+            { tag: '📜', size: 48, delay: 2.2, pos: { bottom: '25%', right: '20%' }, yBounce: -30 },
+            { tag: '🔍', size: 36, delay: 3.1, pos: { top: '45%', right: '10%' }, yBounce: -20 },
           ].map((item, i) => (
             <motion.div
               key={`emblem-${i}`}
@@ -522,6 +522,30 @@ export default function Home() {
 
         {/* Refined Typography Reveal */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
+          {/* Cute Scholar Owl Motif */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
+            className="mb-5 z-10 relative"
+          >
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="text-[72px] md:text-[84px] drop-shadow-md flex items-center justify-center relative"
+            >
+              🦉
+              <motion.div 
+                initial={{ opacity: 0, rotate: -20 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                transition={{ delay: 0.8, type: "spring" }}
+                className="absolute -top-4 -right-3 text-[36px]"
+              >
+                🎓
+              </motion.div>
+            </motion.div>
+          </motion.div>
+
           <motion.div
             initial="hidden"
             animate="visible"
@@ -532,9 +556,9 @@ export default function Home() {
                 transition: { staggerChildren: 0.12, delayChildren: 0.8 }
               }
             }}
-            className="text-[34px] md:text-[44px] font-black tracking-widest text-gray-900 text-center leading-[1.3] font-pretendard px-6 flex flex-wrap justify-center gap-x-1.5"
+            className="text-[38px] md:text-[48px] font-black tracking-widest text-gray-900 text-center leading-[1.3] font-pretendard px-6 flex flex-wrap justify-center gap-x-2"
           >
-            {['당', '신', '의', ' ', '운', '세'].map((char, index) => {
+            {['명', '리', '박', '사'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-4"></span>;
               return (
                 <motion.span
@@ -560,10 +584,10 @@ export default function Home() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.2, duration: 1, ease: "easeOut" }}
-            className="mt-5 px-5 py-2 bg-white/70 backdrop-blur-md rounded-full text-[#4A5568] font-bold text-[13px] shadow-sm ring-1 ring-black/5 flex items-center gap-2"
+            className="mt-6 px-5 py-2.5 bg-white/70 backdrop-blur-md rounded-full text-[#4A5568] font-bold text-[14px] shadow-sm ring-1 ring-black/5 flex items-center gap-2"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FFB199] animate-pulse"></span>
-            당신의 고유한 흐름을 읽고 있습니다
+            <span className="w-2 h-2 rounded-full bg-[#81C784] animate-pulse"></span>
+            당신의 사주를 연구하고 있습니다
           </motion.div>
         </div>
 
