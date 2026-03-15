@@ -451,85 +451,76 @@ export default function Home() {
         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all duration-700 ease-in-out bg-[#F8F9FA] ${(!matrixData && showSplashMode) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
         onClick={handleSplashClick}
       >
-        {/* MZ Cute Zodiac Animation Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gradient-to-br from-[#FFF0F5] via-[#FFF8E7] to-[#F0F8FF]">
+        {/* Refined Cute & Premium Animation Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#FDFBFA]">
+          {/* Soft, minimal gradient overlays */}
+          <div className="absolute top-0 right-0 w-full h-[60vh] bg-gradient-to-b from-[#FFF2ED]/60 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-[#E8F5E9]/40 to-transparent"></div>
 
-          {/* Animated Blob Background Elements */}
+          {/* Animated Glowing Orbs (Subtle, Premium) */}
           <motion.div
             animate={{
-              rotate: 360,
-              scale: [1, 1.2, 0.9, 1],
-              borderRadius: ["40%", "60%", "30%", "40%"]
+              y: [0, -20, 0],
+              scale: [1, 1.05, 1],
+              opacity: [0.3, 0.5, 0.3]
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-[#FFB199]/20 blur-[60px]"
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[15%] right-[15%] w-[40vw] h-[40vw] bg-[#FFB199]/20 rounded-full blur-[80px]"
           />
           <motion.div
             animate={{
-              rotate: -360,
-              scale: [1, 0.8, 1.1, 1],
-              borderRadius: ["60%", "30%", "50%", "60%"]
+              y: [0, 30, 0],
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2]
             }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-[10%] -right-[10%] w-[80vw] h-[80vw] bg-[#81C784]/20 blur-[60px]"
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-[20%] left-[10%] w-[50vw] h-[50vw] bg-[#81C784]/20 rounded-full blur-[80px]"
+          />
+          <motion.div
+            animate={{
+              x: [0, 20, 0],
+              scale: [0.9, 1, 0.9],
+              opacity: [0.1, 0.3, 0.1]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-[40%] left-[30%] w-[60vw] h-[60vw] bg-blue-100/30 rounded-full blur-[100px]"
           />
 
-          {/* Floating Hanja Characters */}
-          {['甲', '을', '丙', '정', '戊', '기', '庚', '신', '壬', '계'].map((char, i) => (
+          {/* Elegant Floating Emblems (Fewer, softer movements) */}
+          {[
+            { tag: '🌿', size: 36, delay: 0.2, pos: { top: '25%', left: '20%' }, yBounce: -15 },
+            { tag: '🐯', size: 48, delay: 0.8, pos: { top: '15%', right: '25%' }, yBounce: -25 },
+            { tag: '✨', size: 28, delay: 1.5, pos: { bottom: '35%', left: '15%' }, yBounce: -10 },
+            { tag: '🐰', size: 54, delay: 2.2, pos: { bottom: '25%', right: '20%' }, yBounce: -30 },
+            { tag: '🌸', size: 32, delay: 3.1, pos: { top: '45%', right: '10%' }, yBounce: -20 },
+          ].map((item, i) => (
             <motion.div
-              key={`hanja-${i}`}
-              initial={{ opacity: 0, scale: 0, x: (i % 2 === 0 ? '-50vw' : '50vw'), y: '100vh' }}
-              animate={{
-                opacity: [0, 0.4, 0],
-                scale: [0.5, 1.5, 0.5],
-                x: (i % 2 === 0 ? '50vw' : '-50vw'),
-                y: '-20vh',
-                rotate: [0, i % 2 === 0 ? 180 : -180]
-              }}
-              transition={{ duration: 8 + (i % 5), repeat: Infinity, ease: "linear", delay: i * 0.7 }}
-              className="absolute font-black text-4xl text-[#FFB199]/40 drop-shadow-sm font-nanum pointer-events-none"
-              style={{
-                left: `${10 + (i * 8)}%`,
-              }}
-            >
-              {char}
-            </motion.div>
-          ))}
-
-          {/* Bouncing Cute Zodiac Animals */}
-          {['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'].map((emoji, i) => (
-            <motion.div
-              key={`zodiac-${i}`}
-              initial={{ opacity: 0, y: "110vh", x: (i % 2 === 0 ? 50 : -50) }}
+              key={`emblem-${i}`}
+              initial={{ opacity: 0, y: 100, scale: 0.8 }}
               animate={{
                 opacity: [0, 1, 1, 0],
-                y: ["110vh", "30vh", "10vh", "-20vh"],
-                x: [
-                  (i % 2 === 0 ? 50 : -50),
-                  (i % 2 === 0 ? -100 : 100),
-                  (i % 2 === 0 ? 50 : -50),
-                  (i % 2 === 0 ? -150 : 150)
-                ],
-                rotate: [0, -15, 15, -10, 10, 0],
-                scale: [0.8, 1.2, 1, 1.1, 0.9]
+                y: [100, item.yBounce, 0, -100],
+                scale: [0.8, 1, 1, 0.9],
+                rotate: [0, (i % 2 === 0 ? 5 : -5), 0, (i % 2 === 0 ? -5 : 5)]
               }}
               transition={{
-                duration: 6 + (i % 4),
+                duration: 9 + (i % 3),
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: i * 0.4
+                delay: item.delay
               }}
-              className="absolute text-[40px] md:text-[50px] drop-shadow-md pointer-events-none z-0"
+              className="absolute drop-shadow-sm pointer-events-none z-0"
               style={{
-                left: `${(i * 8)}%`,
+                fontSize: `${item.size}px`,
+                ...item.pos
               }}
             >
-              {emoji}
+              {item.tag}
             </motion.div>
           ))}
         </div>
 
-        {/* Bubbly Typography Reveal */}
+        {/* Refined Typography Reveal */}
         <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none h-full w-full">
           <motion.div
             initial="hidden"
@@ -538,60 +529,65 @@ export default function Home() {
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.1, delayChildren: 0.5 }
+                transition: { staggerChildren: 0.12, delayChildren: 0.8 }
               }
             }}
-            className="text-[36px] md:text-[46px] font-black tracking-widest text-[#FF7E67] text-center leading-[1.4] font-jalnan px-6 flex flex-wrap justify-center gap-x-2 drop-shadow-[0_4px_10px_rgba(255,126,103,0.2)]"
+            className="text-[34px] md:text-[44px] font-black tracking-widest text-gray-900 text-center leading-[1.3] font-pretendard px-6 flex flex-wrap justify-center gap-x-1.5"
           >
-            {['당', '신', '의', ' ', '운', '세'].map((char, index) => {
-              if (char === ' ') return <span key={index} className="w-3"></span>;
+            {['당', '신', '이', ' ', '주', '인', '공', '인', ' ', '우', '주'].map((char, index) => {
+              if (char === ' ') return <span key={index} className="w-4"></span>;
               return (
                 <motion.span
                   key={index}
                   variants={{
-                    hidden: { opacity: 0, y: 30, scale: 0.5 },
+                    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
                     visible: {
                       opacity: 1,
                       y: 0,
-                      scale: 1,
-                      transition: { type: "spring", stiffness: 300, damping: 12 }
+                      filter: "blur(0px)",
+                      transition: { duration: 0.8, ease: "easeOut" }
                     }
                   }}
-                  className="inline-block"
+                  className="inline-block drop-shadow-sm"
                 >
                   {char}
                 </motion.span>
               );
             })}
           </motion.div>
+          
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.5, type: "spring", stiffness: 200, damping: 15 }}
-            className="mt-4 px-4 py-1.5 bg-white/60 backdrop-blur-md rounded-full text-[#81C784] font-bold text-[14px] shadow-sm border border-[#81C784]/30"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.2, duration: 1, ease: "easeOut" }}
+            className="mt-5 px-5 py-2 bg-white/70 backdrop-blur-md rounded-full text-[#4A5568] font-bold text-[13px] shadow-sm ring-1 ring-black/5 flex items-center gap-2"
           >
-            #사주팝콘 #내운명어때
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FFB199] animate-pulse"></span>
+            당신의 고유한 흐름을 읽고 있습니다
           </motion.div>
         </div>
 
-        {/* Cute Jelly Enter Button */}
+        {/* Premium Soft Jelly Button */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, type: "spring", stiffness: 150, damping: 12 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 3, duration: 0.5, ease: "easeOut" }}
           className="absolute bottom-24 z-10 w-full px-8 flex justify-center"
         >
           <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative cursor-pointer group"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="relative cursor-pointer group w-[220px]"
           >
-            {/* Playful shadow offset */}
-            <div className="absolute top-1.5 left-0 w-full h-full bg-[#FFB199] rounded-[28px] transition-transform group-hover:translate-y-1"></div>
+            {/* Elegant shadow glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#FFB199]/40 to-[#81C784]/40 rounded-full blur opacity-70 group-hover:opacity-100 transition duration-500"></div>
 
             {/* Inner Button Content */}
-            <div className="relative bg-white border-2 border-[#FFB199] px-10 py-4 rounded-[28px] font-bold text-[18px] flex items-center justify-center gap-2 h-full w-full shadow-[0_4px_15px_rgba(255,177,153,0.3)]">
-              <span className="tracking-wide text-[#333333] font-jalnan">명리의 세계로 🚀</span>
+            <div className="relative bg-white border border-gray-100/50 px-8 py-4 rounded-full font-bold text-[16px] flex items-center justify-center gap-2 h-full w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden">
+               {/* Soft shimmer effect */}
+               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+              <span className="tracking-wide text-gray-800 font-pretendard">결과 확인하기</span>
+              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-800 transition-colors" />
             </div>
           </motion.div>
         </motion.div>
