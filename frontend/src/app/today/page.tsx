@@ -462,7 +462,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="max-w-md mx-auto relative z-10 w-full pb-36 bg-[#F5F6F8]"
+            className="max-w-md mx-auto relative z-10 w-full pb-24 bg-[#F5F6F8]"
           >
 
             {/* Header */}
@@ -512,7 +512,7 @@ export default function Home() {
             </div>
 
             {/* Today's Summary Card and Daily Hub */}
-            <div className="px-4 flex flex-col gap-4 pb-12">
+            <div className="px-4 flex flex-col gap-4 pb-6">
               <div className="bg-white rounded-[32px] p-6 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 overflow-hidden relative">
                 <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">오늘의 운세</div>
                 <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-8">{matrixData.user_name || "방문자"}님의 하루 요약</h2>

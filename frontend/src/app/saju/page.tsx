@@ -514,7 +514,7 @@ export default function FortuneHubPage() {
                     </div>
                 </div>
                 {/* Main Content Areas */}
-                <div className="flex-1 w-full pt-4 pb-32">
+                <div className="flex-1 w-full pt-4 pb-6">
                     <div className="flex flex-col gap-4">
                         {/* Bazi Grid Injected */}
                         {/* Bazi Grid (8 Pillars) instead of Green Banner Image Area */}
