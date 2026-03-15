@@ -554,7 +554,7 @@ export default function Home() {
                 transition: { staggerChildren: 0.12, delayChildren: 0.8 }
               }
             }}
-            className="text-[38px] md:text-[48px] font-black tracking-widest text-gray-900 text-center leading-[1.3] font-pretendard px-6 flex flex-wrap justify-center gap-x-2"
+            className="text-[44px] md:text-[56px] tracking-[0.15em] text-gray-900 text-center leading-[1.3] font-serif px-6 flex flex-wrap justify-center gap-x-3 mb-2"
           >
             {['명', '리', '박', '사'].map((char, index) => {
               if (char === ' ') return <span key={index} className="w-4"></span>;
