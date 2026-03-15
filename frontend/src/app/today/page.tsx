@@ -517,54 +517,53 @@ export default function Home() {
                 <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wide">오늘의 운세</div>
                 <h2 className="text-[24px] font-black tracking-tight text-gray-900 mb-8">{matrixData.user_name || "방문자"}님의 하루 요약</h2>
 
-                {/* Wave Graph Area */}
-                <div className="w-[calc(100%+48px)] -ml-6 h-28 relative mb-6">
-                  {/* Score pill */}
-                  <div className="absolute top-2 right-[36%] transform translate-x-1/2 flex flex-col items-center z-20">
-                    <div className="bg-[#2AC1BC] text-white text-[13px] font-black px-2.5 py-0.5 rounded-lg mb-1 relative shadow-sm leading-none">
-                      {dailyScore}
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-transparent border-t-[#2AC1BC]"></div>
+                {/* Wave Graph Area -> Modern Radial Dial */}
+                <div className="flex flex-col items-center justify-center mt-4 mb-8">
+                  <div className="relative w-40 h-40 flex items-center justify-center">
+                    {/* Background glow */}
+                    <div className="absolute inset-0 bg-[#2AC1BC]/10 rounded-full blur-2xl flex items-center justify-center animate-pulse"></div>
+                    
+                    {/* Outer static ring */}
+                    <svg className="w-full h-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="#F1F3F5" strokeWidth="8" />
+                      {/* Dynamic progress ring */}
+                      <circle 
+                        cx="50" cy="50" r="45" 
+                        fill="none" 
+                        stroke="url(#gradientDial)" 
+                        strokeWidth="8" 
+                        strokeLinecap="round" 
+                        strokeDasharray="282.7" 
+                        strokeDashoffset={282.7 - (282.7 * parseInt(String(dailyScore))) / 100}
+                        className="transition-all duration-1500 ease-out"
+                      />
+                      <defs>
+                        <linearGradient id="gradientDial" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#48CAE4" />
+                          <stop offset="100%" stopColor="#2AC1BC" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+
+                    {/* Inner Content */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">SCORE</span>
+                      <div className="flex items-start">
+                        <span className="text-[46px] font-black text-gray-900 leading-none tracking-tighter">{dailyScore}</span>
+                        <span className="text-[16px] font-bold text-gray-400 mt-1 ml-0.5">점</span>
+                      </div>
                     </div>
-                    <div className="w-2 h-2 bg-white border-[2.5px] border-[#2AC1BC] rounded-full mt-2"></div>
                   </div>
+                  
+                  <div className="flex flex-col items-center text-center mt-6 z-20 relative">
+                    <p className="text-[17px] font-bold text-gray-800 leading-snug w-full px-2 break-keep mt-2">
+                        {matrixData.daily_fortune?.description || "문을 두드리면 반드시 열리는 하루입니다."}
+                    </p>
 
-                  {/* Fake curve */}
-                  <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <path d="M-10,70 Q 20,30 60,40 T 110,70 L 110,100 L -10,100 Z" fill="url(#grad2)" />
-                    <path d="M-10,70 Q 20,30 60,40 T 110,70" fill="none" stroke="#2AC1BC" strokeWidth="1.5" />
-                    <defs>
-                      <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="rgba(42, 193, 188, 0.15)" />
-                        <stop offset="100%" stopColor="rgba(42, 193, 188, 0)" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-
-                  {/* X Axis labels */}
-                  <div className="absolute bottom-2 inset-x-0 w-full flex justify-between px-8 text-[14px] font-bold text-[#A8D8D6] z-10">
-                    <span>그제</span>
-                    <span>어제</span>
-                    <span className="text-gray-900 bg-white shadow-sm border border-gray-100 rounded-full px-4 py-1.5 -translate-y-2 z-20">오늘</span>
-                    <span>내일</span>
-                    <span>모레</span>
+                    <button onClick={() => setIsDailyModalOpen(true)} className="mt-8 mb-2 text-[15px] font-bold text-gray-900 flex items-center gap-1 hover:text-gray-600 transition-colors">
+                        오늘 하루 자세히 보기 <ChevronRight className="w-4 h-4 ml-0.5" />
+                    </button>
                   </div>
-                </div>
-
-                {/* Score and text */}
-                <div className="flex flex-col items-center justify-center text-center mt-6 z-20 relative">
-                  <div className="relative mb-3">
-                    <div className="absolute -top-[2px] -right-[20px] w-10 h-10 bg-[#FFF44F] rounded-full mix-blend-multiply opacity-80 z-0"></div>
-                    <span className="text-[72px] font-black text-gray-900 leading-[0.85] relative z-10 tracking-tighter">
-                      {dailyScore}
-                    </span>
-                  </div>
-                  <p className="text-[17px] font-bold text-gray-800 leading-snug w-full px-2 break-keep mt-2">
-                    {matrixData.daily_fortune?.description || "문을 두드리면 반드시 열리는 하루입니다."}
-                  </p>
-
-                  <button onClick={() => setIsDailyModalOpen(true)} className="mt-8 mb-2 text-[15px] font-bold text-gray-900 flex items-center gap-1 hover:text-gray-600 transition-colors">
-                    오늘 하루 자세히 보기 <ChevronRight className="w-4 h-4 ml-0.5" />
-                  </button>
                 </div>
               </div>
 
