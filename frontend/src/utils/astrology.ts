@@ -31,7 +31,7 @@ export function getZodiacSign(month: number, day: number): AstrologyData {
     const sign = signs[index];
 
     return {
-        type: '별자리 운세',
+        type: '별자리표',
         title: sign.name,
         subtitle: '나의 수호 별자리',
         emoji: sign.emoji,
@@ -60,7 +60,7 @@ export function getBirthstone(month: number): AstrologyData {
     const stone = stones[month - 1];
 
     return {
-        type: '탄생석',
+        type: '퍼스널 젬잼',
         title: `${month}월의 탄생석: ${stone.name}`,
         subtitle: '수호 크리스탈',
         emoji: stone.emoji,
@@ -98,7 +98,7 @@ export function getNumerology(year: number, month: number, day: number): Astrolo
     const numerology = meanings[lifePath] || meanings[1];
 
     return {
-        type: '생년월일 운세',
+        type: '나침반 흐름',
         title: `운명수: ${numerology.title}`,
         subtitle: '수비학 인생 바코드',
         emoji: '🔢',
@@ -123,7 +123,7 @@ export function getSeason(month: number): AstrologyData {
     else season = seasons.winter;
 
     return {
-        type: '태어난 계절운',
+        type: '계절 에너지',
         title: season.title,
         subtitle: '영혼의 계절',
         emoji: season.emoji,
@@ -136,7 +136,7 @@ export function getSeason(month: number): AstrologyData {
 export function getPastLife(): AstrologyData {
     // Past life is abstracted, we show a general mystical banner
     return {
-        type: '전생운',
+        type: '과거의 나',
         title: '신비의 아카식 레코드',
         subtitle: '전생과 카르마',
         emoji: '👁️',
@@ -165,7 +165,7 @@ export function getZodiacAnimal(year: number): AstrologyData {
     const animal = animals[year % 12];
 
     return {
-        type: '띠 운세',
+        type: '띠 해석',
         title: `${animal.name}띠`,
         subtitle: '수호 동물',
         emoji: animal.emoji,
@@ -182,12 +182,12 @@ export function getAstrologyData(type: string, dateObj: Date): AstrologyData | n
     const day = dateObj.getDate();
 
     switch (type) {
-        case '별자리 운세': return getZodiacSign(month, day);
-        case '탄생석': return getBirthstone(month);
-        case '생년월일 운세': return getNumerology(year, month, day);
-        case '태어난 계절운': return getSeason(month);
-        case '전생운': return getPastLife();
-        case '띠 운세': return getZodiacAnimal(year);
+        case '별자리표': return getZodiacSign(month, day);
+        case '퍼스널 젬잼': return getBirthstone(month);
+        case '나침반 흐름': return getNumerology(year, month, day);
+        case '계절 에너지': return getSeason(month);
+        case '과거의 나': return getPastLife();
+        case '띠 해석': return getZodiacAnimal(year);
         default: return null;
     }
 }
