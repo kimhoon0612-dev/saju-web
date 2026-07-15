@@ -37,6 +37,8 @@ function TarotPlayContent() {
     const [progress, setProgress] = useState(0); // for the loading screen (0 to 100%)
     const [readings, setReadings] = useState<any[]>([]);
 
+    const [userWorry, setUserWorry] = useState("");
+
     useEffect(() => {
         let timer: NodeJS.Timeout;
         // With streaming, we get real progress. Only do faux progress up to 20% to avoid stalling.
@@ -79,7 +81,8 @@ function TarotPlayContent() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     type: type,
-                    categories: targetCategories
+                    categories: targetCategories,
+                    user_worry: userWorry.trim() ? userWorry.trim() : null
                 })
             });
 
@@ -204,6 +207,22 @@ function TarotPlayContent() {
                                 오늘의 기운을 담아<br />
                                 카드 {targetCount}장을 선택해주세요
                             </h2>
+                        </div>
+
+                        {/* Voice / Text Input Section */}
+                        <div className="w-full max-w-[320px] mx-auto mb-8 bg-[#160f24]/60 p-4 rounded-2xl border border-purple-500/20 shadow-inner">
+                            <label className="text-purple-200/80 text-[12px] font-bold mb-2 block">
+                                어떤 고민이 있으신가요? (선택)
+                            </label>
+                            
+                            <div className="relative">
+                                <textarea 
+                                    value={userWorry}
+                                    onChange={(e) => setUserWorry(e.target.value)}
+                                    placeholder="예: 이번주 금요일에 중요한 면접이 있는데 잘 될까요?"
+                                    className="w-full bg-[#0a0f25]/50 border border-purple-500/30 rounded-xl p-3 text-[14px] text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 min-h-[80px] resize-none"
+                                />
+                            </div>
                         </div>
 
                         {renderPlaceholders()}

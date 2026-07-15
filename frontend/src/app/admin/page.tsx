@@ -62,6 +62,32 @@ const ShareRatioInput = ({ expertId, initialRatio, onUpdate }: { expertId: numbe
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<TabId>('analytics');
 
+    // Auth State
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [adminToken, setAdminToken] = useState('');
+    const [tokenInput, setTokenInput] = useState('');
+    const [authError, setAuthError] = useState('');
+
+    const handleLogin = () => {
+        if (!tokenInput) { setAuthError('관리자 토큰을 입력하세요.'); return; }
+        setAdminToken(tokenInput);
+        // ExpertsManager의 adminFetch 유틸이 읽을 수 있도록 localStorage에도 저장
+        localStorage.setItem('adminToken', tokenInput);
+        setIsAuthenticated(true);
+        setAuthError('');
+    };
+
+    const adminFetch = (url: string, options: RequestInit = {}) => {
+        return fetch(url, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Admin-Token': adminToken,
+                ...(options.headers || {}),
+            },
+        });
+    };
+
     // Module States
     const [analyticsData, setAnalyticsData] = useState<any>(null);
     const [chartDataHistory, setChartDataHistory] = useState<{ name: string, users: number }[]>([]);
@@ -106,6 +132,12 @@ export default function AdminDashboard() {
     const [editCoinAmount, setEditCoinAmount] = useState<number>(0);
     const [editBonusCoins, setEditBonusCoins] = useState<number>(0);
 
+    // Push Notification State
+    const [pushTitle, setPushTitle] = useState("");
+    const [pushBody, setPushBody] = useState("");
+    const [pushUrl, setPushUrl] = useState("/");
+    const [isPushing, setIsPushing] = useState(false);
+
     // Expert Registration State was moved to ExpertsManager.tsx
 
     // Fetch Logic
@@ -129,17 +161,16 @@ export default function AdminDashboard() {
     const fetchAnalytics = async () => {
         try {
             const [trafficRes, revenueRes] = await Promise.all([
-                fetch('/api/admin/analytics/traffic').then(r => r.json()),
-                fetch('/api/admin/analytics/revenue').then(r => r.json())
+                adminFetch('/api/admin/analytics/traffic').then(r => r.json()),
+                adminFetch('/api/admin/analytics/revenue').then(r => r.json())
             ]);
             setAnalyticsData({ traffic: trafficRes, revenue: revenueRes });
 
-            // Push to historical chart data
             setChartDataHistory(prev => {
                 const now = new Date();
                 const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 const nextPoints = [...prev, { name: timeStr, users: trafficRes.current_concurrent_users }];
-                if (nextPoints.length > 10) nextPoints.shift(); // Keep last 10 ticks
+                if (nextPoints.length > 10) nextPoints.shift();
                 return nextPoints;
             });
         } catch (e) {
@@ -150,51 +181,76 @@ export default function AdminDashboard() {
     const fetchInventory = async () => {
         try {
             const [invRes, statsRes] = await Promise.all([
-                fetch('/api/admin/talisman/inventory', { cache: 'no-store' }),
-                fetch('/api/admin/talisman/stats', { cache: 'no-store' })
+                adminFetch('/api/admin/talisman/inventory'),
+                adminFetch('/api/admin/talisman/stats')
             ]);
             const invData = await invRes.json();
             const statsData = await statsRes.json();
-
             setInventoryData(invData.catalog || []);
             setGoodsStats(statsData.data || null);
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     };
 
     const fetchMarket = async () => {
         try {
             const [logsRes, settleRes] = await Promise.all([
-                fetch('/api/admin/marketplace/matching-logs', { cache: 'no-store' }).then(r => r.json()),
-                fetch('/api/admin/marketplace/settlements', { cache: 'no-store' }).then(r => r.json())
+                adminFetch('/api/admin/marketplace/matching-logs').then(r => r.json()),
+                adminFetch('/api/admin/marketplace/settlements').then(r => r.json())
             ]);
             setMarketData({ logs: logsRes, settlements: settleRes });
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     };
 
     const fetchSystem = async () => {
         try {
             const [healthRes, auditRes] = await Promise.all([
-                fetch('/api/admin/system/health', { cache: 'no-store' }).then(r => r.json()),
-                fetch('/api/admin/system/privacy-audit', { cache: 'no-store' }).then(r => r.json())
+                adminFetch('/api/admin/system/health').then(r => r.json()),
+                adminFetch('/api/admin/system/privacy-audit').then(r => r.json())
             ]);
             setSystemData({ health: healthRes, audit: auditRes });
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     };
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('/api/admin/users', { cache: 'no-store' });
+            const res = await adminFetch('/api/admin/users');
             const data = await res.json();
             setUsersList(data);
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
+    };
+
+    const handleGrantCoins = async (userId: number, userName: string) => {
+        const amountStr = prompt(`${userName} 님에게 지급할 코인 수량을 입력하세요\n(음수 입력 시 차감됩니다)`);
+        if (amountStr === null) return;
+        const amount = parseInt(amountStr, 10);
+        if (isNaN(amount)) { alert('숫자를 입력하세요.'); return; }
+        const reason = prompt('지급 사유를 입력하세요:', '관리자 수동 지급') || '관리자 수동 지급';
+        try {
+            const res = await adminFetch(`/api/admin/users/${userId}/coins`, {
+                method: 'POST',
+                body: JSON.stringify({ amount, reason }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(`완료! ${userName} 님 잔액: ${data.new_balance?.toLocaleString()} P`);
+                fetchUsers();
+            } else {
+                alert('코인 지급 실패: ' + (data.detail || '알 수 없는 오류'));
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    const handleForceDelete = async (userId: number, userEmail: string) => {
+        if (!confirm(`정말로 ${userEmail} 유저를 강제 탈퇴시키겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+        try {
+            const res = await adminFetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('강제 탈퇴 완료');
+                fetchUsers();
+            } else {
+                alert('탈퇴 처리 실패');
+            }
+        } catch (e) { console.error(e); }
     };
 
     const handleSandboxSubmit = async (e: React.FormEvent) => {
@@ -357,6 +413,34 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleSendPush = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!pushTitle || !pushBody) return alert("제목과 내용을 입력해주세요.");
+        if (confirm("모든 사용자에게 푸시 알림을 브로드캐스트 하시겠습니까?")) {
+            setIsPushing(true);
+            try {
+                const res = await fetch('/api/notifications/test-send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: pushTitle, body: pushBody, url: pushUrl })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`발송 완료! (성공: ${data.sent}건, 실패: ${data.failed}건)`);
+                    setPushTitle('');
+                    setPushBody('');
+                } else {
+                    alert('푸시 발송 실패');
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setIsPushing(false);
+            }
+        }
+    };
+
     // UI Components per Tab
     const renderAnalytics = () => {
         if (!analyticsData) return <div className="text-[#4A5568]/60 font-medium p-10 animate-pulse">데이터 통합 집계 중...</div>;
@@ -455,6 +539,32 @@ export default function AdminDashboard() {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
+                </div>
+
+                {/* Push Notification Sender Center */}
+                <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-200 mt-2 hover:border-gray-300 transition-colors">
+                    <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-indigo-500" /> 푸시 알림 도구 (전체 브로드캐스트)
+                    </h3>
+                    <form onSubmit={handleSendPush} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div className="md:col-span-1">
+                            <label className="text-sm font-bold text-gray-600 mb-1 block">푸시 제목</label>
+                            <input type="text" value={pushTitle} onChange={e => setPushTitle(e.target.value)} required placeholder="예: [명리박사] 오늘의 운세" className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="text-sm font-bold text-gray-600 mb-1 block">알림 본문 내용</label>
+                            <input type="text" value={pushBody} onChange={e => setPushBody(e.target.value)} required placeholder="예: 무료 행운 번호가 도착했습니다." className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
+                        </div>
+                        <div className="md:col-span-1">
+                            <label className="text-sm font-bold text-gray-600 mb-1 block">랜딩 URL (선택)</label>
+                            <input type="text" value={pushUrl} onChange={e => setPushUrl(e.target.value)} placeholder="/" className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
+                        </div>
+                        <div className="md:col-span-4 mt-2">
+                            <button type="submit" disabled={isPushing} className="w-full bg-[#4A5568] hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
+                                {isPushing ? "발송 중 서버 대기..." : "전체 구독자에게 푸시 전송하기"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         );
@@ -647,40 +757,65 @@ export default function AdminDashboard() {
                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <Database className="w-5 h-5 text-[#4A5568]" /> 활성 인벤토리 카탈로그
                     </h3>
-                    <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
-                        <table className="w-full text-left text-sm text-gray-700">
-                            <thead className="bg-gray-100 text-gray-700 border-b border-gray-200">
+                    <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden bg-gray-50 max-h-[600px] overflow-y-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-gray-100 text-gray-500 border-b border-gray-200 sticky top-0">
                                 <tr>
+                                    <th className="p-3 font-semibold">이미지</th>
                                     <th className="p-3 font-semibold">유형</th>
                                     <th className="p-3 font-semibold">상품명</th>
-                                    <th className="p-3 font-semibold">테마</th>
                                     <th className="p-3 font-semibold">판매가</th>
-                                    <th className="p-3 font-semibold">상태</th>
+                                    <th className="p-3 font-semibold">공개</th>
                                     <th className="p-3 font-semibold">관리</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {inventoryData.map((item: any) => (
-                                    <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-500 transition-colors">
+                                    <tr key={item.id} className={`border-b border-gray-100 hover:bg-gray-100 transition-colors ${!item.is_active ? 'opacity-40' : ''}`}>
                                         <td className="p-3">
-                                            {item.category === 'coin' && <span className="bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-500/30">코인</span>}
-                                            {item.category === 'goods' && <span className="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-500/30">굿즈</span>}
-                                            {item.category === 'amulet' && <span className="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded text-[10px] font-bold border border-purple-500/30">부적</span>}
+                                            <img src={item.image_url || '/talismans/wealth.png'} alt={item.name}
+                                                className="w-10 h-10 rounded-lg object-cover border border-gray-200" />
                                         </td>
-                                        <td className="p-3 font-bold text-[#2D3748]">{item.name}</td>
-                                        <td className="p-3 text-gray-600">{item.theme}</td>
-                                        <td className="p-3 font-bold text-[#4A5568]">{item.price.toLocaleString()} 원</td>
-                                        <td className="p-3"><span className="bg-green-500/20 text-green-300 px-2 py-1 rounded-md text-xs font-bold border border-green-500/30">판매중</span></td>
                                         <td className="p-3">
-                                            <div className="flex gap-3">
-                                                <button onClick={() => handleEditOpen(item)} className="text-blue-400 hover:text-blue-300 text-xs font-semibold focus:outline-none">수정</button>
-                                                <button onClick={() => handleDeleteProduct(item.id)} className="text-red-400 hover:text-red-300 text-xs font-semibold focus:outline-none">삭제</button>
+                                            {item.category === 'coin' && <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-[10px] font-bold">코인</span>}
+                                            {item.category === 'goods' && <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold">굿즈</span>}
+                                            {item.category === 'amulet' && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-[10px] font-bold">부적</span>}
+                                            {!['coin','goods','amulet'].includes(item.category) && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold">{item.category}</span>}
+                                        </td>
+                                        <td className="p-3 font-bold text-gray-800 max-w-[180px]">
+                                            <p className="truncate">{item.name}</p>
+                                            {item.sales_tags && <p className="text-[10px] text-orange-500 font-bold">{item.sales_tags}</p>}
+                                        </td>
+                                        <td className="p-3 font-bold text-gray-700">{item.price?.toLocaleString()}원</td>
+                                        <td className="p-3">
+                                            <button
+                                                onClick={async () => {
+                                                    const res = await adminFetch(`/api/admin/talisman/inventory/${item.id}/toggle`, { method: 'PATCH' });
+                                                    if (res.ok) fetchInventory();
+                                                }}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                                                    item.is_active ? 'bg-green-500' : 'bg-gray-300'
+                                                }`}
+                                            >
+                                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${item.is_active ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            </button>
+                                        </td>
+                                        <td className="p-3">
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleEditOpen(item)}
+                                                    className="p-1.5 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100 border border-blue-100" title="수정">
+                                                    <Edit2 className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button onClick={() => handleDeleteProduct(item.id)}
+                                                    className="p-1.5 bg-red-50 rounded-lg text-red-500 hover:bg-red-100 border border-red-100" title="삭제">
+                                                    <X className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
                                 {inventoryData.length === 0 && (
-                                    <tr><td colSpan={5} className="p-6 text-center text-gray-400">등록된 상품이 없습니다. 샌드박스에서 추가해주세요.</td></tr>
+                                    <tr><td colSpan={6} className="p-8 text-center text-gray-400">등록된 상품이 없습니다. 좌측에서 추가해주세요.</td></tr>
                                 )}
                             </tbody>
                         </table>
@@ -760,7 +895,7 @@ export default function AdminDashboard() {
                                 </thead>
                                 <tbody>
                                     {(settlements?.settlements || []).map((s: any) => (
-                                        <tr key={s.expert_id} className="border-b border-gray-100 hover:bg-gray-500 transition-colors">
+                                        <tr key={s.expert_id} className="border-b border-gray-100 hover:bg-gray-100 transition-colors">
                                             <td className="p-3 font-bold text-[#2D3748]">{s.expert_name}</td>
                                             <td className="p-3 text-right text-blue-400 font-medium">{s.total_sales_amount?.toLocaleString()}</td>
                                             <td className="p-3 text-right text-red-400 font-medium">-{s.fee_deducted?.toLocaleString()}</td>
@@ -866,33 +1001,40 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th className="p-3 font-semibold">ID</th>
                                     <th className="p-3 font-semibold">가입 이메일</th>
-                                    <th className="p-3 font-semibold">전화번호</th>
                                     <th className="p-3 font-semibold">이름</th>
                                     <th className="p-3 font-semibold">성별</th>
                                     <th className="p-3 font-semibold">생년월일(ISO)</th>
-                                    <th className="p-3 font-semibold">음력/윤달</th>
                                     <th className="p-3 font-semibold">보유 포인트</th>
                                     <th className="p-3 font-semibold">가입일</th>
+                                    <th className="p-3 font-semibold">관리</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {usersList.map((user: any) => (
-                                    <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-500 transition-colors">
+                                    <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-100 transition-colors">
                                         <td className="p-3 text-gray-500">#{user.id}</td>
                                         <td className="p-3 font-bold text-[#2D3748]">{user.email || '미연동'}</td>
-                                        <td className="p-3 text-blue-600 font-medium">{user.phone_number || '미기재'}</td>
                                         <td className="p-3 text-[#2D3748]/90">{user.name || '알 수 없음'}</td>
                                         <td className="p-3 text-gray-600">{user.gender === 'M' ? '남성' : (user.gender === 'F' ? '여성' : '-')}</td>
                                         <td className="p-3 text-gray-600">{user.birth_time_iso ? user.birth_time_iso.replace('T', ' ') : '-'}</td>
-                                        <td className="p-3 text-gray-500 text-xs">
-                                            {user.is_lunar ? '음력' : '양력'}{user.is_leap_month ? ' (윤달)' : ''}
-                                        </td>
-                                        <td className="p-3 text-[#4A5568] font-bold">{user.point_balance.toLocaleString()} P</td>
+                                        <td className="p-3 text-[#4A5568] font-bold">{(user.point_balance || 0).toLocaleString()} P</td>
                                         <td className="p-3 text-gray-400 text-xs">{new Date(user.created_at).toLocaleString()}</td>
+                                        <td className="p-3">
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleGrantCoins(user.id, user.name || user.email)}
+                                                    className="bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg transition-colors"
+                                                >코인지급</button>
+                                                <button
+                                                    onClick={() => handleForceDelete(user.id, user.email)}
+                                                    className="bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-2 py-1 rounded-lg transition-colors"
+                                                >강제탈퇴</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                                 {usersList.length === 0 && (
-                                    <tr><td colSpan={9} className="p-6 text-center text-gray-400">가입된 회원이 없습니다.</td></tr>
+                                    <tr><td colSpan={8} className="p-6 text-center text-gray-400">가입된 회원이 없습니다.</td></tr>
                                 )}
                             </tbody>
                         </table>
@@ -901,6 +1043,39 @@ export default function AdminDashboard() {
             </div>
         );
     };
+
+    // Login Modal
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen bg-[#0d0914] flex items-center justify-center p-4">
+                <div className="bg-white rounded-3xl p-8 shadow-2xl border border-gray-200 w-full max-w-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex justify-center items-center">
+                            <ShieldAlert className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-black text-gray-800">FateName OS</h1>
+                            <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Admin Control Center</p>
+                        </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">관리자 전용 페이지입니다. 관리자 토큰을 입력하세요.</p>
+                    <input
+                        type="password"
+                        value={tokenInput}
+                        onChange={e => setTokenInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                        placeholder="관리자 토큰 입력..."
+                        className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-gray-800 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 mb-3"
+                    />
+                    {authError && <p className="text-red-500 text-xs mb-3">{authError}</p>}
+                    <button
+                        onClick={handleLogin}
+                        className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold rounded-xl transition-all shadow-md"
+                    >접속하기</button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#0d0914] text-[#2D3748] font-pretendard flex flex-col md:flex-row pb-24 md:pb-8">

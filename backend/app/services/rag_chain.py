@@ -1,5 +1,29 @@
 import json
 import os
+
+# Monkeypatch pydantic.v1 to support Python 3.13+ for chromadb config
+try:
+    import pydantic.v1.fields
+    original_set_default_and_type = pydantic.v1.fields.ModelField._set_default_and_type
+
+    def patched_set_default_and_type(self):
+        try:
+            return original_set_default_and_type(self)
+        except Exception as e:
+            if "unable to infer type" in str(e):
+                from typing import Any
+                self.type_ = Any
+                self.outer_type_ = Any
+                self.annotation = Any
+                self.required = False
+                self.allow_none = True
+                return
+            raise e
+
+    pydantic.v1.fields.ModelField._set_default_and_type = patched_set_default_and_type
+except ImportError:
+    pass
+
 from typing import Dict, Any, Optional
 from datetime import datetime
 
@@ -50,10 +74,53 @@ class SajuRAGChain:
 
     def retrieve_classical_texts(self, search_query: str) -> str:
         """
-        No Vector DB used to save memory on Render Free Tier.
-        The LLM's internal knowledge of Jeokcheonsu and Gungtongbogam will suffice.
+        ENABLE_REAL_RAG 환경변수가 활성화된 경우 ChromaDB 및 SentenceTransformer를 사용하여
+        고전 문헌 데이터베이스에서 실제 유사 텍스트를 검색하여 반환합니다.
+        그렇지 않거나 에러 발생 시 기본 안내 문구를 반환합니다.
         """
-        return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다."
+        enable_real_rag = os.environ.get("ENABLE_REAL_RAG", "false").lower() in ("true", "1", "yes")
+        if not enable_real_rag:
+            return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다."
+
+        try:
+            import chromadb
+            from sentence_transformers import SentenceTransformer
+            
+            db_path = os.environ.get("CHROMA_DB_PATH", "./chroma_db")
+            if not os.path.exists(db_path):
+                # Try relative path from app root
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+                db_path = os.path.join(base_dir, "chroma_db")
+                if not os.path.exists(db_path):
+                    return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다. (ChromaDB 저장소가 존재하지 않습니다.)"
+            
+            # PersistentClient 초기화
+            client = chromadb.PersistentClient(path=db_path)
+            collection = client.get_collection(name="classical_saju_texts")
+            
+            # SentenceTransformer로 쿼리 임베딩 생성 (vector_schema.py와 동일 모델 사용)
+            model = SentenceTransformer("jhgan/ko-sbert-nli")
+            query_vector = model.encode(search_query).tolist()
+            
+            # 가장 가까운 매치 2개 검색
+            results = collection.query(
+                query_embeddings=[query_vector],
+                n_results=2
+            )
+            
+            if results and results.get("documents") and results["documents"][0]:
+                matched_docs = []
+                for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
+                    source = meta.get("source", "고전")
+                    original = meta.get("original_text", "")
+                    meaning = meta.get("modern_meaning", doc)
+                    matched_docs.append(f"[{source}] {original}: {meaning}")
+                return "\n".join(matched_docs)
+            
+            return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다."
+        except Exception as e:
+            print(f"RAG Retrieval Error: {e}")
+            return "고전 명리학 문헌의 핵심 지식을 바탕으로 풀이합니다."
 
     def generate_insight(self, saju_matrix: Dict[str, Any]) -> str:
         """

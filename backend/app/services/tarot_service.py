@@ -30,7 +30,7 @@ TAROT_CARDS = [
     {"name": "The World", "name_kr": "세계", "emoji": "🌍"}
 ]
 
-def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -> list[dict]:
+def generate_multiple_tarot_readings(reading_type: str, categories: list[str], user_worry: str = None) -> list[dict]:
     """
     Draws N unique random Tarot cards and generates interpretations for each given category using an LLM.
     """
@@ -73,12 +73,15 @@ def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -
             }
 
         try:
+            worry_context = f"\n사용자의 구체적인 고민: {user_worry}\n" if user_worry else ""
+
             prompt = ChatPromptTemplate.from_template(
                 "당신은 공감 능력이 뛰어나고 통찰력 있는 전문 타로 리더입니다.\n"
                 "사용자가 뽑은 타로 카드는 '{card_name_kr}' ({card_name}) 입니다.\n"
                 "상담 종류(유효기간): {reading_type} (예: daily, monthly)\n"
-                "질문 주제: {category}\n\n"
-                "[작성 규칙]\n"
+                "질문 주제: {category}\n"
+                + worry_context +
+                "\n[작성 규칙]\n"
                 "1. 부드럽고 따뜻한 존댓말로 작성해주세요.\n"
                 "2. 앞부분에 뽑은 카드의 일반적인 상징 의미를 가볍게 설명하고,\n"
                 "3. 곧바로 주제({category})와 연관지어 구체적이고 현실적인 조언과 처방을 3~4문단으로 작성해주세요.\n"
@@ -119,7 +122,7 @@ def generate_multiple_tarot_readings(reading_type: str, categories: list[str]) -
 
     return results
 
-def stream_multiple_tarot_readings(reading_type: str, categories: list[str]):
+def stream_multiple_tarot_readings(reading_type: str, categories: list[str], user_worry: str = None):
     """
     Draws N unique random Tarot cards and generates interpretations for each given category using an LLM.
     Yields each result as a separate NDJSON string immediately upon completion.
@@ -163,12 +166,15 @@ def stream_multiple_tarot_readings(reading_type: str, categories: list[str]):
             }
 
         try:
+            worry_context = f"\n사용자의 구체적인 고민: {user_worry}\n" if user_worry else ""
+
             prompt = ChatPromptTemplate.from_template(
                 "당신은 공감 능력이 뛰어나고 통찰력 있는 전문 타로 리더입니다.\n"
                 "사용자가 뽑은 타로 카드는 '{card_name_kr}' ({card_name}) 입니다.\n"
                 "상담 종류(유효기간): {reading_type} (예: daily, monthly)\n"
-                "질문 주제: {category}\n\n"
-                "[작성 규칙]\n"
+                "질문 주제: {category}\n"
+                + worry_context +
+                "\n[작성 규칙]\n"
                 "1. 부드럽고 따뜻한 존댓말로 작성해주세요.\n"
                 "2. 앞부분에 뽑은 카드의 일반적인 상징 의미를 가볍게 설명하고,\n"
                 "3. 곧바로 주제({category})와 연관지어 구체적이고 현실적인 조언과 처방을 3~4문단으로 작성해주세요.\n"

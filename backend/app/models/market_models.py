@@ -161,3 +161,15 @@ class EmailVerification(Base):
     expires_at = Column(DateTime, nullable=False)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class PushSubscription(Base):
+    """
+    기록: 웹 푸시 알림을 위한 VAPID 구독 정보
+    """
+    __tablename__ = "push_subscriptions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True) # 비회원도 토큰 허용 가능
+    endpoint = Column(String, unique=True, nullable=False)
+    p256dh = Column(String, nullable=False)
+    auth = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

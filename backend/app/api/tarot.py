@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from app.services.tarot_service import generate_multiple_tarot_readings, stream_multiple_tarot_readings
 
 router = APIRouter(prefix="/api/tarot", tags=["Tarot"])
@@ -9,6 +9,7 @@ router = APIRouter(prefix="/api/tarot", tags=["Tarot"])
 class TarotMultiDrawRequest(BaseModel):
     categories: List[str]
     type: str
+    user_worry: Optional[str] = None
 
 class TarotDrawResponse(BaseModel):
     category: str
@@ -24,7 +25,7 @@ def draw_multiple_tarot_cards(request: TarotMultiDrawRequest):
     for each requested category (e.g., love, career) based on the type (daily, monthly).
     """
     try:
-        results = generate_multiple_tarot_readings(request.type, request.categories)
+        results = generate_multiple_tarot_readings(request.type, request.categories, request.user_worry)
         return [TarotDrawResponse(**res) for res in results]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -36,6 +37,6 @@ def draw_multiple_tarot_cards_stream(request: TarotMultiDrawRequest):
     for each requested category as Newline Delimited JSON (NDJSON).
     """
     return StreamingResponse(
-        stream_multiple_tarot_readings(request.type, request.categories),
+        stream_multiple_tarot_readings(request.type, request.categories, request.user_worry),
         media_type="application/x-ndjson"
     )

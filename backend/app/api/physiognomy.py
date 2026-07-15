@@ -1,5 +1,6 @@
 import os
 import base64
+import json
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import google.generativeai as genai
@@ -113,7 +114,6 @@ async def analyze_palm(request: PhysiognomyRequest):
             {"mime_type": "image/jpeg", "data": image_bytes}
         ])
 
-        import json
         result_text = response.text.strip()
         
         # Remove markdown JSON blocks if the model still includes them

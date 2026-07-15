@@ -56,5 +56,5 @@ def test_digital_goods(matrix_data):
 if __name__ == "__main__":
     matrix_res = test_calculate()
     if matrix_res and "matrix" in matrix_res:
-        # test_insight(matrix_res["matrix"])
+        test_insight(matrix_res["matrix"])
         test_digital_goods(matrix_res["matrix"])

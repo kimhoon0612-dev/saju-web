@@ -30,22 +30,29 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  --color-glass: rgba(255, 255, 255, 0.4); /* Brighter glass for light mode */
+  --color-glass: rgba(255, 255, 255, 0.4);
   --color-glass-border: rgba(0, 0, 0, 0.05);
 
-  /* Theme B: Clean Minimalist */
+  /* FateName Brand Palette */
   --color-brand-mint: #81C784;
   --color-brand-peach: #FFB199;
-  --color-brand-primary: #4A5568; 
-  --color-gray-bg: #F7F5F2; /* Subtle cream/gray */
+  --color-brand-primary: #4A5568;
+  --color-brand-gold: #D4AF37;
+  --color-gray-bg: #F7F5F2;
   --color-border: #E2E8F0;
   --color-card-bg: #FFFFFF;
+
+  /* Element Colors */
+  --color-wood-green: #4CAF50;
+  --color-fire-orange: #FF7043;
+  --color-earth-amber: #FFA000;
+  --color-metal-silver: #90A4AE;
+  --color-water-blue: #42A5F5;
 }
 
 :root {
-  --background: #F8F9FA; /* Cleaner Off-White */
-  --foreground: #2D3748; /* Charcoal Grey */
+  --background: #F8F9FA;
+  --foreground: #2D3748;
 }
 
 body {
@@ -56,30 +63,105 @@ body {
   letter-spacing: -0.015em;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.025em;
 }
 
 @layer utilities {
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hide-scrollbar {
+  /* ── Scrollbar Hide ── */
+  .hide-scrollbar::-webkit-scrollbar,
+  .hidden-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar, .hidden-scrollbar {
     -ms-overflow-style: none;
-    /* IE and Edge */
     scrollbar-width: none;
-    /* Firefox */
   }
 
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
+  /* ── Premium Card ── */
+  .card-premium {
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
   }
+  .card-premium:hover {
+    box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+
+  .card-glow {
+    box-shadow: 0 0 0 0 rgba(212,175,55,0);
+    transition: box-shadow 0.3s ease;
+  }
+  .card-glow:hover {
+    box-shadow: 0 0 20px 4px rgba(212,175,55,0.18), 0 8px 30px rgba(0,0,0,0.08);
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%);
+    color: white;
+    border-radius: 16px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(45,55,72,0.35);
+  }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: white;
+    border-radius: 16px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+  }
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(212,175,55,0.4);
+  }
+
+  /* ── Animations ── */
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-6px); }
+  }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 10px 2px rgba(212,175,55,0.15); }
+    50%       { box-shadow: 0 0 24px 8px rgba(212,175,55,0.35); }
+  }
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes ripple {
+    0%   { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  .animate-fade-in-up   { animation: fadeInUp 0.45s ease both; }
+  .animate-scale-in     { animation: scaleIn 0.3s ease both; }
+  .animate-float-y      { animation: floatY 3s ease-in-out infinite; }
+  .animate-glow-pulse   { animation: glowPulse 2.5s ease-in-out infinite; }
+  .animate-spin-slow    { animation: spinSlow 8s linear infinite; }
+
+  /* ── Stagger delays ── */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
 }

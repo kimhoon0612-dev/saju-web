@@ -1,240 +1,180 @@
+import os
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import delete
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
-import random
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import os
 
 from app.core.database import get_db
-from app.models.market_models import User, UserRole, EmailVerification
-import hashlib
+from app.core.security import create_access_token
+from app.models.market_models import User, UserRole
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-class RegisterRequest(BaseModel):
-    email: str
-    password: Optional[str] = None # Optional for Kakao login
-    name: str
-    phone_number: Optional[str] = None
-    gender: Optional[str] = None
-    birth_time_iso: Optional[str] = None
-    is_lunar: Optional[bool] = False
-    is_leap_month: Optional[bool] = False
-    login_type: str = "email" # "email" or "kakao"
 
-class RegisterResponse(BaseModel):
-    status: str
-    message: str
+class Token(BaseModel):
+    access_token: str
+    token_type: str
     user_id: int
+    name: str
 
-class SendVerificationRequest(BaseModel):
-    email: EmailStr
 
-class VerifyCodeRequest(BaseModel):
-    email: EmailStr
-    code: str
+class SocialLoginRequest(BaseModel):
+    code: str           # 카카오/Apple OAuth 인가 코드
+    redirect_uri: str   # 리다이렉트 URI (카카오 앱 설정과 일치해야 함)
 
-class VerificationResponse(BaseModel):
-    status: str
-    message: str
 
-def hash_password(password: str) -> str:
-    # A simple hash for now, in production use bcrypt
-    return hashlib.sha256(password.encode()).hexdigest()
-
-@router.post("/register", response_model=RegisterResponse)
-async def register_user(request: RegisterRequest, db: AsyncSession = Depends(get_db)):
+# ─────────────────────────────────────────
+# 카카오 소셜 로그인 (메인 로그인 방식)
+# ─────────────────────────────────────────
+@router.post("/kakao", response_model=Token)
+async def login_kakao(request: SocialLoginRequest, db: AsyncSession = Depends(get_db)):
     """
-    Register a new user with email or kakao.
+    카카오 소셜 로그인.
+    인가 코드(code)를 카카오 토큰으로 교환 후 사용자 프로필을 조회하여
+    DB에 신규 가입 또는 기존 유저로 JWT를 발급합니다.
     """
-    # For email registration, force verification check
-    if request.login_type == "email":
-        pass
-        # TEMP BYPASS: Allow registration even without email verification while SMTP is not set up.
-        # verification_result = await db.execute(select(EmailVerification).where(EmailVerification.email == request.email))
-        # verification = verification_result.scalars().first()
-        # 
-        # if not verification or not verification.is_verified:
-        #     raise HTTPException(
-        #         status_code=status.HTTP_400_BAD_REQUEST,
-        #         detail="이메일 인증이 완료되지 않았습니다."
-        #     )
+    client_id = os.environ.get("KAKAO_REST_API_KEY")
+    if not client_id:
+        raise HTTPException(status_code=500, detail="KAKAO_REST_API_KEY가 서버에 설정되지 않았습니다.")
 
-    # Check if user already exists
-    result = await db.execute(select(User).where(User.email == request.email))
-    existing_user = result.scalars().first()
-    
-    if existing_user:
-        # If logging in with Kakao and email already exists, just return success 
-        # (in a real app, we'd log them in and return a JWT here)
-        if request.login_type == "kakao":
-             return RegisterResponse(status="success", message="User already exists, logged in.", user_id=existing_user.id)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+    # 1. 인가코드 → 카카오 액세스 토큰 교환
+    token_url = "https://kauth.kakao.com/oauth/token"
+    token_data = {
+        "grant_type": "authorization_code",
+        "client_id": client_id,
+        "redirect_uri": request.redirect_uri,
+        "code": request.code
+    }
+
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(token_url, data=token_data)
+
+    if token_response.status_code != 200:
+        print("[Kakao Auth Error]", token_response.text)
+        raise HTTPException(status_code=400, detail=f"카카오 토큰 발급 실패: {token_response.text}")
+
+    kakao_access_token = token_response.json().get("access_token")
+
+    # 2. 카카오 유저 프로필 조회
+    user_url = "https://kapi.kakao.com/v2/user/me"
+    headers = {"Authorization": f"Bearer {kakao_access_token}"}
+
+    async with httpx.AsyncClient() as client:
+        user_response = await client.get(user_url, headers=headers)
+
+    if user_response.status_code != 200:
+        raise HTTPException(status_code=400, detail="카카오 사용자 프로필 조회 실패")
+
+    kakao_user_data = user_response.json()
+    kakao_id = str(kakao_user_data.get("id"))
+    kakao_account = kakao_user_data.get("kakao_account", {})
+    kakao_profile = kakao_account.get("profile", {})
+
+    user_email = kakao_account.get("email", f"kakao_{kakao_id}@kakaomapping.com")
+    user_name = kakao_profile.get("nickname", f"카카오유저{kakao_id[-4:]}")
+
+    # 3. DB 조회 및 자동 가입
+    result = await db.execute(select(User).where(User.email == user_email))
+    user = result.scalars().first()
+
+    if not user:
+        user = User(
+            username=user_email,
+            email=user_email,
+            name=user_name,
+            role=UserRole.USER
         )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
 
-    # Create new user
-    new_user = User(
-        username=request.email, # Use email as username for uniqueness
-        email=request.email,
-        name=request.name,
-        phone_number=request.phone_number,
-        gender=request.gender,
-        birth_time_iso=request.birth_time_iso,
-        is_lunar=request.is_lunar,
-        is_leap_month=request.is_leap_month,
-        role=UserRole.USER
+    # 4. JWT 발급 (7일 유효)
+    access_token = create_access_token(
+        subject=str(user.id), expires_delta=timedelta(days=7)
     )
-    
-    if request.login_type == "email" and request.password:
-        new_user.password_hash = hash_password(request.password)
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.id, "name": user.name}
 
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    
-    return RegisterResponse(
-        status="success", 
-        message="Registration successful", 
-        user_id=new_user.id
-    )
 
-def send_email_async(to_email: str, code: str):
-    import logging
-    import traceback
-    
-    logger = logging.getLogger(__name__)
-    
-    # Retrieve SMTP config from environment variables
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_username = os.environ.get("SMTP_USERNAME")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    
-    print(f"[EMAIL_DEBUG] Starting email send to {to_email}. Server: {smtp_server}:{smtp_port}, User: {smtp_username}")
-    
-    if not smtp_username or not smtp_password:
-        print(f"[EMAIL_DEBUG] SMTP Configuration is missing! Cannot send real email to {to_email}.")
-        print(f"VIRTUAL INBOX -> {to_email} Verification Code: {code}")
-        return
+# ─────────────────────────────────────────
+# Apple 소셜 로그인 (iOS App Store 필수)
+# ─────────────────────────────────────────
+@router.post("/apple", response_model=Token)
+async def login_apple(request: SocialLoginRequest, db: AsyncSession = Depends(get_db)):
+    """
+    Apple 소셜 로그인.
+    실제 배포 환경에서는 Apple 인증서(JWKS)로 서명 검증을 진행합니다.
+    로컬 테스트 시에는 token이 'mock_'로 시작하거나 APPLE_LOGIN_TEST_MODE가 활성화된 경우 검증을 우회합니다.
+    """
+    apple_user_id = None
+    user_email = None
+    user_name = "Apple 유저"
 
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = smtp_username
-        msg['To'] = to_email
-        msg['Subject'] = "[나의운명코드] 회원가입 이메일 인증 코드가 도착했습니다."
+    # 로컬 테스트 우회 모드 확인
+    test_mode = os.environ.get("APPLE_LOGIN_TEST_MODE", "false").lower() in ("true", "1")
+    is_mock = request.code.startswith("mock_") if request.code else False
+
+    if test_mode or is_mock:
+        # 테스트 모드: code를 apple_user_id로 바로 매핑
+        apple_user_id = request.code or "unknown"
+        user_email = f"apple_{apple_user_id[:12]}@appleid.apple.com"
+    else:
+        # 상용 환경: Apple JWT 서명 검증
+        if not request.code:
+            raise HTTPException(status_code=400, detail="Apple Identity Token (JWT)이 누락되었습니다.")
         
-        body = f"안녕하세요. 나의 운명코드에 가입해 주셔서 감사합니다.\n\n요청하신 인증 코드는 아래와 같습니다:\n\n인증코드: {code}\n\n이 코드는 10분 동안 유효합니다. 홈페이지로 돌아가 이 코드를 입력해 주세요."
-        msg.attach(MIMEText(body, 'plain', 'utf-8'))
-        
-        print("[EMAIL_DEBUG] Connecting to SMTP server...")
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=15)
-        print("[EMAIL_DEBUG] Starting TLS...")
-        server.starttls()
-        print("[EMAIL_DEBUG] Logging in...")
-        server.login(smtp_username, smtp_password)
-        print("[EMAIL_DEBUG] Sending message...")
-        server.send_message(msg)
-        print("[EMAIL_DEBUG] Quitting server...")
-        server.quit()
-        print(f"[EMAIL_DEBUG] Successfully sent verification email to {to_email}")
-    except Exception as e:
-        print(f"[EMAIL_ERROR] Failed to send email to {to_email}: {e}")
-        traceback.print_exc()
+        try:
+            # 1. Apple JWKS(공개키 목록) 가져오기
+            jwks_url = "https://appleid.apple.com/auth/keys"
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(jwks_url)
+                resp.raise_for_status()
+                jwks = resp.json()
+            
+            # 2. JWT 서명 및 클레임 검증
+            apple_client_id = os.environ.get("APPLE_CLIENT_ID")
+            options = {"verify_aud": bool(apple_client_id)}
+            
+            from jose import jwt
+            
+            payload = jwt.decode(
+                request.code, # 클라이언트는 identityToken을 'code' 필드에 담아 전달
+                jwks,
+                algorithms=["RS256"],
+                audience=apple_client_id if apple_client_id else None,
+                issuer="https://appleid.apple.com",
+                options=options
+            )
+            
+            apple_user_id = payload.get("sub")
+            user_email = payload.get("email")
+            
+            if not apple_user_id:
+                raise HTTPException(status_code=400, detail="Apple Token에서 유저 ID(sub)를 추출할 수 없습니다.")
+                
+            if not user_email:
+                user_email = f"apple_{apple_user_id[:12]}@appleid.apple.com"
+                
+        except Exception as e:
+            print("[Apple Token Verification Error]", e)
+            raise HTTPException(status_code=401, detail=f"Apple 로그인 검증 실패: {str(e)}")
 
-@router.get("/test-email")
-def test_email_sync(email: str):
-    import logging
-    import traceback
-    
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_username = os.environ.get("SMTP_USERNAME")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    
-    if not smtp_username or not smtp_password:
-        return {"status": "error", "reason": "No credentials in Render ENVs"}
+    # 3. DB 조회 및 자동 가입
+    result = await db.execute(select(User).where(User.email == user_email))
+    user = result.scalars().first()
 
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = smtp_username
-        msg['To'] = email
-        msg['Subject'] = "[나의운명코드] 회원가입 이메일 발송 디버그 테스트"
-        
-        body = "이메일 디버그 테스트입니다."
-        msg.attach(MIMEText(body, 'plain', 'utf-8'))
-        
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=15)
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.send_message(msg)
-        server.quit()
-        return {"status": "success", "message": f"Test email sent to {email}"}
-    except Exception as e:
-        return {
-            "status": "error",
-            "error_type": type(e).__name__,
-            "error_msg": str(e),
-            "traceback": traceback.format_exc()
-        }
+    if not user:
+        user = User(
+            username=user_email,
+            email=user_email,
+            name=user_name,
+            role=UserRole.USER
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
 
-from fastapi import BackgroundTasks
-
-@router.post("/send-verification-code", response_model=VerificationResponse)
-async def send_verification_code(request: SendVerificationRequest, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
-    # 1. Check if email is already registered
-    existing_user_result = await db.execute(select(User).where(User.email == request.email))
-    if existing_user_result.scalars().first():
-        raise HTTPException(status_code=400, detail="이미 가입된 이메일입니다.")
-
-    # 2. Generate a 6-digit random code
-    code = str(random.randint(100000, 999999))
-    
-    # 3. Clean up any existing codes for this email
-    await db.execute(delete(EmailVerification).where(EmailVerification.email == request.email))
-    
-    # 4. Save new code to DB
-    expires_at = datetime.utcnow() + timedelta(minutes=10)
-    new_verification = EmailVerification(
-        email=request.email,
-        code=code,
-        expires_at=expires_at,
-        is_verified=False
-    )
-    db.add(new_verification)
-    await db.commit()
-    
-    # 5. Send Email (in background to avoid blocking the API response)
-    background_tasks.add_task(send_email_async, request.email, code)
-    
-    return VerificationResponse(status="success", message="인증 코드가 이메일로 전송되었습니다.")
-
-@router.post("/verify-code", response_model=VerificationResponse)
-async def verify_code(request: VerifyCodeRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(EmailVerification).where(EmailVerification.email == request.email))
-    verification = result.scalars().first()
-    
-    if not verification:
-        raise HTTPException(status_code=400, detail="인증 요청을 먼저 진행해 주세요.")
-        
-    if verification.is_verified:
-        return VerificationResponse(status="success", message="이미 인증된 이메일입니다.")
-        
-    if datetime.utcnow() > verification.expires_at:
-        raise HTTPException(status_code=400, detail="인증 코드가 만료되었습니다. 다시 요청해 주세요.")
-        
-    if verification.code != request.code:
-        raise HTTPException(status_code=400, detail="인증 코드가 일치하지 않습니다.")
-        
-    # Mark as verified
-    verification.is_verified = True
-    await db.commit()
-    
-    return VerificationResponse(status="success", message="이메일 인증이 완료되었습니다.")
+    access_token = create_access_token(subject=str(user.id), expires_delta=timedelta(days=7))
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.id, "name": user.name}

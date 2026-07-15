@@ -7,8 +7,9 @@ from typing import Optional
 
 from app.core.database import get_db
 from app.models.market_models import Reservation, PointTransaction, User, ExpertProfile, UserRole
+from app.api.admin_auth import verify_admin
 
-router = APIRouter(prefix="/api/admin/marketplace", tags=["admin_marketplace"])
+router = APIRouter(prefix="/api/admin/marketplace", tags=["admin_marketplace"], dependencies=[Depends(verify_admin)])
 
 class ExpertRegisterRequest(BaseModel):
     display_name: str

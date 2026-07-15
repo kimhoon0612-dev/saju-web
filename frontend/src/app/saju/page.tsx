@@ -36,6 +36,7 @@ import {
 import BottomNav from "@/components/BottomNav";
 import UserBadge from "@/components/UserBadge";
 import ElementalBarChart from "@/components/ElementalBarChart";
+import DaewunTimeline from "@/components/DaewunTimeline";
 
 const ELEMENT_COLORS_BG: Record<string, string> = {
     "wood": "bg-[#A8D5BA] text-gray-800", // Pastel Green
@@ -75,6 +76,14 @@ export default function FortuneHubPage() {
     // Modal States
     const [showLotto, setShowLotto] = useState(false);
     const [lottoNumbers, setLottoNumbers] = useState<number[]>([]);
+
+    // Banner slider state
+    const [bannerIndex, setBannerIndex] = useState(0);
+    const bannerSlides = [
+      { badge: '🔮 AI 정밀 분석', title: '나만의 사주 심층 리포트', sub: '8글자 명식 전체 풀이 · 무제한 AI 상담', cta: '지금 분석하기', href: '/saju/confirm?type=정통 명리', from: 'from-violet-600', to: 'to-purple-800' },
+      { badge: '⚡ 코인 이벤트', title: '첫 충전 30% 보너스!', sub: '지금 충전하면 추가 코인을 드려요', cta: '코인 충전하기', href: '/store', from: 'from-amber-500', to: 'to-orange-700' },
+      { badge: '👤 전문가 상담', title: '1:1 명리학 전문가 매칭', sub: '검증된 상담사와 실시간 채팅 운세상담', cta: '상담사 찾기', href: '/experts', from: 'from-teal-500', to: 'to-cyan-700' },
+    ];
 
     const [showTrait, setShowTrait] = useState(false);
     const [traitResult, setTraitResult] = useState({ title: "", desc: "", reason: "" });
@@ -186,6 +195,14 @@ export default function FortuneHubPage() {
         }
     }, []);
 
+    // Banner auto-slide
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setBannerIndex(prev => (prev + 1) % bannerSlides.length);
+        }, 3500);
+        return () => clearInterval(timer);
+    }, [bannerSlides.length]);
+
     // 1. Lotto Logic
     const handleLotto = () => {
         const nums = new Set<number>();
@@ -196,46 +213,45 @@ export default function FortuneHubPage() {
         setShowLotto(true);
     };
 
-    // 2. Trait Logic
+    // 2. Trait Logic — Bug-05 fix: 오행 비교를 영어(API 반환값)로 수정
     const handleTrait = () => {
         let title = "평인복덕";
         let desc = "평범함 속에 비범함이 감춰진 사주입니다. 작은 행운이 자주 찾아옵니다.";
         let reason = "당신의 사주는 오행이 고루 분포되어 있어 특별한 치우침 없이 무난한 평온함을 누리는 에너지입니다.";
 
         if (userSaju && userSaju?.day_pillar) {
-            const dayElem = userSaju?.day_pillar.heavenly.element;
+            const dayElem = userSaju?.day_pillar.heavenly.element; // "wood" | "fire" | "earth" | "metal" | "water"
             const dayLabel = userSaju?.day_pillar.heavenly.label;
 
-            if (dayElem === "목") {
+            if (dayElem === "wood") {
                 title = "태을귀인";
                 desc = "학문과 지혜를 돕는 강력한 귀인의 기운이 있습니다.";
-                reason = `당신의 일간인 '${dayLabel}(${dayElem})'과 사주의 기운이 만나, 학업이나 연구, 지적인 활동에서 뜻밖의 조력자를 만나게 되는 길신이 찾아옵니다.`;
-            } else if (dayElem === "화") {
+                reason = `당신의 일간인 '${dayLabel}'과 사주의 기운이 만나, 학업이나 연구, 지적인 활동에서 뜻밖의 조력자를 만나게 되는 길신이 찾아옵니다.`;
+            } else if (dayElem === "fire") {
                 title = "천을귀인";
                 desc = "주변의 도움으로 위기를 모면하는 최고의 길신이 함께합니다.";
-                reason = `당신의 일간인 '${dayLabel}(${dayElem})' 특유의 에너지 덕분에, 위험한 순간마다 보이지 않는 귀인의 도움을 받아 흉몽이 길몽으로 바뀌는 강력한 복을 타고 났습니다.`;
-            } else if (dayElem === "토") {
+                reason = `당신의 일간인 '${dayLabel}' 특유의 에너지 덕분에, 위험한 순간마다 보이지 않는 귀인의 도움을 받아 흉몽이 길몽으로 바뀌는 강력한 복을 타고 났습니다.`;
+            } else if (dayElem === "earth") {
                 title = "문창귀인";
                 desc = "글재주가 뛰어나고 지혜로우며 흉운을 길운으로 바꿉니다.";
-                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 단단한 기반 위에 총명함이 수놓아져, 말을 조리 있게 하고 학문적 성취나 창작 활동에서 큰 행운을 얻게 됩니다.`;
-            } else if (dayElem === "금") {
+                reason = `당신의 일간인 '${dayLabel}'의 단단한 기반 위에 총명함이 수놓아져, 말을 조리 있게 하고 학문적 성취나 창작 활동에서 큰 행운을 얻게 됩니다.`;
+            } else if (dayElem === "metal") {
                 title = "천주귀인";
                 desc = "의식이 풍부하고 평생 의식주 걱정이 없는 복덕운입니다.";
-                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 결실을 맺는 성질이 작용하여, 타고난 식록(먹을 복)이 풍부해 평생 경제적인 안락함을 누릴 수 있는 든든한 사주입니다.`;
-            } else if (dayElem === "수") {
+                reason = `당신의 일간인 '${dayLabel}'의 결실을 맺는 성질이 작용하여, 타고난 식록(먹을 복)이 풍부해 평생 경제적인 안락함을 누릴 수 있는 든든한 사주입니다.`;
+            } else if (dayElem === "water") {
                 title = "금여록";
                 desc = "부귀와 안락을 상징하며 좋은 사람들을 만날 귀한 운입니다.";
-                reason = `당신의 일간인 '${dayLabel}(${dayElem})'의 유연하고 맑은 성질이 좋은 배우자나 훌륭한 파트너를 이끌어, 인생의 수레를 타고 편안히 나아가는 복을 지녔습니다.`;
+                reason = `당신의 일간인 '${dayLabel}'의 유연하고 맑은 성질이 좋은 배우자나 훌륭한 파트너를 이끌어, 인생의 수레를 타고 편안히 나아가는 복을 지녔습니다.`;
             }
         }
         setTraitResult({ title, desc, reason });
         setShowTrait(true);
     };
 
-    // 3. Talisman Logic (Multiple)
+    // 3. Talisman Logic — Bug-06 fix: 십성 비교를 정확한 API 반환값으로 수정
     const handleTalisman = () => {
         const results = [];
-        // Base wealth talisman is always good to have
         results.push({
             type: "wealth",
             title: "재물 넉넉 부적",
@@ -244,23 +260,36 @@ export default function FortuneHubPage() {
 
         if (userSaju && userSaju?.month_pillar) {
             const mg = userSaju?.month_pillar.earthly.ten_god || "";
-            if (mg.includes("관성")) {
+            // API returns: 편관, 정관, 편재, 정재, 편인, 정인, 비견, 겁재, 식신, 상관
+            if (["편관", "정관"].includes(mg)) {
                 results.push({
                     type: "career",
                     title: "직장 탄탄 부적",
                     desc: "직장에서 능력을 인정받고 승진이나 이직 운을 틔워주는 부적입니다."
                 });
-            } else if (mg.includes("인성")) {
+            } else if (["편인", "정인"].includes(mg)) {
                 results.push({
                     type: "health",
                     title: "무병 무탈 부적",
                     desc: "잔병치레를 막아주고 몸과 마음의 평온을 지켜주는 건강 부적입니다."
                 });
-            } else if (mg.includes("비겁")) {
+            } else if (["비견", "겁재"].includes(mg)) {
                 results.push({
                     type: "love",
                     title: "애정 만발 부적",
                     desc: "주변 인연이 좋아지고 좋은 짝을 찾아주는 사랑 부적입니다."
+                });
+            } else if (["편재", "정재"].includes(mg)) {
+                results.push({
+                    type: "wealth",
+                    title: "황금 재물 부적",
+                    desc: "재물이 쌓이고 돈을 불러들이는 강력한 재물운 부적입니다."
+                });
+            } else if (["식신", "상관"].includes(mg)) {
+                results.push({
+                    type: "love",
+                    title: "귀인 인연 부적",
+                    desc: "좋은 인연을 맺고 창의적인 능력을 발휘하게 돕는 부적입니다."
                 });
             }
         }
@@ -289,22 +318,28 @@ export default function FortuneHubPage() {
         setShowTalisman(true);
     };
 
-    // 4. Moving Logic
+    // 4. Moving Logic — Bug-07 fix: 명리학 '손 없는 날' 기준으로 교체
+    // 손 없는 날: 음력 날짜 기준 1·2일(동쪽), 3·4일(남쪽), 5·6일(서쪽), 7·8일(북쪽), 9·10일 손 없음
+    // 양력으로는 음력 날짜가 9나 0으로 끝나는 날 (9일, 10일, 19일, 20일, 29일, 30일)
+    // 단, 실제로는 음력 변환이 필요하지만 양력 날짜의 일부를 활용한 근사치로 구현
     const getMovingDates = () => {
         const dates = [];
-        // 지정된 연/월의 1일부터 말일까지 순회하며 일자가 9, 0으로 끝나는 날짜 수집
         const daysInMonth = new Date(movingYear, movingMonth, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayStr = day.toString();
-            if (dayStr.endsWith("9") || dayStr.endsWith("0")) {
-                // 요일 계산
-                const objDate = new Date(movingYear, movingMonth - 1, day);
-                const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
-                const weekDay = daysOfWeek[objDate.getDay()];
-                dates.push(`${movingMonth}월 ${day}일 (${weekDay})`);
-            }
+        const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+        
+        // 손 없는 날 패턴: 각 10일 주기에서 9, 10번째 날 (음력 기준 손이 하늘에 있는 날)
+        // 양력 날짜로 근사: 9, 10, 19, 20, 29, 30일
+        const sonNonePattern = [9, 10, 19, 20, 29, 30];
+        
+        for (const day of sonNonePattern) {
+            if (day > daysInMonth) continue;
+            const objDate = new Date(movingYear, movingMonth - 1, day);
+            const weekDay = daysOfWeek[objDate.getDay()];
+            // 일요일은 이사 비추천 (관례상)
+            const recommend = objDate.getDay() !== 0 ? "✅ 추천" : "⚠️ 일요일";
+            dates.push(`${movingMonth}월 ${day}일 (${weekDay}) ${recommend}`);
         }
-        // 최근 날짜순이므로 전체 다 보여주거나 적절히 자름 (보통 한 달에 5~6개 정도)
+        
         return dates;
     };
 
@@ -478,41 +513,38 @@ export default function FortuneHubPage() {
 
             <main className="max-w-md mx-auto flex flex-col gap-3 px-4 pt-3">
 
-                {/* Animated Ad Banner Placeholder */}
-                <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-[24px] relative overflow-hidden h-40 flex items-center justify-center border border-gray-100 shadow-sm">
-                    {/* Background decorative elements */}
-                    <div className="absolute inset-0 opacity-40">
-                        <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-                        <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                    </div>
-
-                    {/* Animated animals layer */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
-                        <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
-                        <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
-                        <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
-                        <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
-                        <span className="inline-block bg-indigo-100 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide">
-                            NOTICE
-                        </span>
-                        <h2 className="text-[18px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
-                            광고 오픈 준비 중입니다
-                        </h2>
-                        <p className="text-[13px] font-bold text-gray-600">
-                            동물 친구들이 공간을 꾸미고 있어요! 🐾
-                        </p>
-                    </div>
-
-                    {/* Pagination Dots (Decorative) */}
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                {/* Promotion Banner Slider */}
+                <div className="w-full rounded-[24px] relative overflow-hidden h-40 shadow-md">
+                    {bannerSlides.map((slide, idx) => (
+                        <div
+                            key={idx}
+                            className={`absolute inset-0 bg-gradient-to-br ${slide.from} ${slide.to} flex flex-col justify-center px-6 transition-opacity duration-700 ${
+                                idx === bannerIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                            }`}
+                        >
+                            <div className="absolute right-4 top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+                            <span className="inline-block bg-white/20 text-white text-[11px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide w-fit">
+                                {slide.badge}
+                            </span>
+                            <h2 className="text-[20px] font-black text-white leading-[1.2] tracking-tight mb-1">{slide.title}</h2>
+                            <p className="text-[12px] font-bold text-white/80 mb-3">{slide.sub}</p>
+                            <Link href={slide.href}
+                                className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white text-[13px] font-black px-4 py-1.5 rounded-full border border-white/30 transition-all w-fit"
+                            >
+                                {slide.cta} <ChevronRight className="w-3.5 h-3.5" />
+                            </Link>
+                        </div>
+                    ))}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                        {bannerSlides.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setBannerIndex(idx)}
+                                className={`rounded-full transition-all ${
+                                    idx === bannerIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                                }`}
+                            />
+                        ))}
                     </div>
                 </div>
                 {/* Main Content Areas */}
@@ -622,6 +654,14 @@ export default function FortuneHubPage() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* 대운 타임라인 */}
+                        {userSaju?.daewun_pillars && userSaju.daewun_pillars.length > 0 && (
+                            <DaewunTimeline
+                                daewunPillars={userSaju.daewun_pillars}
+                                daewunNumber={userSaju.daewun_number || 1}
+                            />
+                        )}
 
                         {/* ==== 영역 2: 내 삶의 나침반! 심층 분석 ==== */}
                         <section className="bg-white rounded-[32px] p-7 pt-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 flex flex-col gap-8">

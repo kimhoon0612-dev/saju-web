@@ -26,14 +26,50 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         setStep("checkout");
     };
 
-    const handlePaymentSubmit = () => {
+    const handlePaymentSubmit = async () => {
         if (!formData.name || !formData.phone || !formData.address) {
             setError("배송지 정보를 모두 입력해주세요.");
             return;
         }
         setError(null);
-        // Mock API Call overhead here
-        setTimeout(() => setStep("complete"), 800);
+        
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+            const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+                ? 'http://localhost:8000' 
+                : apiUrl;
+                
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                setError("로그인이 필요한 서비스입니다.");
+                return;
+            }
+
+            const res = await fetch(`${baseUrl}/api/market/purchase`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    product_id: parseInt(product.id, 10),
+                    shipping_name: formData.name,
+                    shipping_phone: formData.phone,
+                    shipping_address: formData.address
+                })
+            });
+
+            if (res.ok) {
+                // 성공 시
+                setStep("complete");
+            } else {
+                const errorData = await res.json();
+                setError(errorData.detail || "결제 중 오류가 발생했습니다.");
+            }
+        } catch (err) {
+            console.error("Purchase error:", err);
+            setError("서버와의 연결이 원활하지 않습니다.");
+        }
     };
 
 

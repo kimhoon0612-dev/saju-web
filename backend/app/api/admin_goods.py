@@ -17,7 +17,9 @@ try:
 except Exception:
     openai_client = None
 
-router = APIRouter(prefix="/api/admin/talisman", tags=["admin_talisman"])
+from app.api.admin_auth import verify_admin
+
+router = APIRouter(prefix="/api/admin/talisman", tags=["admin_talisman"], dependencies=[Depends(verify_admin)])
 
 class SandboxRequest(BaseModel):
     prompt: str
@@ -224,3 +226,16 @@ async def upload_talisman_image(file: UploadFile = File(...)):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"파일 업로드 실패: {str(e)}")
+
+@router.patch("/inventory/{product_id}/toggle")
+async def toggle_product_active(product_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    [Admin] 상품의 is_active 상태를 즉시 반전합니다. (활성/비활성 토글)
+    """
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    if not product:
+        raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
+    product.is_active = not product.is_active
+    await db.commit()
+    return {"status": "success", "product_id": product_id, "is_active": product.is_active}

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: saju_db
+    environment:
+      POSTGRES_USER: saju_user
+      POSTGRES_PASSWORD: saju_password
+      POSTGRES_DB: saju_market
+    ports:
+      - "5432:5432"
+    volumes:
+      - saju_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: saju_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: saju_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://saju_user:saju_password@db:5432/saju_market
+      - REDIS_URL=redis://redis:6379/0
+      - ALLOWED_ORIGINS=http://localhost:3000
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+volumes:
+  saju_pgdata:

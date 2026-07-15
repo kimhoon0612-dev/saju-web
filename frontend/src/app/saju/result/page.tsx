@@ -111,11 +111,11 @@ function SajuContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const initialTabParam = searchParams.get('tab') as any;
+    const initialTabParam = searchParams.get('tab') as "daewun" | "life_stages" | "yearly" | "daily" | "elemental" | null;
     const readingType = searchParams.get('type');
     const displayTitle = readingType ? `${readingType} 결과` : '정밀 사주 분석';
 
-    const initialTab = ['daewun', 'life_stages', 'yearly', 'daily', 'elemental'].includes(initialTabParam)
+    const initialTab = (initialTabParam && ['daewun', 'life_stages', 'yearly', 'daily', 'elemental'].includes(initialTabParam))
         ? initialTabParam
         : "daewun";
 
@@ -160,9 +160,9 @@ function SajuContent() {
     // Effect for initializing matrix data
     useEffect(() => {
 
-        const storedMatrix = sessionStorage.getItem("saju_matrix");
-        const storedTimeInfo = sessionStorage.getItem("saju_time_info");
-        const storedUser = sessionStorage.getItem("saju_user_info");
+        const storedMatrix = localStorage.getItem("saju_matrix");
+        const storedTimeInfo = localStorage.getItem("saju_time_info");
+        const storedUser = localStorage.getItem("saju_user_info");
 
         if (!storedMatrix) {
             router.replace("/");
@@ -189,20 +189,18 @@ function SajuContent() {
 
                 // 1. Fire Specific Reading Immediately to Render (Non-Blocking)
                 if (paramsType) {
-                    const cachedSpecific = sessionStorage.getItem("saju_specific_" + paramsType);
+                    const cachedSpecific = localStorage.getItem("saju_specific_" + paramsType);
                     if (cachedSpecific) {
                         setSpecificReading(cachedSpecific);
                     } else {
-                        const storedPartnerMatrix = sessionStorage.getItem("saju_partner_matrix");
+                        const storedPartnerMatrix = localStorage.getItem("saju_partner_matrix");
                         const specificPayload: any = { saju_matrix: parsedMatrix, reading_type: paramsType };
                         if (storedPartnerMatrix) {
                             specificPayload.partner_matrix = JSON.parse(storedPartnerMatrix);
                         }
 
-                        const renderBaseUrl = "https://saju-web.onrender.com";
-
                         // Fire and forget (let it update state asynchronously)
-                        fetch(`${renderBaseUrl}/api/specific-reading`, {
+                        fetch(`${API_BASE}/api/specific-reading`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(specificPayload)
@@ -227,7 +225,7 @@ function SajuContent() {
                                                     } catch (e) { }
                                                 }
                                                 setSpecificReading(finalCleanText);
-                                                sessionStorage.setItem("saju_specific_" + paramsType, finalCleanText);
+                                                localStorage.setItem("saju_specific_" + paramsType, finalCleanText);
                                                 break;
                                             }
 
@@ -256,7 +254,7 @@ function SajuContent() {
                                             } catch (e) { }
                                         }
                                         setSpecificReading(finalCleanText);
-                                        sessionStorage.setItem("saju_specific_" + paramsType, finalCleanText);
+                                        localStorage.setItem("saju_specific_" + paramsType, finalCleanText);
                                     }
                                 } catch (streamError) {
                                     console.error("Stream reading interrupted:", streamError);
@@ -275,7 +273,7 @@ function SajuContent() {
 
                 // 2. Fire Vercel Proxied APIs (Background tasks) with session caching to prevent Rate Limit (15 RPM)
                 try {
-                    const cachedInsight = sessionStorage.getItem("saju_insight");
+                    const cachedInsight = localStorage.getItem("saju_insight");
                     if (cachedInsight) {
                         setInsight(cachedInsight);
                     } else {
@@ -287,11 +285,11 @@ function SajuContent() {
                         if (insightRes.ok) {
                             const insightData = await insightRes.json();
                             setInsight(insightData.insight);
-                            sessionStorage.setItem("saju_insight", insightData.insight);
+                            localStorage.setItem("saju_insight", insightData.insight);
                         }
                     }
 
-                    const cachedLifeStages = sessionStorage.getItem("saju_lifestages");
+                    const cachedLifeStages = localStorage.getItem("saju_lifestages");
                     if (cachedLifeStages) {
                         setLifeStages(JSON.parse(cachedLifeStages));
                     } else {
@@ -303,7 +301,7 @@ function SajuContent() {
                         if (lifeRes.ok) {
                             const lifeData = await lifeRes.json();
                             setLifeStages(lifeData.stages || []);
-                            sessionStorage.setItem("saju_lifestages", JSON.stringify(lifeData.stages || []));
+                            localStorage.setItem("saju_lifestages", JSON.stringify(lifeData.stages || []));
                         }
                     }
                 } catch (error) {
@@ -316,7 +314,7 @@ function SajuContent() {
             fetchAdditionalData();
 
         } catch (e) {
-            console.error("세션 스토리지 파싱 오류:", e);
+            console.error("로컬 스토리지 파싱 오류:", e);
             router.replace("/");
         }
     }, [router, searchParams]);
@@ -441,7 +439,7 @@ function SajuContent() {
                                     {/* Tab 1: Daewun */}
                                     {activeTab === "daewun" && matrix.daewun_pillars && (
                                         <div className="bg-white rounded-3xl pb-6 shadow-sm border border-gray-100 overflow-hidden">
-                                            <DaewunTimeline daewunNumber={matrix.daewun_number} pillars={matrix.daewun_pillars} />
+                                            <DaewunTimeline daewunNumber={matrix.daewun_number} daewunPillars={matrix.daewun_pillars} />
                                         </div>
                                     )}
 

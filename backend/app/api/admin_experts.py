@@ -6,8 +6,9 @@ from app.models.market_models import VirtualExpert, ExpertReview, ExpertSettleme
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from app.api.admin_auth import verify_admin
 
-router = APIRouter()
+router = APIRouter(prefix="/api/admin/experts", tags=["admin_experts"], dependencies=[Depends(verify_admin)])
 
 class ExpertCreateUpdate(BaseModel):
     category: str
@@ -132,3 +133,16 @@ async def complete_settlement(settlement_id: int, db: AsyncSession = Depends(get
     settlement.completed_at = datetime.utcnow()
     await db.commit()
     return {"message": "Settlement completed"}
+
+@router.patch("/{expert_id}/toggle-online")
+async def toggle_expert_online(expert_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    [Admin] 전문가의 온라인 상태를 즉시 반전합니다. (온라인/부재중 토글)
+    """
+    result = await db.execute(select(VirtualExpert).where(VirtualExpert.id == expert_id))
+    expert = result.scalars().first()
+    if not expert:
+        raise HTTPException(status_code=404, detail="Expert not found")
+    expert.is_online = not expert.is_online
+    await db.commit()
+    return {"status": "success", "expert_id": expert_id, "is_online": expert.is_online}

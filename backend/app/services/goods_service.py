@@ -43,14 +43,27 @@ def generate_digital_goods(saju_params: Dict[str, Any]) -> Dict[str, str]:
     prompt = f"A breathtaking, highly aesthetic, minimalist and mystical 3D rendered mobile wallpaper representing the Chinese Five Element: {element} ({element_ko}). It MUST strictly follow a retro-modern cyber-spiritual aesthetic with neon highlights over dark glassmorphism materials. The colors should be heavily associated with {element_ko}. CRITICAL: NO text, no letters, no characters, no words at all. Pure abstract geometry and spiritual energy. High resolution, elegant composition."
 
     try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=prompt,
-            size="1024x1024",
-            quality="hd",
-            n=1,
-            style="natural"
-        )
+        try:
+            response = client.images.generate(
+                model="dall-e-3",
+                prompt=prompt,
+                size="1024x1024",
+                quality="hd",
+                n=1,
+                style="natural"
+            )
+        except Exception as e:
+            if "style" in str(e):
+                print("Retrying DALL-E image generation without 'style' parameter...")
+                response = client.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt,
+                    size="1024x1024",
+                    quality="hd",
+                    n=1
+                )
+            else:
+                raise e
         return {
             "image_url": response.data[0].url,
             "theme": f"당신만의 맞춤형 사이버 부적: {element_ko}",

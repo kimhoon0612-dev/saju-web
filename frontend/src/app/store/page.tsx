@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import ProductModal from "@/components/Store/ProductModal";
+import PaymentModal from "@/components/PaymentModal";
 import { Sparkles, Heart, BadgeDollarSign, Briefcase, Dumbbell, Clover, Star, ChevronRight } from "lucide-react";
 import UserBadge from "@/components/UserBadge";
 
@@ -35,11 +37,65 @@ export const storeProducts: Product[] = [
 ];
 
 export default function DirectStorePage() {
+    const router = useRouter();
+
+    useEffect(() => {
+        if (process.env.NEXT_PUBLIC_ENABLE_STORE !== "true") {
+            router.replace("/");
+        }
+    }, [router]);
+
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [products, setProducts] = useState<Product[]>(storeProducts);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [storeTab, setStoreTab] = useState<'MARKET' | 'COIN'>('MARKET');
-    const [userCoins, setUserCoins] = useState(0); // Mock user coin balance
+    const [userCoins, setUserCoins] = useState(0);
+    const [isLoadingCoins, setIsLoadingCoins] = useState(true);
+
+    // Banner slider
+    const [bannerIndex, setBannerIndex] = useState(0);
+    const bannerSlides = [
+        { badge: '🎁 첨 충전 혼스', title: '첫 충전 30% 보너스!', sub: '지금 충전하면 추가 코인을 드려요', cta: '코인 충전하기', from: 'from-amber-500', to: 'to-orange-700', tab: 'COIN' as const },
+        { badge: '🔮 프리미엄', title: '명리 AI 심층 리포트', sub: '8글자 명식 전체 풀이 · 무제한 AI 상담', cta: '리포트 기능 보기', from: 'from-violet-600', to: 'to-purple-800', tab: 'MARKET' as const },
+        { badge: '⚡ 겁가포인트', title: '오늘 만 특가 이벤트!', sub: '선정 상품은 내일 바로 사라집니다', cta: '상품 보기', from: 'from-rose-500', to: 'to-pink-700', tab: 'MARKET' as const },
+    ];
+
+    // Toss Payment State
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [paymentDetails, setPaymentDetails] = useState({ amount: 0, bonus: 0, price: 0, packageName: "" });
+
+    // Banner auto-slide
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setBannerIndex(prev => (prev + 1) % bannerSlides.length);
+        }, 3500);
+        return () => clearInterval(timer);
+    }, [bannerSlides.length]);
+
+    // Fetch real coin balance on mount
+    useEffect(() => {
+        const fetchBalance = async () => {
+            setIsLoadingCoins(true);
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) { setIsLoadingCoins(false); return; }
+                const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://saju-web.onrender.com';
+                const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : apiBase;
+                const res = await fetch(`${baseUrl}/api/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUserCoins(data.point_balance || 0);
+                }
+            } catch (e) {
+                console.warn('Failed to fetch coin balance:', e);
+            } finally {
+                setIsLoadingCoins(false);
+            }
+        };
+        fetchBalance();
+    }, []);
 
     // Browser back button handling for the modal
     useEffect(() => {
@@ -64,8 +120,26 @@ export default function DirectStorePage() {
         window.history.back();
     };
 
-    const handleChargeRequest = (amount: number, bonus: number, price: number) => {
-        alert(`[PG 연동 대기]\n\n총 ${amount + bonus}코인 충전 결제창으로 이동하시겠습니까?\n(결제 금액: ${price.toLocaleString()}원)`);
+    const handleChargeRequest = (amount: number, bonus: number, price: number, productId: string, packageName: string) => {
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.ReactNativeWebView) {
+            // Transform internal ID to App Store SKU, e.g., "c_10k" -> "com.sajuhub.coin.10k"
+            const skuId = productId.startsWith('c_') ? `com.sajuhub.coin.${productId.replace('c_', '')}` : productId;
+            
+            // @ts-ignore
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'IAP_PURCHASE',
+                payload: {
+                    productId: skuId,
+                    amount: amount,
+                    bonus: bonus,
+                    price: price
+                }
+            }));
+        } else {
+            setPaymentDetails({ amount, bonus, price, packageName });
+            setIsPaymentModalOpen(true);
+        }
     };
 
     // Filter products based on active category
@@ -101,37 +175,180 @@ export default function DirectStorePage() {
     useEffect(() => {
         const fetchStoreDB = async () => {
             try {
-                // Determine the correct host regardless of whether accessed via localhost or tunnel
                 const host = window.location.origin;
                 const res = await fetch(`${host}/api/store/products`, { cache: 'no-store' });
 
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.products) {
+                    if (data && data.products && data.products.length > 0) {
+                        // 백엔드가 이미 프론트 호환 필드명으로 반환함 (imageUrl, elementTheme 등)
                         const dbProducts: Product[] = data.products.map((p: any) => ({
-                            id: `db_${p.id}`,
+                            id: String(p.id),
                             name: p.name,
                             description: p.description,
                             price: p.price,
                             category: p.category,
-                            elementTheme: p.theme,
-                            imageUrl: p.image_url || '/talismans/health.png',
+                            elementTheme: p.elementTheme || p.theme,
+                            imageUrl: p.imageUrl || p.image_url || '/talismans/wealth.png',
                             original_price: p.original_price,
                             sales_tags: p.sales_tags,
-                            coin_amount: p.coin_amount,
-                            bonus_coins: p.bonus_coins
+                            coin_amount: p.coin_amount || 0,
+                            bonus_coins: p.bonus_coins || 0,
                         }));
-                        const allProducts = [...storeProducts, ...dbProducts];
-                        const uniqueProducts = Array.from(new Map(allProducts.map(item => [item.name, item])).values());
-                        setProducts(uniqueProducts);
+                        // DB 상품을 우선하되, 이름이 겹치는 기본 상품은 제거
+                        const dbNames = new Set(dbProducts.map(p => p.name));
+                        const staticFallback = storeProducts.filter(p => !dbNames.has(p.name));
+                        setProducts([...dbProducts, ...staticFallback]);
+                        return;
                     }
                 }
             } catch (error) {
-                console.warn("Failed to load DB products, falling back to static products:", error);
-                // Already initialized with storeProducts, so we don't need to do anything else.
+                console.warn("DB 상품 로드 실패 — 정적 상품 사용:", error);
             }
+            // fallback: 정적 상품 유지 (이미 초기값으로 설정됨)
         };
         fetchStoreDB();
+    }, []);
+
+    // Listen for incoming messages from React Native WebView (IAP Success)
+    useEffect(() => {
+        const handleWebViewMessage = async (event: any) => {
+            try {
+                // Ensure the event data is parsed properly
+                let data;
+                if (typeof event.data === 'string') {
+                    try {
+                        data = JSON.parse(event.data);
+                    } catch (e) {
+                        return; // Ignore non-JSON messages
+                    }
+                } else {
+                    data = event.data;
+                }
+
+                if (data && data.type === 'IAP_FAIL') {
+                    const errorMsg = data.error || "결제가 취소되었거나 오류가 발생했습니다.";
+                    alert(`결제 실패: ${errorMsg}`);
+                    return;
+                }
+
+                if (data && data.type === 'IAP_SUCCESS') {
+                    const { productId, receipt, platform } = data.payload;
+                    // Transform App Store SKU back to internal ID, e.g., "com.sajuhub.coin.10k" -> "c_10k"
+                    const internalId = productId.startsWith('com.sajuhub.coin.') 
+                        ? `c_${productId.replace('com.sajuhub.coin.', '')}` 
+                        : productId;
+                        
+                    const pkg = coinProducts.find(p => p.id === internalId);
+                    const coinReward = pkg ? (pkg.coin_amount || 0) + (pkg.bonus_coins || 0) : 0;
+
+                    const token = localStorage.getItem('access_token');
+                    if (!token) {
+                        alert("로그인 정보가 만료되었습니다. 다시 로그인 해 주세요.");
+                        return;
+                    }
+
+                    const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+                    const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:8000' : apiBase;
+
+                    const res = await fetch(`${baseUrl}/api/iap/verify`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            platform: platform || 'ios', // Use mapped platform or fallback
+                            receipt_data: receipt,
+                            product_id: internalId,
+                            coin_reward: coinReward
+                        })
+                    });
+
+                    if (res.ok) {
+                        const result = await res.json();
+                        setUserCoins(result.new_balance);
+                        alert(`결제가 완료되었습니다! ⚡ ${result.added_coins}코인이 지급되었습니다.`);
+                    } else {
+                        alert('결제 검증에 실패했습니다. 고객센터로 문의해주세요.');
+                    }
+                }
+            } catch (err) {
+                console.error('Error handling webview message:', err);
+            }
+        };
+
+        window.addEventListener('message', handleWebViewMessage);
+        // iOS React Native WebView fallback
+        document.addEventListener('message', handleWebViewMessage as unknown as EventListener);
+
+        return () => {
+            window.removeEventListener('message', handleWebViewMessage);
+            document.removeEventListener('message', handleWebViewMessage as unknown as EventListener);
+        };
+    }, [coinProducts]);
+
+    // Handle Toss Payments Redirect
+    useEffect(() => {
+        const handleTossRedirect = async () => {
+            if (typeof window === 'undefined') return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const tossSuccess = urlParams.get('tossSuccess');
+            const tossFail = urlParams.get('tossFail');
+            
+            if (tossFail) {
+                alert("결제를 취소했거나 실패했습니다.");
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+
+            if (tossSuccess) {
+                const paymentKey = urlParams.get('paymentKey');
+                const orderId = urlParams.get('orderId');
+                const amountStr = urlParams.get('amount');
+                const rewardStr = urlParams.get('reward');
+
+                if (paymentKey && orderId && amountStr) {
+                    const token = localStorage.getItem('access_token');
+                    if (!token) {
+                        alert("로그인 정보가 없습니다.");
+                        return;
+                    }
+                    try {
+                        const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+                        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : apiBase;
+                        const res = await fetch(`${baseUrl}/api/payments/verify/toss`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                paymentKey,
+                                orderId,
+                                amount: parseInt(amountStr, 10),
+                                coin_reward: parseInt(rewardStr || "0", 10)
+                            })
+                        });
+
+                        if (res.ok) {
+                            const result = await res.json();
+                            setUserCoins(result.new_balance);
+                            setStoreTab('COIN');
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            alert(`결제 성공! ${result.added_coins}코인이 충전되었습니다.`);
+                        } else {
+                            const err = await res.json();
+                            alert(`결제 승인 실패: ${err.detail}`);
+                        }
+                    } catch (e) {
+                        console.error("Toss Verify Error:", e);
+                    }
+                }
+            }
+        };
+
+        handleTossRedirect();
     }, []);
 
     return (
@@ -143,40 +360,41 @@ export default function DirectStorePage() {
             </div>
 
             <main className="w-full">
-                {/* Animated Ad Banner Placeholder */}
-                <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden h-48 flex items-center justify-center border-b border-gray-100 rounded-b-[2rem]">
-                    {/* Background decorative elements */}
-                    <div className="absolute inset-0 opacity-40">
-                        <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-                        <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                    </div>
+                {/* Promotion Banner Slider */}
+                <div className="w-full relative overflow-hidden h-48 flex items-center justify-center border-b border-gray-100 rounded-b-[2rem]">
+                    {bannerSlides.map((slide, idx) => (
+                        <div
+                            key={idx}
+                            className={`absolute inset-0 bg-gradient-to-br ${slide.from} ${slide.to} flex flex-col justify-center px-8 transition-opacity duration-700 ${
+                                idx === bannerIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                            }`}
+                        >
+                            <div className="absolute right-6 top-6 w-28 h-28 bg-white/10 rounded-full blur-2xl" />
+                            <span className="inline-block bg-white/20 text-white text-[11px] font-black px-3 py-1 rounded-full mb-3 tracking-wide w-fit">
+                                {slide.badge}
+                            </span>
+                            <h2 className="text-[22px] font-black text-white leading-[1.2] tracking-tight mb-1">{slide.title}</h2>
+                            <p className="text-[13px] font-bold text-white/80 mb-4">{slide.sub}</p>
+                            <button
+                                onClick={() => setStoreTab(slide.tab)}
+                                className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white text-[13px] font-black px-4 py-2 rounded-full border border-white/30 transition-all w-fit"
+                            >
+                                {slide.cta}
+                            </button>
+                        </div>
+                    ))}
 
-                    {/* Animated animals layer */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
-                        <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
-                        <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
-                        <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
-                        <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-8 py-5 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
-                        <span className="inline-block bg-indigo-100 text-indigo-700 text-[11px] font-black px-3 py-1 rounded-full mb-3 tracking-wide">
-                            NOTICE
-                        </span>
-                        <h2 className="text-[20px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
-                            광고 오픈 준비 중입니다
-                        </h2>
-                        <p className="text-[14px] font-bold text-gray-600">
-                            동물 친구들이 열심히 공간을<br />꾸미고 있어요! 🐾
-                        </p>
-                    </div>
-
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+                    {/* Indicator dots */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                        {bannerSlides.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setBannerIndex(idx)}
+                                className={`rounded-full transition-all ${
+                                    idx === bannerIndex ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                                }`}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -375,20 +593,31 @@ export default function DirectStorePage() {
                 {/* Coin Charger Mode */}
                 {storeTab === 'COIN' && (
                     <div className="mt-6 px-4 pb-24">
-                        {/* Coin Balance Card */}
-                        <div className="bg-gradient-to-r from-gray-900 to-black rounded-3xl p-6 text-white mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.15)] relative overflow-hidden">
-                            <div className="absolute -right-10 -top-10 w-32 h-32 bg-yellow-500/20 blur-3xl rounded-full"></div>
-                            <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full"></div>
+                        {/* Coin Balance Card - Premium Gold */}
+                        <div className="rounded-[28px] p-6 text-white mb-8 shadow-[0_16px_48px_rgba(212,175,55,0.30)] relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a1208 0%, #2c1e06 40%, #1a1208 100%)' }}>
+                            {/* Gold shimmer orbs */}
+                            <div className="absolute -right-8 -top-8 w-36 h-36 bg-yellow-500/25 blur-3xl rounded-full pointer-events-none" />
+                            <div className="absolute -left-8 -bottom-8 w-28 h-28 bg-amber-400/15 blur-3xl rounded-full pointer-events-none" />
+                            {/* Decorative coins */}
+                            <div className="absolute top-4 right-6 text-[42px] opacity-15 animate-float-y select-none">🪙</div>
+                            <div className="absolute bottom-4 right-20 text-[28px] opacity-10 animate-float-y delay-300 select-none">✨</div>
 
-                            <div className="relative z-10 flex flex-col items-center">
-                                <span className="text-[14px] font-medium text-gray-400 mb-1">현재 보유 코인</span>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <span className="text-yellow-400 text-3xl">⚡</span>
-                                    <span className="text-4xl font-black tracking-tight">{userCoins.toLocaleString()}</span>
+                            <div className="relative z-10">
+                                <p className="text-[12px] font-black text-yellow-500/70 uppercase tracking-widest mb-3">MY COIN BALANCE</p>
+                                <div className="flex items-end gap-2 mb-5">
+                                    <span className="text-yellow-400 text-[30px] leading-none">⚡</span>
+                                    {isLoadingCoins ? (
+                                        <span className="text-[40px] font-black text-gray-500 animate-pulse leading-none">---</span>
+                                    ) : (
+                                        <span className="text-[44px] font-black tracking-tight leading-none" style={{ color: '#F5D87A' }}>
+                                            {userCoins.toLocaleString()}
+                                        </span>
+                                    )}
+                                    <span className="text-[18px] font-bold text-yellow-600/70 mb-1">코인</span>
                                 </div>
-                                <div className="w-full bg-white/10 rounded-xl p-3 flex items-center justify-between">
-                                    <span className="text-[13px] text-gray-300">내역 확인하기</span>
-                                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                                <div className="w-full rounded-xl p-3 flex items-center justify-between" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <span className="text-[13px] text-gray-400 font-bold">충전 내역 확인하기</span>
+                                    <ChevronRight className="w-4 h-4 text-gray-500" />
                                 </div>
                             </div>
                         </div>
@@ -403,7 +632,7 @@ export default function DirectStorePage() {
                                 return (
                                 <button
                                     key={idx}
-                                    onClick={() => handleChargeRequest(amount, bonus, pkg.price)}
+                                    onClick={() => handleChargeRequest(amount, bonus, pkg.price, pkg.id, pkg.name)}
                                     className={`w-full bg-white rounded-2xl p-4 flex items-center justify-between transition-all group ${highlight ? 'border-2 border-yellow-400 shadow-[0_4px_15px_rgba(250,204,21,0.2)]' : 'border border-gray-100 shadow-sm hover:border-gray-300'}`}
                                 >
                                     <div className="flex items-center gap-4">
@@ -446,6 +675,16 @@ export default function DirectStorePage() {
                     onClose={handleCloseModal}
                 />
             )}
+
+            {/* Toss Payment Modal */}
+            <PaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={() => setIsPaymentModalOpen(false)}
+                coinAmount={paymentDetails.amount}
+                bonusCoins={paymentDetails.bonus}
+                price={paymentDetails.price}
+                packageName={paymentDetails.packageName}
+            />
         </div>
     );
 }

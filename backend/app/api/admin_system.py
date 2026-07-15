@@ -2,8 +2,10 @@ from fastapi import APIRouter
 import time
 import random
 from datetime import datetime
+from fastapi import Depends
+from app.api.admin_auth import verify_admin
 
-router = APIRouter(prefix="/api/admin/system", tags=["admin_system"])
+router = APIRouter(prefix="/api/admin/system", tags=["admin_system"], dependencies=[Depends(verify_admin)])
 
 @router.get("/health")
 async def get_system_health():

@@ -41,6 +41,7 @@ export default function Home() {
   const [matrixData, setMatrixData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDailyModalOpen, setIsDailyModalOpen] = useState(false);
   const [showSplashMode, setShowSplashMode] = useState(true);
 
@@ -60,7 +61,18 @@ export default function Home() {
   const [movingMonth, setMovingMonth] = useState(new Date().getMonth() + 1);
 
   const [showTalisman, setShowTalisman] = useState(false);
-  const [talismanResults, setTalismanResults] = useState<{ type: string, title: string, desc: string }[]>([]);
+  const [talismanResults, setTalismanResults] = useState<{ type: string, title: string, desc: string, reason: string }[]>([]);
+
+  // Banner slider state
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const isStoreEnabled = process.env.NEXT_PUBLIC_ENABLE_STORE === "true";
+  const isExpertsEnabled = process.env.NEXT_PUBLIC_ENABLE_EXPERTS === "true";
+
+  const bannerSlides = [
+    { badge: '🔮 AI 정밀 분석', title: '나만의 사주 심층 리포트', sub: '8글자 명식 전체 풀이 · 무제한 AI 상담', cta: '지금 분석하기', href: '/saju', from: 'from-violet-600', to: 'to-purple-800' },
+    ...(isStoreEnabled ? [{ badge: '⚡ 코인 이벤트', title: '첫 충전 30% 보너스!', sub: '지금 충전하면 추가 코인을 드려요', cta: '코인 충전하기', href: '/store', from: 'from-amber-500', to: 'to-orange-700' }] : []),
+    ...(isExpertsEnabled ? [{ badge: '👤 전문가 상담', title: '1:1 명리학 전문가 매칭', sub: '검증된 상담사와 실시간 채팅 운세상담', cta: '상담사 찾기', href: '/experts', from: 'from-teal-500', to: 'to-cyan-700' }] : []),
+  ];
 
   const [showFace, setShowFace] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -76,6 +88,11 @@ export default function Home() {
   // User Profile
   const [userGender, setUserGender] = useState<string>("female");
 
+  // Attendance Check
+  const [attendanceStatus, setAttendanceStatus] = useState<boolean | null>(null);
+  const [consecutiveDays, setConsecutiveDays] = useState(0);
+  const [isClaimingAttendance, setIsClaimingAttendance] = useState(false);
+
   // Parse daily score locally based on harmony/clash backend logic
   let dailyScore = 75;
   if (matrixData?.daily_fortune) {
@@ -85,69 +102,82 @@ export default function Home() {
     dailyScore = Math.max(40, Math.min(100, dailyScore));
   }
 
-  // 1. Lotto Logic
+  // Banner auto-slide
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBannerIndex(prev => (prev + 1) % bannerSlides.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [bannerSlides.length]);
+
+  // 1. 오행 기반 행운 번호 알고리즘
   const handleLotto = () => {
+    const elementRanges: Record<string, [number, number]> = {
+      wood: [1, 9], fire: [10, 19], earth: [20, 29], metal: [30, 39], water: [40, 45],
+    };
+    const dayElem = matrixData?.day_pillar?.heavenly?.element?.toLowerCase() || '';
+    const monthElem = matrixData?.month_pillar?.heavenly?.element?.toLowerCase() || '';
+    const yearElem = matrixData?.year_pillar?.heavenly?.element?.toLowerCase() || '';
+    const weights: Record<string, number> = { wood: 1, fire: 1, earth: 1, metal: 1, water: 1 };
+    if (dayElem && weights[dayElem] !== undefined)   weights[dayElem]   += 3;
+    if (monthElem && weights[monthElem] !== undefined) weights[monthElem] += 2;
+    if (yearElem && weights[yearElem] !== undefined)  weights[yearElem]  += 1;
+    const pickElement = (): string => {
+      const elems = Object.keys(weights);
+      const total = elems.reduce((s, e) => s + weights[e], 0);
+      let r = Math.random() * total;
+      for (const e of elems) { r -= weights[e]; if (r <= 0) return e; }
+      return elems[0];
+    };
     const nums = new Set<number>();
-    while (nums.size < 6) {
-      nums.add(Math.floor(Math.random() * 45) + 1);
+    let tries = 0;
+    while (nums.size < 6 && tries < 200) {
+      const elem = pickElement();
+      const [min, max] = elementRanges[elem] || [1, 45];
+      nums.add(Math.floor(Math.random() * (max - min + 1)) + min);
+      tries++;
     }
+    while (nums.size < 6) nums.add(Math.floor(Math.random() * 45) + 1);
     setLottoNumbers(Array.from(nums).sort((a, b) => a - b));
     setShowLotto(true);
   };
 
-  // 3. Talisman Logic (Multiple)
+  // 3. 오행 조후 기반 정밀 부적 추천
   const handleTalisman = () => {
-    const results = [];
-    // Base wealth talisman is always good to have
-    results.push({
-      type: "wealth",
-      title: "재물 넉넉 부적",
-      desc: "뜻밖의 금전운이 따르고 지출이 줄어드는 강력한 재물 부적입니다."
+    const results: { type: string; title: string; desc: string; reason: string }[] = [];
+    const elementScore: Record<string, number> = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+    const pillars = ['year_pillar', 'month_pillar', 'day_pillar', 'time_pillar'];
+    pillars.forEach(p => {
+      const he = matrixData?.[p]?.heavenly?.element?.toLowerCase();
+      const ee = matrixData?.[p]?.earthly?.element?.toLowerCase();
+      if (he && elementScore[he] !== undefined) elementScore[he]++;
+      if (ee && elementScore[ee] !== undefined) elementScore[ee]++;
     });
-
-    if (matrixData && matrixData.month_pillar) {
-      const mg = matrixData.month_pillar.earthly.ten_god || "";
-      if (mg.includes("관성")) {
-        results.push({
-          type: "career",
-          title: "직장 탄탄 부적",
-          desc: "직장에서 능력을 인정받고 승진이나 이직 운을 틔워주는 부적입니다."
-        });
-      } else if (mg.includes("인성")) {
-        results.push({
-          type: "health",
-          title: "무병 무탈 부적",
-          desc: "잔병치레를 막아주고 몸과 마음의 평온을 지켜주는 건강 부적입니다."
-        });
-      } else if (mg.includes("비겁")) {
-        results.push({
-          type: "love",
-          title: "애정 만발 부적",
-          desc: "주변 인연이 좋아지고 좋은 짝을 찾아주는 사랑 부적입니다."
-        });
-      }
+    const weakest = Object.entries(elementScore).sort((a, b) => a[1] - b[1])[0][0];
+    const strongest = Object.entries(elementScore).sort((a, b) => b[1] - a[1])[0][0];
+    const elemMap: Record<string, { type: string; title: string; desc: string; reason: string }> = {
+      wood:  { type: 'health', title: '건강 활력 부적', desc: '목기(木氣)를 보충하여 체력과 성장력을 끌어올립니다.', reason: `목(木)기운이 ${elementScore.wood}개로 부족합니다.` },
+      fire:  { type: 'career', title: '직장 발전 부적', desc: '화기(火氣)로 열정과 리더십을 폭발시켜 직장운을 활짝 열어줍니다.', reason: `화(火)기운이 ${elementScore.fire}개로 부족합니다.` },
+      earth: { type: 'wealth', title: '재물 안정 부적', desc: '토기(土氣)로 재물의 뿌리를 단단히 하여 축적과 안정을 이끕니다.', reason: `토(土)기운이 ${elementScore.earth}개로 부족합니다.` },
+      metal: { type: 'wealth', title: '재물 대박 부적', desc: '금기(金氣)로 결실과 금전운을 강하게 당겨 뜻밖의 횡재수를 만듭니다.', reason: `금(金)기운이 ${elementScore.metal}개로 부족합니다.` },
+      water: { type: 'love',   title: '지혜 인연 부적', desc: '수기(水氣)로 지혜와 인연의 흐름을 원활하게 하여 귀인을 불러옵니다.', reason: `수(水)기운이 ${elementScore.water}개로 부족합니다.` },
+    };
+    results.push(elemMap[weakest]);
+    const combined = (matrixData?.day_pillar?.earthly?.ten_god || '') + (matrixData?.month_pillar?.earthly?.ten_god || '');
+    if (combined.includes('관성') || combined.includes('편관')) {
+      results.push({ type: 'career', title: '합격 출세 부적', desc: '관성(官星)의 기운을 극대화하여 시험·취업·승진에서 두각을 나타냅니다.', reason: '관성이 월주/일주에 위치합니다.' });
+    } else if (combined.includes('재성') || combined.includes('편재')) {
+      results.push({ type: 'wealth', title: '재물 대박 부적', desc: '재성(財星) 기운을 더욱 강화하여 금전운 폭발 부적입니다.', reason: '재성이 월주/일주에 위치합니다.' });
+    } else if (combined.includes('인성') || combined.includes('편인')) {
+      results.push({ type: 'health', title: '무병 무탈 부적', desc: '인성(印星) 기운으로 건강과 정신력을 든든하게 지켜주는 부적입니다.', reason: '인성이 월주/일주에 위치합니다.' });
+    } else {
+      results.push({ type: 'love', title: '애정 만발 부적', desc: '주변 인연이 좋아지고 소울메이트를 끌어당기는 인연 부적입니다.', reason: '인연과 대인관계 운을 보강합니다.' });
     }
-
-    // Add a secondary default if only one was added
-    if (results.length === 1) {
-      results.push({
-        type: "health",
-        title: "무병 무탈 부적",
-        desc: "올 한해 잔병치레를 막아주고 당신의 체력을 든든하게 지켜줍니다."
-      });
-      results.push({
-        type: "love",
-        title: "애정 만발 부적",
-        desc: "어디를 가나 사람들에게 호감을 얻고 따뜻한 인연을 맺게 돕습니다."
-      });
-    } else if (results.length === 2) {
-      results.push({
-        type: "love",
-        title: "귀인 상봉 부적",
-        desc: "조용히 나를 돕는 귀인이 나타나 위기를 기회로 바꿔주는 신비한 부적입니다."
-      });
+    if (strongest !== weakest) {
+      results.push({ type: 'luck', title: '귀인 상봉 부적', desc: `${strongest === 'fire' ? '화(火)' : strongest === 'wood' ? '목(木)' : strongest === 'metal' ? '금(金)' : strongest === 'water' ? '수(水)' : '토(土)'}기운이 강한 당신 곁에 귀인이 나타납니다.`, reason: '가장 강한 기운을 귀인으로 연결합니다.' });
+    } else {
+      results.push({ type: 'luck', title: '만사 형통 부적', desc: '모든 기운의 균형을 잡아 원하는 일이 술술 풀리는 종합 개운 부적입니다.', reason: '오행 균형으로 전반적 운을 끌어올립니다.' });
     }
-
     setTalismanResults(results);
     setShowTalisman(true);
   };
@@ -328,25 +358,141 @@ export default function Home() {
     img.src = objectUrl;
   };
 
-  // Check if we have matrix data in sessionStorage on mount
   useEffect(() => {
-    const stored = sessionStorage.getItem("saju_matrix");
-    const storedUserInfo = sessionStorage.getItem("saju_user_info");
-
-    if (stored) {
-      router.push("/saju");
-      return; // Stop execution to prevent flashing
-    }
-
-    if (storedUserInfo) {
+    const init = async () => {
       try {
-        const parsed = JSON.parse(storedUserInfo);
-        if (parsed.gender) setUserGender(parsed.gender);
-      } catch (e) { }
-    }
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          setIsInitializing(false);
+          return;
+        }
 
-    setIsInitializing(false);
+        const stored = sessionStorage.getItem("saju_matrix");
+        const storedUserInfo = sessionStorage.getItem("saju_user_info");
+
+        if (stored) {
+          // sessionStorage에 이미 있으면 바로 이동
+          window.location.href = "/saju";
+          return;
+        }
+
+        if (storedUserInfo) {
+          const parsed = JSON.parse(storedUserInfo);
+          if (parsed.gender) setUserGender(parsed.gender);
+        }
+
+        // DB에서 생년월일 불러오기 (자동 복원 시도)
+        try {
+          const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+          const meRes = await fetch(`${API_BASE}/api/users/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (meRes.ok) {
+            const me = await meRes.json();
+            if (me.birth_time_iso) {
+              // DB에 생년월일이 있으면 자동 재계산
+              const calcRes = await fetch(`${API_BASE}/api/calculate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  birth_time_iso: me.birth_time_iso,
+                  longitude: 126.978,
+                  is_lunar: me.is_lunar || false,
+                  is_leap_month: me.is_leap_month || false,
+                  gender: me.gender || "F"
+                })
+              });
+              if (calcRes.ok) {
+                const responseData = await calcRes.json();
+                responseData.matrix.user_name = me.name || "방문자";
+                const completeMatrix = {
+                  ...responseData.matrix,
+                  daily_fortune: responseData.matrix.daily_fortune || responseData.fortune_cycle?.iljin,
+                  fortune_cycle: responseData.fortune_cycle
+                };
+                sessionStorage.setItem("saju_matrix", JSON.stringify(completeMatrix));
+                sessionStorage.setItem("saju_user_info", JSON.stringify({
+                  name: me.name,
+                  birth_time_iso: me.birth_time_iso,
+                  is_lunar: me.is_lunar,
+                  is_leap_month: me.is_leap_month,
+                  gender: me.gender,
+                  longitude: 126.978
+                }));
+                window.location.href = "/saju";
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("DB 자동 복원 실패 (비치명적):", e);
+        }
+      } catch (e) {
+        console.error("SessionStorage Access Error in WebView:", e);
+      }
+      setIsInitializing(false);
+    };
+    init();
   }, [router]);
+
+  useEffect(() => {
+    const checkAttendance = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token || !isLoggedIn) return;
+      try {
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+        const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:8000' : API_BASE;
+        const res = await fetch(`${baseUrl}/api/users/attendance/status`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAttendanceStatus(data.already_claimed);
+          setConsecutiveDays(data.consecutive_days || 0);
+        }
+      } catch (err) {
+        console.error("Failed to check attendance:", err);
+      }
+    };
+    if (isLoggedIn) {
+      checkAttendance();
+    }
+  }, [isLoggedIn]);
+
+  const handleAttendanceClaim = async () => {
+    if (isClaimingAttendance) return;
+    setIsClaimingAttendance(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+      const baseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:8000' : API_BASE;
+      const res = await fetch(`${baseUrl}/api/users/attendance`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAttendanceStatus(true);
+        setConsecutiveDays(data.new_streak || 1);
+        const streakMsg = data.streak_bonus > 0 ? `\n🎊 ${data.new_streak}일 연속 출석 보너스! +${data.streak_bonus} 코인` : '';
+        alert(`✅ 출석 완료!\n기본 보상: ${data.reward_amount} 코인${streakMsg}\n\n현재 잔액: ${data.new_balance.toLocaleString()} 코인`);
+      } else {
+        const err = await res.json();
+        alert(err.detail || "오류가 발생했습니다.");
+      }
+    } catch (err) {
+      alert("네트워크 오류가 발생했습니다.");
+    } finally {
+      setIsClaimingAttendance(false);
+    }
+  };
 
   const handleCalculate = async (data: { name: string; birth_time_iso: string; longitude: number; is_lunar: boolean; is_leap_month: boolean; gender: string }) => {
     setIsLoading(true);
@@ -404,8 +550,30 @@ export default function Home() {
       }
       keysToRemoveH.forEach(k => sessionStorage.removeItem(k));
 
+      // DB 자동 저장: 로그인 상태인 경우 생년월일 정보를 서버에 영속화
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        try {
+          const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://saju-web.onrender.com";
+          await fetch(`${API_BASE}/api/users/birth-data`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({
+              birth_time_iso: data.birth_time_iso,
+              is_lunar: data.is_lunar,
+              is_leap_month: data.is_leap_month,
+              gender: data.gender,
+              name: data.name,
+              saju_summary: `${completeMatrix.year_pillar?.heavenly?.label || ''}${completeMatrix.year_pillar?.earthly?.label || ''} ${completeMatrix.month_pillar?.heavenly?.label || ''}${completeMatrix.month_pillar?.earthly?.label || ''} ${completeMatrix.day_pillar?.heavenly?.label || ''}${completeMatrix.day_pillar?.earthly?.label || ''} ${completeMatrix.time_pillar?.heavenly?.label || ''}${completeMatrix.time_pillar?.earthly?.label || ''}`
+            })
+          });
+        } catch (e) {
+          console.warn("사주 데이터 DB 저장 실패 (비치명적):", e);
+        }
+      }
+
       console.log("Data saved to sessionStorage. Redirecting to My Flow (Saju)...");
-      router.push('/saju');
+      window.location.href = '/saju';
 
     } catch (error: any) {
       console.error("데이터 동기화 실패:", error);
@@ -439,8 +607,11 @@ export default function Home() {
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-[#F5F6F8] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-t-[3px] border-r-[3px] border-gray-300 border-solid animate-spin"></div>
+      <div className="min-h-screen bg-[#F5F6F8] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-t-[3px] border-r-[3px] border-blue-500 border-solid animate-spin mb-4"></div>
+        <p className="text-sm font-semibold text-gray-700">명리박사 시스템을 초기화하고 있습니다...</p>
+        <p className="text-xs text-gray-500 mt-2">만약 이 화면이 계속 보인다면, 우주 파동 연결이 지연되는 중입니다.</p>
+        <p className="text-xs text-gray-400 mt-1">WebView Cache Bypassed / Hard Redirect Mode</p>
       </div>
     );
   }
@@ -615,12 +786,43 @@ export default function Home() {
                   나를 발견하는<br />가장 조용한 시간
                 </h1>
                 <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
-                  생년월일을 통해 당신의 고유한 결을 읽어냅니다.<br />자연의 흐름과 일상을 동기화하세요.
+                  {isLoggedIn 
+                    ? "생년월일을 통해 당신의 고유한 결을 읽어냅니다.\n자연의 흐름과 일상을 동기화하세요."
+                    : "단 하나의 명리학 지침서, 명리박사.\n로그인하고 당신만의 우주 파동을 확인하세요."}
                 </p>
               </div>
 
               <div className="w-full pb-8 mt-4 relative z-20">
-                <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+                {isLoggedIn ? (
+                  <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+                ) : (
+                  <div className="w-full flex flex-col gap-3 mt-4">
+                    <button
+                      onClick={() => {
+                        const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "YOUR_KAKAO_REST_API_KEY";
+                        const REDIRECT_URI = typeof window !== 'undefined' 
+                          ? `${window.location.origin}/auth/kakao/callback` 
+                          : '';
+                        
+                        setIsLoading(true);
+                        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+                      }}
+                      disabled={isLoading}
+                      className="w-full h-14 bg-[#FEE500] text-[#000000] rounded-xl flex items-center justify-center font-bold font-pretendard transition-transform active:scale-95 disabled:opacity-50 relative shadow-sm"
+                    >
+                      <div className="absolute left-5 flex items-center justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M12 4C7.02944 4 3 7.12643 3 10.982C3 13.4478 4.60411 15.6133 6.95837 16.8856L6.08272 20.061C5.97893 20.4374 6.38871 20.7265 6.70327 20.5015L10.3758 17.8741C10.9026 17.9351 11.4447 17.9641 12 17.9641C16.9706 17.9641 21 14.8377 21 10.982C21 7.12643 16.9706 4 12 4Z" fill="black"/>
+                        </svg>
+                      </div>
+                      {isLoading ? "연결 중..." : "카카오로 시작하기"}
+                    </button>
+                    
+                    <p className="text-xs text-center text-gray-400 font-pretendard mt-4">
+                      카카오 로그인 시 명리박사의 <a href="/terms" className="underline">이용약관</a> 및 <a href="/terms" className="underline">개인정보처리방침</a>에 동의하게 됩니다.
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -646,100 +848,172 @@ export default function Home() {
             </header>
 
             <div className="px-4 pt-3 pb-4">
-              {/* Animated Ad Banner Placeholder */}
-              <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-[24px] relative overflow-hidden h-40 flex items-center justify-center border border-gray-100 shadow-sm">
-                {/* Background decorative elements */}
-                <div className="absolute inset-0 opacity-40">
-                  <div className="absolute top-4 left-4 w-16 h-16 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-                  <div className="absolute bottom-4 right-4 w-20 h-20 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                </div>
-
-                {/* Animated animals layer */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div className="absolute -bottom-2 left-10 text-3xl animate-[bounce_3s_ease-in-out_infinite]">🐶</div>
-                  <div className="absolute bottom-2 right-16 text-2xl animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>🐰</div>
-                  <div className="absolute top-6 left-1/4 text-2xl animate-[bounce_4s_ease-in-out_infinite]" style={{ animationDelay: '1.2s' }}>🐱</div>
-                  <div className="absolute top-10 right-1/4 text-4xl animate-[pulse_3s_ease-in-out_infinite] origin-bottom -rotate-12">🦒</div>
-                  <div className="absolute bottom-4 left-1/3 text-2xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '1.8s' }}>🐼</div>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-white/50 text-center mx-4">
-                  <span className="inline-block bg-indigo-100 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide">
-                    NOTICE
-                  </span>
-                  <h2 className="text-[18px] font-black text-gray-900 leading-[1.3] tracking-tight mb-1">
-                    광고 오픈 준비 중입니다
-                  </h2>
-                  <p className="text-[13px] font-bold text-gray-600">
-                    동물 친구들이 공간을 꾸미고 있어요! 🐾
-                  </p>
-                </div>
-
-                {/* Pagination Dots (Decorative) */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-200"></div>
+              {/* Promotion Banner Slider */}
+              <div className="w-full rounded-[24px] relative overflow-hidden h-40 shadow-md">
+                {bannerSlides.map((slide, idx) => (
+                  <div
+                    key={idx}
+                    className={`absolute inset-0 bg-gradient-to-br ${slide.from} ${slide.to} flex flex-col justify-center px-6 transition-opacity duration-700 ${
+                      idx === bannerIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                    }`}
+                  >
+                    <div className="absolute right-4 top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+                    <span className="inline-block bg-white/20 text-white text-[11px] font-black px-2.5 py-1 rounded-full mb-2 tracking-wide w-fit">
+                      {slide.badge}
+                    </span>
+                    <h2 className="text-[20px] font-black text-white leading-[1.2] tracking-tight mb-1">{slide.title}</h2>
+                    <p className="text-[12px] font-bold text-white/80 mb-3">{slide.sub}</p>
+                    <Link href={slide.href}
+                      className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white text-[13px] font-black px-4 py-1.5 rounded-full border border-white/30 transition-all w-fit"
+                    >
+                      {slide.cta} <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                ))}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                  {bannerSlides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setBannerIndex(idx)}
+                      className={`rounded-full transition-all ${
+                        idx === bannerIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
 
             {/* Today's Summary Card and Daily Hub */}
             <div className="px-4 flex flex-col gap-5 pb-12 mt-2">
-              <div className="bg-white rounded-[32px] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 overflow-hidden relative">
+              <div className="bg-white rounded-[32px] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 overflow-hidden relative animate-fade-in-up">
+                {/* Glow orb */}
+                <div
+                  className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-60 pointer-events-none"
+                  style={{ background: dailyScore >= 80 ? '#2AC1BC30' : dailyScore >= 60 ? '#FFA00030' : '#FF704330' }}
+                />
                 <div className="text-[13px] text-gray-400 font-bold mb-1 tracking-wider uppercase">오늘의 운세</div>
-                <h2 className="text-[26px] font-black tracking-tight text-gray-900 mb-8">{matrixData.user_name || "방문자"}님의 하루 요약</h2>
+                <h2 className="text-[26px] font-black tracking-tight text-gray-900 mb-6">{matrixData.user_name || "방문자"}님의 하루 요약</h2>
 
                 {/* Wave Graph Area -> Modern Radial Dial */}
-                <div className="flex flex-col items-center justify-center mt-4 mb-8">
-                  <div className="relative w-40 h-40 flex items-center justify-center">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="relative w-44 h-44 flex items-center justify-center">
                     {/* Background glow */}
-                    <div className="absolute inset-0 bg-[#2AC1BC]/10 rounded-full blur-2xl flex items-center justify-center animate-pulse"></div>
+                    <div
+                      className="absolute inset-3 rounded-full blur-xl opacity-20 pointer-events-none"
+                      style={{ background: dailyScore >= 80 ? '#2AC1BC' : dailyScore >= 60 ? '#FFA000' : '#FF7043' }}
+                    />
                     
                     {/* Outer static ring */}
                     <svg className="w-full h-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="45" fill="none" stroke="#F1F3F5" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="44" fill="none" stroke="#F1F3F5" strokeWidth="7" />
                       {/* Dynamic progress ring */}
                       <circle 
-                        cx="50" cy="50" r="45" 
+                        cx="50" cy="50" r="44" 
                         fill="none" 
-                        stroke="url(#gradientDial)" 
-                        strokeWidth="8" 
+                        stroke="url(#homeGradientDial)" 
+                        strokeWidth="7" 
                         strokeLinecap="round" 
-                        strokeDasharray="282.7" 
-                        strokeDashoffset={282.7 - (282.7 * parseInt(String(dailyScore))) / 100}
-                        className="transition-all duration-1500 ease-out"
+                        strokeDasharray="276.5" 
+                        strokeDashoffset={276.5 - (276.5 * dailyScore) / 100}
+                        style={{ transition: 'stroke-dashoffset 1.5s ease-out' }}
                       />
                       <defs>
-                        <linearGradient id="gradientDial" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#48CAE4" />
-                          <stop offset="100%" stopColor="#2AC1BC" />
+                        <linearGradient id="homeGradientDial" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor={dailyScore >= 80 ? '#48CAE4' : dailyScore >= 60 ? '#FFD54F' : '#FF8A65'} />
+                          <stop offset="100%" stopColor={dailyScore >= 80 ? '#2AC1BC' : dailyScore >= 60 ? '#FFA000' : '#FF5722'} />
                         </linearGradient>
                       </defs>
                     </svg>
 
                     {/* Inner Content */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">SCORE</span>
+                      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">TODAY</span>
                       <div className="flex items-start">
-                        <span className="text-[46px] font-black text-gray-900 leading-none tracking-tighter">{dailyScore}</span>
-                        <span className="text-[16px] font-bold text-gray-400 mt-1 ml-0.5">점</span>
+                        <span className="text-[50px] font-black text-gray-900 leading-none tracking-tighter">{dailyScore}</span>
+                        <span className="text-[16px] font-bold text-gray-400 mt-2 ml-0.5">점</span>
                       </div>
+                      <span className="text-[12px] font-bold mt-1" style={{ color: dailyScore >= 80 ? '#2AC1BC' : dailyScore >= 60 ? '#FFA000' : '#FF7043' }}>
+                        {dailyScore >= 85 ? '🌟 최상' : dailyScore >= 70 ? '😊 양호' : dailyScore >= 55 ? '😐 보통' : '⚠️ 주의'}
+                      </span>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-center text-center mt-6 z-20 relative">
-                    <p className="text-[17px] font-bold text-gray-800 leading-snug w-full px-2 break-keep mt-2">
+                  <div className="flex flex-col items-center text-center mt-5 z-20 relative px-2">
+                    <p className="text-[16px] font-bold text-gray-800 leading-snug break-keep">
                         {matrixData.daily_fortune?.description || "문을 두드리면 반드시 열리는 하루입니다."}
                     </p>
 
-                    <button onClick={() => setIsDailyModalOpen(true)} className="mt-8 mb-2 text-[15px] font-bold text-gray-900 flex items-center gap-1 hover:text-gray-600 transition-colors">
+                    <button onClick={() => setIsDailyModalOpen(true)} className="mt-5 mb-2 text-[14px] font-bold text-gray-500 flex items-center gap-1 hover:text-gray-800 transition-colors border border-gray-200 px-4 py-1.5 rounded-full">
                         오늘 하루 자세히 보기 <ChevronRight className="w-4 h-4 ml-0.5" />
                     </button>
                   </div>
                 </div>
               </div>
+
+              {/* Daily Attendance Banner */}
+              {isLoggedIn && attendanceStatus !== null && (
+                <div
+                  onClick={attendanceStatus ? undefined : handleAttendanceClaim}
+                  className={`rounded-[28px] p-5 shadow-[0_8px_30px_rgba(250,204,21,0.25)] relative overflow-hidden group transition-all ${
+                    attendanceStatus
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-50 border border-gray-200 cursor-default'
+                      : 'bg-gradient-to-r from-yellow-400 to-orange-400 border border-yellow-300 cursor-pointer hover:scale-[1.02] active:scale-95'
+                  }`}
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-2xl rounded-full transform translate-x-10 -translate-y-10 group-hover:scale-110 transition-transform duration-700" />
+                  
+                  <div className="flex items-center justify-between relative z-10 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-2xl shadow-inner backdrop-blur-sm border ${
+                        attendanceStatus ? 'bg-gray-200 border-gray-300' : 'bg-white/30 border-white/40 animate-[bounce_3s_ease-in-out_infinite]'
+                      }`}>
+                        {attendanceStatus ? '✅' : '🎁'}
+                      </div>
+                      <div className={`flex flex-col ${attendanceStatus ? 'text-gray-600' : 'text-white'}`}>
+                        <span className="text-[13px] font-extrabold opacity-90 drop-shadow-sm mb-0.5">
+                          {attendanceStatus ? `${consecutiveDays}일 연속 출석 중` : '매일매일 쏟아지는 혜택'}
+                        </span>
+                        <span className="text-[18px] font-black drop-shadow-md tracking-tight">
+                          {attendanceStatus ? '오늘 출석 완료! 🎉' : '출석 50코인 받기'}
+                        </span>
+                      </div>
+                    </div>
+                    {!attendanceStatus && <ChevronRight className="w-6 h-6 text-white opacity-90 drop-shadow-sm" />}
+                  </div>
+
+                  {/* 7-day streak bar */}
+                  <div className="flex gap-1.5 relative z-10">
+                    {Array.from({ length: 7 }).map((_, i) => {
+                      const filled = i < (attendanceStatus ? consecutiveDays + 1 : consecutiveDays);
+                      const isToday = i === (attendanceStatus ? consecutiveDays : consecutiveDays);
+                      return (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                          <div className={`w-full h-2 rounded-full transition-all ${
+                            filled
+                              ? attendanceStatus
+                                ? 'bg-orange-400'
+                                : 'bg-white'
+                              : attendanceStatus
+                                ? 'bg-gray-300'
+                                : 'bg-white/30'
+                          } ${isToday && !attendanceStatus ? 'animate-pulse' : ''}`} />
+                          <span className={`text-[9px] font-bold ${
+                            filled
+                              ? attendanceStatus ? 'text-orange-500' : 'text-white/90'
+                              : attendanceStatus ? 'text-gray-400' : 'text-white/40'
+                          }`}>{i + 1}일</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {consecutiveDays >= 6 && !attendanceStatus && (
+                    <p className={`text-[11px] font-black mt-2 text-center relative z-10 ${attendanceStatus ? 'text-gray-500' : 'text-white'}`}>
+                      🎊 오늘 출석하면 7일 연속! +100 보너스 코인 지급
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Daily/Fun Hub injected from saju/page.tsx */}
               <section className="bg-white rounded-[32px] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5 flex flex-col gap-6">

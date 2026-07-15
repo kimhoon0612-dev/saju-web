@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Star, ChevronDown, Heart, Search, User, TicketPercent, Sparkles } from 'lucide-react';
 import { cn } from '../../components/DestinyMatrixCard';
 import ExpertProfileModal, { Expert } from '../../components/ExpertProfileModal';
@@ -8,11 +9,20 @@ import Link from 'next/link';
 import UserBadge from '@/components/UserBadge';
 
 export default function ExpertsPage() {
+    const router = useRouter();
+
+    useEffect(() => {
+        if (process.env.NEXT_PUBLIC_ENABLE_EXPERTS !== "true") {
+            router.replace("/");
+        }
+    }, [router]);
+
     const [selectedTab, setSelectedTab] = useState("전체");
     const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [experts, setExperts] = useState<Expert[]>([]);
     const [loading, setLoading] = useState(true);
+    const onlineCount = experts.filter(e => e.is_online).length;
 
     const tabs = ["전체", "운세", "타로"];
 
@@ -34,6 +44,21 @@ export default function ExpertsPage() {
         fetchExperts();
     }, []);
 
+    // Skeleton card component
+    const SkeletonCard = () => (
+        <div className="bg-white rounded-[20px] border border-gray-100 overflow-hidden animate-pulse">
+            <div className="w-full aspect-[4/5] bg-gray-100" />
+            <div className="p-3">
+                <div className="flex justify-between mb-2">
+                    <div className="h-4 bg-gray-100 rounded w-16" />
+                    <div className="h-4 bg-gray-100 rounded w-12" />
+                </div>
+                <div className="h-3 bg-gray-50 rounded w-full mt-2" />
+            </div>
+        </div>
+    );
+
+
     return (
         <main className="min-h-screen bg-[#F5F6F8] pb-32">
 
@@ -43,26 +68,36 @@ export default function ExpertsPage() {
             </div>
 
             {/* Premium Hero Section */}
-            <div className="w-full bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 relative overflow-hidden flex flex-col items-center justify-center border-b border-indigo-950/50 py-10">
+            <div className="w-full bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 relative overflow-hidden flex flex-col items-center justify-center border-b border-indigo-950/50 py-12">
                 {/* Background decorative elements */}
                 <div className="absolute inset-0 opacity-20">
-                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-400 rounded-full mix-blend-screen filter blur-3xl"></div>
-                    <div className="absolute top-20 -right-10 w-48 h-48 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl"></div>
+                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-400 rounded-full mix-blend-screen filter blur-3xl" />
+                    <div className="absolute top-20 -right-10 w-48 h-48 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl" />
                 </div>
+                {/* Floating orb */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-12 bg-indigo-500/20 blur-2xl rounded-full pointer-events-none" />
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col items-center text-center px-4">
+                <div className="relative z-10 flex flex-col items-center text-center px-6">
                     <span className="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-100 text-[11px] font-bold px-3 py-1 rounded-full mb-4 outline outline-1 outline-indigo-400/30 backdrop-blur-sm">
                         <Sparkles className="w-3 h-3 text-indigo-300" /> 프리미엄 1:1 상담
                     </span>
-                    <h2 className="text-[24px] font-black text-white leading-[1.3] tracking-tight mb-2">
+                    <h2 className="text-[26px] font-black text-white leading-[1.3] tracking-tight mb-2">
                         당신의 운명을 밝혀줄<br />최고의 멘토를 만나보세요
                     </h2>
-                    <p className="text-[14px] text-indigo-200/80 font-medium max-w-[260px]">
+                    <p className="text-[14px] text-indigo-200/80 font-medium max-w-[280px] mb-4">
                         엄선된 명리·타로 전문가들이 당신만의 깊이 있는 인생 해답을 제시합니다.
                     </p>
+                    {/* Online count live badge */}
+                    {onlineCount > 0 && (
+                        <div className="flex items-center gap-1.5 bg-green-500/20 border border-green-400/30 text-green-300 text-[12px] font-black px-3 py-1 rounded-full">
+                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                            지금 {onlineCount}명 온라인 상담 가능
+                        </div>
+                    )}
                 </div>
             </div>
+
 
             {/* Expert List Section - Tabs */}
             <div className="bg-white border-b border-gray-100 mt-2 rounded-t-[24px] overflow-hidden">
@@ -101,11 +136,23 @@ export default function ExpertsPage() {
 
             {/* Grid List */}
             <div className="px-4 py-4 grid grid-cols-2 gap-3 sm:gap-4">
-                {experts.filter(expert => {
-                    const matchesTab = selectedTab === '전체' || expert.category === selectedTab;
-                    const matchesSearch = expert.display_name.includes(searchTerm) || (expert.tags && expert.tags.includes(searchTerm));
-                    return matchesTab && matchesSearch;
-                }).map(expert => (
+                {loading ? (
+                    // Loading skeleton
+                    Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                ) : (() => {
+                    const filtered = experts.filter(expert => {
+                        const matchesTab = selectedTab === '전체' || expert.category === selectedTab;
+                        const matchesSearch = expert.display_name.includes(searchTerm) || (expert.tags && expert.tags.includes(searchTerm));
+                        return matchesTab && matchesSearch;
+                    });
+                    if (filtered.length === 0) return (
+                        <div className="col-span-2 flex flex-col items-center py-16 gap-4">
+                            <span className="text-5xl animate-float-y">🔮</span>
+                            <p className="text-[15px] font-black text-gray-500">아직 등록된 전문가가 없어요</p>
+                            <p className="text-[13px] text-gray-400 font-medium text-center">곧 엄선된 명리 전문가들이<br />채워질 예정입니다.</p>
+                        </div>
+                    );
+                    return filtered.map(expert => (
                     <div
                         key={expert.id}
                         onClick={() => setSelectedExpert(expert)}
@@ -176,7 +223,8 @@ export default function ExpertsPage() {
                             </div>
                         </div>
                     </div>
-                ))}
+                    ));
+                })()}
             </div>
 
             {selectedExpert && (

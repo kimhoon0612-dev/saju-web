@@ -1,6 +1,29 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+# Monkeypatch pydantic.v1 to support Python 3.13+ for chromadb config
+try:
+    import pydantic.v1.fields
+    original_set_default_and_type = pydantic.v1.fields.ModelField._set_default_and_type
+
+    def patched_set_default_and_type(self):
+        try:
+            return original_set_default_and_type(self)
+        except Exception as e:
+            if "unable to infer type" in str(e):
+                from typing import Any
+                self.type_ = Any
+                self.outer_type_ = Any
+                self.annotation = Any
+                self.required = False
+                self.allow_none = True
+                return
+            raise e
+
+    pydantic.v1.fields.ModelField._set_default_and_type = patched_set_default_and_type
+except ImportError:
+    pass
+
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -23,7 +46,14 @@ from contextlib import asynccontextmanager
 from app.core.database import engine, Base
 import app.models.market_models  # Import to register models
 from fastapi.responses import PlainTextResponse, StreamingResponse
+from fastapi import Request
+import os
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from sqlalchemy.future import select
@@ -137,13 +167,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,https://saju-web.vercel.app").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 class UserBirthRequest(BaseModel):
     birth_time_iso: str  # ISO-8601 format (e.g., "2026-02-23T12:00:00")
@@ -197,23 +232,24 @@ def read_root():
     return {"status": "ok", "message": "FateName API is running."}
 
 @app.post("/api/calculate", response_model=CalculateResponse)
-def calculate_user_bazi(request: UserBirthRequest):
+@limiter.limit("5/minute")
+def calculate_user_bazi(request: Request, body: UserBirthRequest):
     """
     1. 사용자의 태어난 시간과 경도를 받아 진태양시를 보정합니다.
     2. KASI API를 통해 해당일의 간지를 조회합니다.
     3. 최종 명식(Destiny Matrix)을 도출합니다.
     """
     try:
-        birth_datetime = datetime.fromisoformat(request.birth_time_iso)
+        birth_datetime = datetime.fromisoformat(body.birth_time_iso)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid ISO format for birth_time_iso")
 
     try:
         # 1. 음력 처리 (음력일 경우 양력으로 변환)
-        if request.is_lunar:
+        if body.is_lunar:
             calendar = KoreanLunarCalendar()
             # setLunarDate(year, month, day, isIntercalary)
-            isValid = calendar.setLunarDate(birth_datetime.year, birth_datetime.month, birth_datetime.day, request.is_leap_month)
+            isValid = calendar.setLunarDate(birth_datetime.year, birth_datetime.month, birth_datetime.day, body.is_leap_month)
             if not isValid:
                 raise HTTPException(status_code=400, detail="유효하지 않은 음력 날짜입니다.")
             
@@ -225,12 +261,12 @@ def calculate_user_bazi(request: UserBirthRequest):
             )
 
         # 2. 진태양시 보정
-        tst = calculate_true_solar_time(birth_datetime, request.longitude)
+        tst = calculate_true_solar_time(birth_datetime, body.longitude)
 
         # 3. 사주 매트릭스 도출 (PyEphem 천문 알고리즘 사용)
         # birth_datetime: 기준 KST 표준시
         # 경도를 넘겨 calculate_bazi 내부에서 진태양시를 보정하도록 함
-        saju_matrix = calculate_bazi(birth_datetime, request.longitude, request.gender)
+        saju_matrix = calculate_bazi(birth_datetime, body.longitude, body.gender)
 
         # 4. 오늘의 운세 (Daily Fortune) 도출
         # 현재 한국 표준시 기준 서버 시간
@@ -244,8 +280,8 @@ def calculate_user_bazi(request: UserBirthRequest):
         return CalculateResponse(
             original_time=birth_datetime.isoformat(),
             true_solar_time=tst.isoformat(),
-            longitude_offset_min=(request.longitude - 135.0) * 4.0,
-            eot_min=0.0, # Removed complex tracking for the response since frontend doesn't strictly need eot breakdown
+            longitude_offset_min=(body.longitude - 135.0) * 4.0,  # Bug-01 fix: body.longitude
+            eot_min=0.0,
             total_correction_min=(tst - birth_datetime).total_seconds() / 60.0,
             matrix=matrix_dict,
             fortune_cycle=fortune_cycle.dict()
@@ -258,7 +294,8 @@ def calculate_user_bazi(request: UserBirthRequest):
 
 
 @app.post("/api/insight")
-def get_daily_insight(matrix: SajuMatrix):
+@limiter.limit("5/minute")
+def get_daily_insight(request: Request, matrix: SajuMatrix):
     """
     계산된 사주 매트릭스를 기반으로 RAG 파이프라인을 거쳐 투데이 액션(Insight)을 생성합니다.
     (Memory 의도적 파기: 데이터베이스에 사용자 정보 저장을 수행하지 않습니다)
@@ -271,7 +308,8 @@ def get_daily_insight(matrix: SajuMatrix):
     return {"insight": insight_text}
 
 @app.post("/api/life-stages")
-def get_life_stages(matrix: SajuMatrix):
+@limiter.limit("5/minute")
+def get_life_stages(request: Request, matrix: SajuMatrix):
     """
     사주 매트릭스의 년/월/일/시주를 바탕으로 초년/청년/중년/말년운의 생애주기 분석결과를 반환합니다.
     """
@@ -280,7 +318,8 @@ def get_life_stages(matrix: SajuMatrix):
     return result
 
 @app.post("/api/specific-reading")
-def get_specific_reading(request: SpecificReadingRequest):
+@limiter.limit("5/minute")
+def get_specific_reading(request: Request, payload: SpecificReadingRequest):
     """
     신년운세, 토정비결, 궁합 등 특정 운세에 대한 맞춤형 해석을 반환합니다.
     Stream the response to prevent Safari/Vercel timeouts on 45s+ generations.
@@ -290,23 +329,24 @@ def get_specific_reading(request: SpecificReadingRequest):
     # We create a generator that yields text chunks from LangChain
     def iter_stream():
         for chunk in rag_chain.stream_specific_reading(
-            request.saju_matrix, 
-            request.reading_type,
-            request.partner_matrix
+            payload.saju_matrix, 
+            payload.reading_type,
+            payload.partner_matrix
         ):
             yield chunk
 
     return StreamingResponse(iter_stream(), media_type="text/plain")
 
 @app.post("/api/chat")
-def chat_with_agent(request: ChatRequest):
+@limiter.limit("10/minute")
+def chat_with_agent(request: Request, payload: ChatRequest):
     """
     사용자의 사주 데이터와 이전 대화 기록을 바탕으로 Agentic 챗봇 응답을 생성합니다.
     """
     agent = SajuChatAgent()
-    history_dicts = [{"role": msg.role, "content": msg.content} for msg in request.history]
+    history_dicts = [{"role": msg.role, "content": msg.content} for msg in payload.history]
     
-    result = agent.chat(request.message, history_dicts, request.saju_context)
+    result = agent.chat(payload.message, history_dicts, payload.saju_context)
     return result
 
 @app.post("/api/transcribe")
@@ -392,6 +432,10 @@ from app.api.experts import router as experts_router
 from app.api.admin_experts import router as admin_experts_router
 from app.api.auth import router as auth_router
 from app.api.admin_users import router as admin_users_router
+from app.api.users import router as users_router
+from app.api.iap import router as iap_router
+from app.api.notifications import router as notifications_router
+from app.api.payments import router as payments_router
 
 app.include_router(marketplace_router)
 app.include_router(admin_analytics_router)
@@ -400,10 +444,14 @@ app.include_router(admin_market_router)
 app.include_router(admin_system_router)
 app.include_router(store_router)
 app.include_router(tarot_router)
-app.include_router(physiognomy_router, prefix="/api")
+app.include_router(physiognomy_router, prefix="/api")  # /api/physiognomy, /api/palmistry
 
 app.include_router(experts_router, prefix="/api/experts", tags=["experts"])
 app.include_router(admin_experts_router, prefix="/api/admin/experts", tags=["admin-experts"])
 
 app.include_router(auth_router)
 app.include_router(admin_users_router)
+app.include_router(users_router)
+app.include_router(iap_router)
+app.include_router(notifications_router)
+app.include_router(payments_router)

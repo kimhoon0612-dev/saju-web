@@ -1,5 +1,29 @@
 import json
 import os
+
+# Monkeypatch pydantic.v1 to support Python 3.13+ for chromadb config
+try:
+    import pydantic.v1.fields
+    original_set_default_and_type = pydantic.v1.fields.ModelField._set_default_and_type
+
+    def patched_set_default_and_type(self):
+        try:
+            return original_set_default_and_type(self)
+        except Exception as e:
+            if "unable to infer type" in str(e):
+                from typing import Any
+                self.type_ = Any
+                self.outer_type_ = Any
+                self.annotation = Any
+                self.required = False
+                self.allow_none = True
+                return
+            raise e
+
+    pydantic.v1.fields.ModelField._set_default_and_type = patched_set_default_and_type
+except ImportError:
+    pass
+
 import chromadb
 from typing import List, Optional
 from pydantic import BaseModel

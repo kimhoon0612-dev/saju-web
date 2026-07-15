@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev -H 0.0.0.0 --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@tosspayments/payment-widget-sdk": "^0.12.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
     "html2canvas": "^1.4.1",
