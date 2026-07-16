@@ -46,6 +46,9 @@ export default function Home() {
 
   // Banner slider state
   const [bannerIndex, setBannerIndex] = useState(0);
+  const isStoreEnabled = process.env.NEXT_PUBLIC_ENABLE_STORE === "true";
+  const isExpertsEnabled = process.env.NEXT_PUBLIC_ENABLE_EXPERTS === "true";
+
   const bannerSlides = [
     {
       badge: '🔮 AI 정밀 분석',
@@ -56,7 +59,7 @@ export default function Home() {
       from: 'from-violet-600',
       to: 'to-purple-800',
     },
-    {
+    ...(isStoreEnabled ? [{
       badge: '⚡ 코인 이벤트',
       title: '첫 충전 30% 보너스!',
       sub: '지금 충전하면 추가 코인을 드려요',
@@ -64,8 +67,8 @@ export default function Home() {
       href: '/store',
       from: 'from-amber-500',
       to: 'to-orange-700',
-    },
-    {
+    }] : []),
+    ...(isExpertsEnabled ? [{
       badge: '👤 전문가 상담',
       title: '1:1 명리학 전문가 매칭',
       sub: '검증된 상담사와 실시간 채팅 운세상담',
@@ -73,7 +76,7 @@ export default function Home() {
       href: '/experts',
       from: 'from-teal-500',
       to: 'to-cyan-700',
-    },
+    }] : []),
   ];
 
   // New Modal States
@@ -1103,9 +1106,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <Link href="/store" className="w-full bg-orange-100 text-orange-700 font-bold text-[16px] h-[52px] rounded-2xl hover:bg-orange-200 transition-colors flex items-center justify-center mb-2">
-              부적/코인 마켓 구경가기
-            </Link>
+            {isStoreEnabled && (
+              <Link href="/store" className="w-full bg-orange-100 text-orange-700 font-bold text-[16px] h-[52px] rounded-2xl hover:bg-orange-200 transition-colors flex items-center justify-center mb-2">
+                부적/코인 마켓 구경가기
+              </Link>
+            )}
             <button onClick={() => setShowTalisman(false)} className="w-full bg-gray-900 text-white font-bold text-[16px] h-[52px] rounded-2xl hover:bg-gray-800 transition-colors">
               닫기
             </button>

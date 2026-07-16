@@ -9,6 +9,7 @@ function TarotPlayContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const type = searchParams?.get("type") || "daily";
+    const isExpertsEnabled = process.env.NEXT_PUBLIC_ENABLE_EXPERTS === "true";
 
     // Dynamic Configuration
     let titleInfo = "특별한 타로";
@@ -377,18 +378,20 @@ function TarotPlayContent() {
                             ))}
 
                             {/* Expert Consultation CTA */}
-                            <div className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-md rounded-3xl p-6 border border-purple-500/30 mt-6 mb-4 text-center">
-                                <h3 className="text-white font-bold mb-2 text-[17px]">더 깊은 방향성이 필요하신가요?</h3>
-                                <p className="text-white/60 text-[14px] leading-relaxed mb-5">
-                                    카드의 직관적인 메시지를 넘어,<br />전문가와 1:1로 구체적인 고민을 해소해보세요.
-                                </p>
-                                <button
-                                    onClick={() => router.push('/experts')}
-                                    className="w-full bg-purple-600/30 text-purple-200 border border-purple-500/50 py-3.5 rounded-2xl font-bold text-[15px] hover:bg-purple-600/50 hover:text-white transition-all shadow-[0_4px_15px_rgba(168,85,247,0.2)]"
-                                >
-                                    전문가에게 깊이 있는 상담받기
-                                </button>
-                            </div>
+                            {isExpertsEnabled && (
+                                <div className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 backdrop-blur-md rounded-3xl p-6 border border-purple-500/30 mt-6 mb-4 text-center">
+                                    <h3 className="text-white font-bold mb-2 text-[17px]">더 깊은 방향성이 필요하신가요?</h3>
+                                    <p className="text-white/60 text-[14px] leading-relaxed mb-5">
+                                        카드의 직관적인 메시지를 넘어,<br />전문가와 1:1로 구체적인 고민을 해소해보세요.
+                                    </p>
+                                    <button
+                                        onClick={() => router.push('/experts')}
+                                        className="w-full bg-purple-600/30 text-purple-200 border border-purple-500/50 py-3.5 rounded-2xl font-bold text-[15px] hover:bg-purple-600/50 hover:text-white transition-all shadow-[0_4px_15px_rgba(168,85,247,0.2)]"
+                                    >
+                                        전문가에게 깊이 있는 상담받기
+                                    </button>
+                                </div>
+                            )}
 
                             <button
                                 onClick={() => router.push('/tarot')}

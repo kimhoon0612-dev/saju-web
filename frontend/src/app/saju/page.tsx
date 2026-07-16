@@ -79,10 +79,13 @@ export default function FortuneHubPage() {
 
     // Banner slider state
     const [bannerIndex, setBannerIndex] = useState(0);
+    const isStoreEnabled = process.env.NEXT_PUBLIC_ENABLE_STORE === "true";
+    const isExpertsEnabled = process.env.NEXT_PUBLIC_ENABLE_EXPERTS === "true";
+
     const bannerSlides = [
       { badge: '🔮 AI 정밀 분석', title: '나만의 사주 심층 리포트', sub: '8글자 명식 전체 풀이 · 무제한 AI 상담', cta: '지금 분석하기', href: '/saju/confirm?type=정통 명리', from: 'from-violet-600', to: 'to-purple-800' },
-      { badge: '⚡ 코인 이벤트', title: '첫 충전 30% 보너스!', sub: '지금 충전하면 추가 코인을 드려요', cta: '코인 충전하기', href: '/store', from: 'from-amber-500', to: 'to-orange-700' },
-      { badge: '👤 전문가 상담', title: '1:1 명리학 전문가 매칭', sub: '검증된 상담사와 실시간 채팅 운세상담', cta: '상담사 찾기', href: '/experts', from: 'from-teal-500', to: 'to-cyan-700' },
+      ...(isStoreEnabled ? [{ badge: '⚡ 코인 이벤트', title: '첫 충전 30% 보너스!', sub: '지금 충전하면 추가 코인을 드려요', cta: '코인 충전하기', href: '/store', from: 'from-amber-500', to: 'to-orange-700' }] : []),
+      ...(isExpertsEnabled ? [{ badge: '👤 전문가 상담', title: '1:1 명리학 전문가 매칭', sub: '검증된 상담사와 실시간 채팅 운세상담', cta: '상담사 찾기', href: '/experts', from: 'from-teal-500', to: 'to-cyan-700' }] : []),
     ];
 
     const [showTrait, setShowTrait] = useState(false);
