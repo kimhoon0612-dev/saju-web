@@ -608,8 +608,8 @@ export default function Home() {
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-[#F5F6F8] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-t-[3px] border-r-[3px] border-blue-500 border-solid animate-spin mb-4"></div>
-        <p className="text-sm font-semibold text-gray-700">명리박사 시스템을 초기화하고 있습니다...</p>
+        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-t-[3px] border-r-[3px] border-indigo-500 border-solid animate-spin mb-4"></div>
+        <p className="text-sm font-semibold text-gray-700">세상의 모든 사주팔자 시스템을 초기화하고 있습니다...</p>
         <p className="text-xs text-gray-500 mt-2">만약 이 화면이 계속 보인다면, 우주 파동 연결이 지연되는 중입니다.</p>
         <p className="text-xs text-gray-400 mt-1">WebView Cache Bypassed / Hard Redirect Mode</p>
       </div>
@@ -733,11 +733,11 @@ export default function Home() {
               transition={{ delay: 3.0, duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
               className="flex flex-col items-center gap-1"
             >
-              <div className="text-[44px] md:text-[56px] tracking-[0.25em] text-[#D4AF37] font-serif font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]">
-                명리박사
+              <div className="text-[24px] md:text-[34px] tracking-[0.15em] text-[#D4AF37] font-sans font-black drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]">
+                세상의 모든 사주팔자
               </div>
-              <div className="text-[#D4AF37]/50 tracking-[0.3em] text-sm font-light uppercase">
-                Dr. Myeongri
+              <div className="text-[#D4AF37]/50 tracking-[0.2em] text-xs font-medium uppercase mt-1">
+                All Saju in the World
               </div>
             </motion.div>
           </div>
@@ -764,42 +764,55 @@ export default function Home() {
       {
         !matrixData && (
           <motion.div
-            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#F8F9FA] overflow-hidden"
+            className="w-full min-h-[calc(100vh-12rem)] flex flex-col items-center justify-start px-4 pt-2 pb-8 relative bg-[#0C0F26] overflow-hidden"
           >
-            {/* Subtle minimal background decoration */}
+            {/* Cosmic nebula backgrounds */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFB199]/10 rounded-full blur-[80px]"></div>
-              <div className="absolute bottom-[20%] left-[-20%] w-[50%] h-[50%] bg-[#81C784]/10 rounded-full blur-[60px]"></div>
+              <div className="absolute top-[-10%] right-[-10%] w-[70%] h-[70%] bg-violet-600/15 rounded-full blur-[90px]"></div>
+              <div className="absolute bottom-[20%] left-[-20%] w-[60%] h-[60%] bg-indigo-500/15 rounded-full blur-[80px]"></div>
+              <div className="absolute top-[30%] left-[25%] w-[40%] h-[40%] bg-amber-500/5 rounded-full blur-[100px]"></div>
             </div>
 
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-              className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-10"
+              className="w-full max-w-md relative z-10 flex flex-col gap-6 pt-8"
             >
               <div className="text-center">
-                <div className="inline-flex items-center justify-center p-3.5 bg-white border border-gray-100 rounded-2xl shadow-sm mb-6">
-                  <Sparkles className="w-8 h-8 text-[#4A5568]" strokeWidth={1.5} />
-                </div>
-                <h1 className="text-[28px] font-black text-[#2D3748] tracking-tight mb-3 leading-[1.3] font-pretendard">
-                  나를 발견하는<br />가장 조용한 시간
+                {/* Floating mascot illustration */}
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                  className="relative w-36 h-36 mx-auto mb-6 drop-shadow-[0_12px_36px_rgba(168,85,247,0.3)]"
+                >
+                  <img
+                    src="/images/welcome_anime_mascot.png"
+                    alt="세상의 모든 사주팔자 마스코트"
+                    className="w-full h-full object-contain rounded-[36px] border-2 border-white/10 bg-[#161233]"
+                  />
+                </motion.div>
+
+                <h1 className="text-[26px] font-black text-white tracking-tight mb-3 leading-[1.3] font-pretendard">
+                  세상의 모든 사주팔자
                 </h1>
-                <p className="text-gray-500 font-medium text-[15px] break-keep px-4">
+                <p className="text-white/60 font-medium text-[14px] leading-relaxed break-keep px-6">
                   {isLoggedIn 
                     ? "생년월일을 통해 당신의 고유한 결을 읽어냅니다.\n자연의 흐름과 일상을 동기화하세요."
-                    : "단 하나의 명리학 지침서, 명리박사.\n로그인하고 당신만의 우주 파동을 확인하세요."}
+                    : "우주의 흐름과 나의 일상을 동기화하는\n가장 쉽고 친근한 명리 가이드"}
                 </p>
               </div>
 
-              <div className="w-full pb-8 mt-4 relative z-20">
+              <div className="w-full pb-8 mt-2 relative z-20">
                 {isLoggedIn ? (
-                  <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+                  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[28px] p-5 shadow-xl">
+                    <BirthDataForm onCalculate={handleCalculate} isLoading={isLoading} buttonText="나의 매트릭스 생성" />
+                  </div>
                 ) : (
                   <div className="w-full flex flex-col gap-3 mt-4">
                     <button
                       onClick={() => {
-                        const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "YOUR_KAKAO_REST_API_KEY";
+                        const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "a1a2b678a3ba09a7c064e3b4bfafc6cd";
                         const REDIRECT_URI = typeof window !== 'undefined' 
                           ? `${window.location.origin}/auth/kakao/callback` 
                           : '';
@@ -808,18 +821,18 @@ export default function Home() {
                         window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
                       }}
                       disabled={isLoading}
-                      className="w-full h-14 bg-[#FEE500] text-[#000000] rounded-xl flex items-center justify-center font-bold font-pretendard transition-transform active:scale-95 disabled:opacity-50 relative shadow-sm"
+                      className="w-full h-15 bg-[#FEE500] text-[#000000] rounded-[20px] flex items-center justify-center font-black font-pretendard border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000000] transition-all disabled:opacity-50 relative"
                     >
                       <div className="absolute left-5 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path fillRule="evenodd" clipRule="evenodd" d="M12 4C7.02944 4 3 7.12643 3 10.982C3 13.4478 4.60411 15.6133 6.95837 16.8856L6.08272 20.061C5.97893 20.4374 6.38871 20.7265 6.70327 20.5015L10.3758 17.8741C10.9026 17.9351 11.4447 17.9641 12 17.9641C16.9706 17.9641 21 14.8377 21 10.982C21 7.12643 16.9706 4 12 4Z" fill="black"/>
                         </svg>
                       </div>
                       {isLoading ? "연결 중..." : "카카오로 시작하기"}
                     </button>
                     
-                    <p className="text-xs text-center text-gray-400 font-pretendard mt-4">
-                      카카오 로그인 시 명리박사의 <a href="/terms" className="underline">이용약관</a> 및 <a href="/terms" className="underline">개인정보처리방침</a>에 동의하게 됩니다.
+                    <p className="text-[11px] text-center text-white/40 font-pretendard mt-4">
+                      카카오 로그인 시 세상의 모든 사주팔자의 <a href="/terms" className="underline text-white/60">이용약관</a> 및 <a href="/terms" className="underline text-white/60">개인정보처리방침</a>에 동의하게 됩니다.
                     </p>
                   </div>
                 )}

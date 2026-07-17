@@ -19,7 +19,7 @@ export default function TermsOfServicePage() {
                     
                     <h2 className="text-md font-bold text-gray-900 mb-2">제1조 (목적)</h2>
                     <p className="text-[13px] text-gray-600 leading-relaxed break-keep mb-6">
-                        본 약관은 "명리박사"(이하 "회사")가 제공하는 사주, 타로, 관상 등 운세 관련 서비스(이하 "서비스")를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+                        본 약관은 "세상의 모든 사주팔자"(이하 "회사")가 제공하는 사주, 타로, 관상 등 운세 관련 서비스(이하 "서비스")를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
                     </p>
 
                     <h2 className="text-md font-bold text-gray-900 mb-2">제2조 (용어의 정의)</h2>

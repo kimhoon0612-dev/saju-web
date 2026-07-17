@@ -549,7 +549,7 @@ export default function AdminDashboard() {
                     <form onSubmit={handleSendPush} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                         <div className="md:col-span-1">
                             <label className="text-sm font-bold text-gray-600 mb-1 block">푸시 제목</label>
-                            <input type="text" value={pushTitle} onChange={e => setPushTitle(e.target.value)} required placeholder="예: [명리박사] 오늘의 운세" className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
+                            <input type="text" value={pushTitle} onChange={e => setPushTitle(e.target.value)} required placeholder="예: [세상의 모든 사주팔자] 오늘의 운세" className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3 text-[#2D3748] focus:outline-none focus:border-[#4A5568]" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="text-sm font-bold text-gray-600 mb-1 block">알림 본문 내용</label>
