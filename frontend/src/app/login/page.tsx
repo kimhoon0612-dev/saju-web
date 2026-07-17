@@ -18,7 +18,7 @@ export default function LoginPage() {
   const handleKakaoLogin = () => {
     if (!termsAgreed) return;
     setIsLoading(true);
-    const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "";
+    const KAKAO_REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "a1a2b678a3ba09a7c064e3b4bfafc6cd";
     const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
     window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   };
